@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:paddingTop="15dp">
+    <TableLayout android:id="@+id/editContent2"
+        android:layout_width="320dp"
+        android:layout_height="78dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/border"
+        android:padding="15dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp">
+<TableRow android:id="@+id/rowButtonPhotoDialog"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical|center_horizontal">
+    <Button
+        android:id="@+id/btnCamera"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Abrir cámara"
+        android:layout_gravity="center_horizontal" />
+    <Button
+        android:id="@+id/btnGallery"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Buscar en tu móvil"
+        android:layout_gravity="center_horizontal" />
+</TableRow>
+    </TableLayout>
+</LinearLayout>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                  <TextView android:id="@+id/txtTitlePiece1"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="5dip"
+                      android:layout_marginBottom="10dip"
+                      android:textSize="20dip"
+                      android:text="Ficha 1"
+                      android:textColor="#0b84aa"
+                      android:layout_marginLeft="5dip" />
+
+
+                 <FrameLayout
+                    android:id="@+id/frmButtons1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="175dp"
+                    android:background="@drawable/border"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginLeft="15dp">
+
+                    <LinearLayout android:id="@+id/editContent1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical">
+
+                        <Button
+                            android:id="@+id/btnText1"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:text="Texto"
+                            android:layout_gravity="center_horizontal"
+                            android:paddingLeft="10dip"
+                            android:paddingRight="10dip"
+                            android:layout_marginTop="5dip"
+                            android:layout_marginLeft="5dip"
+                            android:layout_marginRight="5dip" />
+
+                        <Button
+                            android:id="@+id/btnPhoto1"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:text="Foto"
+                            android:layout_gravity="center_horizontal"
+                            android:paddingLeft="10dip"
+                            android:paddingRight="10dip"
+                            android:layout_marginTop="5dip"
+                            android:layout_marginLeft="5dip"
+                            android:layout_marginRight="5dip" />
+
+                        <Button
+                            android:id="@+id/btnFig1"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:text="Figura"
+                            android:layout_gravity="center_horizontal"
+                            android:paddingLeft="10dip"
+                            android:paddingRight="10dip"
+                            android:layout_marginTop="5dip"
+                            android:layout_marginLeft="5dip"
+                            android:layout_marginRight="5dip" />
+                    </LinearLayout>
+                </FrameLayout>
+                <FrameLayout
+                    android:id="@+id/frmTxt1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="175dp"
+                    android:visibility="gone"
+                    android:background="@drawable/border">
+
+                    <TextView
+                        android:id="@+id/txtContent1"
+                        android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"/>
+                </FrameLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp">
+                    <Button
+                        android:id="@+id/btnEdit1"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0pt"
+                        android:layout_weight="1"
+                        android:text="Editar"
+                        android:layout_gravity="center_horizontal"
+                        android:paddingLeft="10dip"
+                        android:paddingRight="10dip"
+                        android:layout_marginTop="5dip"
+                        android:layout_marginLeft="5dip"
+                        android:layout_marginRight="5dip"
+                        android:textSize="8dp" />
+                    <Button
+                        android:id="@+id/btnDel1"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0pt"
+                        android:layout_weight="1"
+                        android:text="Borrar"
+                        android:layout_gravity="center_horizontal"
+                        android:paddingLeft="10dip"
+                        android:paddingRight="10dip"
+                        android:layout_marginTop="5dip"
+                        android:layout_marginLeft="5dip"
+                        android:layout_marginRight="5dip"
+                        android:textSize="8dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0pt"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+                <TextView android:id="@+id/txtTitlePiece2"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dip"
+                        android:layout_marginBottom="10dip"
+                        android:textSize="20dip"
+                        android:text="Ficha 2"
+                        android:textColor="#0b84aa"
+                    android:layout_marginLeft="5dip" />
+                <FrameLayout
+                    android:id="@+id/frmButtons2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="175dp"
+                    android:background="@drawable/border"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginLeft="15dp">
+
+                        <LinearLayout android:id="@+id/editContent2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="10dp"
+                            android:orientation="vertical">
+
+                            <Button
+                                android:id="@+id/btnText2"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="Texto"
+                                android:layout_gravity="center_horizontal"
+                                android:paddingLeft="10dip"
+                                android:paddingRight="10dip"
+                                android:layout_marginTop="5dip"
+                                android:layout_marginLeft="5dip"
+                                android:layout_marginRight="5dip" />
+
+                            <Button
+                                android:id="@+id/btnPhoto2"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="Foto"
+                                android:layout_gravity="center_horizontal"
+                                android:paddingLeft="10dip"
+                                android:paddingRight="10dip"
+                                android:layout_marginTop="5dip"
+                                android:layout_marginLeft="5dip"
+                                android:layout_marginRight="5dip" />
+
+                            <Button
+                                android:id="@+id/btnFig2"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="Figura"
+                                android:layout_gravity="center_horizontal"
+                                android:paddingLeft="10dip"
+                                android:paddingRight="10dip"
+                                android:layout_marginTop="5dip"
+                                android:layout_marginLeft="5dip"
+                                android:layout_marginRight="5dip" />
+                                />
+                        </LinearLayout>
+                </FrameLayout>
+                <FrameLayout
+                    android:id="@+id/frmTxt2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="175dp"
+                    android:visibility="gone"
+                    android:background="@drawable/border">
+                    <TextView
+                        android:id="@+id/txtContent2"
+                        android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"/>
+
+                </FrameLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp">
+                    <Button
+                        android:id="@+id/btnEdit2"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0pt"
+                        android:layout_weight="1"
+                        android:text="Editar"
+                        android:layout_gravity="center_horizontal"
+                        android:paddingLeft="10dip"
+                        android:paddingRight="10dip"
+                        android:layout_marginTop="5dip"
+                        android:layout_marginLeft="5dip"
+                        android:layout_marginRight="5dip"
+                        android:textSize="8dp"/>
+                    <Button
+                        android:id="@+id/btnDel2"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0pt"
+                        android:layout_weight="1"
+                        android:text="Borrar"
+                        android:layout_gravity="center_horizontal"
+                        android:paddingLeft="10dip"
+                        android:paddingRight="10dip"
+                        android:layout_marginTop="5dip"
+                        android:layout_marginLeft="5dip"
+                        android:layout_marginRight="5dip"
+                        android:textSize="8dp"/>
+                </LinearLayout>
+            </LinearLayout>
+</LinearLayout>

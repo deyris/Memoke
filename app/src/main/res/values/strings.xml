@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Memoke</string>
+    <string name="creation_title">Tablero: %1$s</string>
+    <string name="creation_number">Pareja número %1$d</string>
+    <string name="content_title">Pareja número %1$d</string>
+
+    <string-array name="type_content">
+    <item>Texto</item>
+    <item>Foto</item>
+    <item>Figura</item>
+    </string-array>
+
+</resources>
