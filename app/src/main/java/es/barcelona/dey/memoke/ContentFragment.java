@@ -101,11 +101,89 @@ public class ContentFragment extends Fragment {
         genTextButton(mBtnText1);
         genTextButton(mBtnText2);
 
+
+
         //pair = new Pair();
        // pair.setIdPair(createdPair++);
 
         return  mLayout;
 
+    }
+
+    public void genEditButtonFromPhoto(ImageView image, final boolean isClickinForEdit){
+        image.setOnClickListener(new View.OnClickListener() {
+                                      @Override
+                                      public void onClick(View v) {
+                                          LinearLayout parent = (LinearLayout)v.getParent();
+
+                                          for (int i = 0; i < parent.getChildCount()-1; i++) {
+                                              try {
+                                                  Button button = (Button) parent.getChildAt(i);
+                                                  if (button instanceof Button) {
+                                                      if (isClickinForEdit) {
+                                                          button.setVisibility(View.VISIBLE);
+                                                      }else{
+                                                          button.setVisibility(View.GONE);
+                                                      }
+                                                  }
+                                              }catch (Exception e){
+
+                                              }
+
+                                          }
+                                          if (isClickinForEdit) {
+                                              //Hay que cambiar el icono poniendo el de cancel
+                                              fixIconCancelEdit(parent);
+                                          }else{
+                                              fixIconEdit(parent);
+                                          }
+
+                                      }
+
+                                  }
+
+        );
+    }
+
+    public void genCancelEditButtonFromPhoto(ImageView image){
+        image.setOnClickListener(new View.OnClickListener() {
+                                     @Override
+                                     public void onClick(View v) {
+                                         LinearLayout parent = (LinearLayout)v.getParent();
+
+                                         for (int i = 0; i < parent.getChildCount()-1; i++) {
+                                             try {
+                                                 Button button = (Button) parent.getChildAt(i);
+                                                 if (button instanceof Button) {
+                                                     button.setVisibility(View.VISIBLE);
+                                                 }
+                                             }catch (Exception e){
+
+                                             }
+
+                                         }
+
+                                         fixIconCancelEdit(parent);
+
+
+                                     }
+
+                                 }
+
+        );
+    }
+
+    public void genEditButtonFromText(ImageView image){
+        image.setOnClickListener(new View.OnClickListener() {
+                                     @Override
+                                     public void onClick(View v) {
+
+
+                                     }
+
+                                 }
+
+        );
     }
 
     public void receivingFromDialog(int data){
@@ -127,13 +205,12 @@ public class ContentFragment extends Fragment {
         FrameLayout frameLayout1 = (FrameLayout)mLayout.findViewById(mCurrentFrameTextShow);
         frameLayout1.setVisibility(View.VISIBLE);
 
-        int a = frameLayout1.getChildCount();
-
         TextView textView = (TextView)frameLayout1.getChildAt(0);
         textView.setText(data.getText());
         textView.setTextSize(data.getTextSize()/2);
 
-
+        ImageView imageView = (ImageView)frameLayout1.getChildAt(1);
+        genEditButtonFromText(imageView);
     }
 
 
@@ -193,20 +270,20 @@ public class ContentFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
                                       @Override
                                       public void onClick(View v) {
-                                          LinearLayout t = (LinearLayout)v.getParent();
+                                          LinearLayout t = (LinearLayout) v.getParent();
                                           FrameLayout f = (FrameLayout) t.getParent();
-                                          t = (LinearLayout)f.getParent();
+                                          t = (LinearLayout) f.getParent();
 
                                           int a = t.getChildCount();
 
-                                          FrameLayout fHide = (FrameLayout)t.getChildAt(1); //A esconder
-                                          FrameLayout fShow = (FrameLayout)t.getChildAt(2); //A mostrar
+                                          FrameLayout fHide = (FrameLayout) t.getChildAt(1); //A esconder
+                                          FrameLayout fShow = (FrameLayout) t.getChildAt(2); //A mostrar
                                           mCurrentFrameTextHide = fHide.getId();
                                           mCurrentFrameTextShow = fShow.getId();
 
-                                          DialogText textDialog = new DialogText((CreationActivity)getActivity());
+                                          DialogText textDialog = new DialogText((CreationActivity) getActivity());
                                           textDialog.show();
-                                         }
+                                      }
 
                                   }
 
@@ -247,23 +324,65 @@ public class ContentFragment extends Fragment {
 
     }
 
+    private void fixIconCancelEdit(LinearLayout linearLayout){
+        ImageView imageViewPencil = (ImageView)linearLayout.getChildAt(3);
+        imageViewPencil.setImageResource(R.drawable.ic_action_name3);
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(imageViewPencil.getLayoutParams());
+        //64 tamanho del icono
+        int top = linearLayout.getHeight() - 64 + 5;
+        int left = linearLayout.getWidth() - 64 + 5;
+        lp.setMargins(left, 0, 0, 0);
+
+        imageViewPencil.setLayoutParams(lp);
+
+        imageViewPencil.setVisibility(View.VISIBLE);
+
+        //Ponemos listener para poner icono de edicion
+        genEditButtonFromPhoto(imageViewPencil, false);
+    }
+
+    private void fixIconEdit(LinearLayout linearLayout){
+
+        ImageView imageView = (ImageView)linearLayout.getChildAt(3);
+        imageView.setImageResource(R.drawable.ic_action_name2);
+        imageView.setVisibility(View.VISIBLE);
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(imageView.getLayoutParams());
+        //64 tamanho del icono
+        int heigh = linearLayout.getHeight() - 64 + 5;
+        int width = linearLayout.getWidth() - 64 + 5;
+        lp.setMargins(width, heigh, 0, 0);
+        imageView.setLayoutParams(lp);
+
+        //Ponemos listener para cancelar la edición
+        genEditButtonFromPhoto(imageView, true);
+    }
+
     public void setPicToBackground(){
 
-        LinearLayout LinearLayout = (LinearLayout)mLayout.findViewById(mCurrentLinearPhoto);
+        LinearLayout linearLayout = (LinearLayout)mLayout.findViewById(mCurrentLinearPhoto);
 
-        int a = LinearLayout.getChildCount();
+        int a = linearLayout.getChildCount();//3 botones y 1 icono
 
-        for (int i = 0; i < LinearLayout.getChildCount(); i++) {
+        for (int i = 0; i < linearLayout.getChildCount()-1; i++) {
+            try {
+                Button button = (Button) linearLayout.getChildAt(i);
+                if (button instanceof Button) {
+                    button.setVisibility(View.GONE);
+                }
+            }catch (Exception e){
 
-            Button button = (Button ) LinearLayout.getChildAt(i);
-            if(button instanceof Button){
-                button.setVisibility(View.GONE);
             }
 
         }
+        //Recolocar el icono para editar
+        fixIconEdit(linearLayout);
+
+
 
         Picasso.with(getActivity()).load(mCurrentPhotoPath)
-                .resize(LinearLayout.getHeight(), LinearLayout.getWidth())
+                .resize(linearLayout.getHeight(), linearLayout.getWidth())
                 .centerCrop().into(new Target() {
 
             @Override

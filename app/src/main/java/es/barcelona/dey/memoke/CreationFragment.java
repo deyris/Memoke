@@ -18,12 +18,9 @@ import android.widget.TextView;
 public class CreationFragment extends Fragment {
 
     public static String PARAM_TITLE = "TITLE";
-    public static String PARAM_NUMBER = "NUMERO";
 
     TextView mTxtTitle;
     TextView mTxtNumber;
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,6 +40,21 @@ public class CreationFragment extends Fragment {
             Bundle bundle1 = getArguments();
             mTxtNumber.setText(String.format(res.getString(R.string.creation_number), bundle1.getInt("CURRENT_PAIR")));
         }
+
+        Button btnTablero = (Button)mLinearLayout.findViewById(R.id.btnTablero);
+        btnTablero.setOnClickListener(new View.OnClickListener() {
+                                     @Override
+                                     public void onClick(View v) {
+
+                                         Intent i = new Intent(getActivity(),BoardActivity.class);
+
+                                         //i.putExtra(PARAM_TITLE,mTxtTitle.getText().toString());
+                                         startActivity(i);
+                                     }
+
+                                 }
+
+        );
 
         return mLinearLayout;
 

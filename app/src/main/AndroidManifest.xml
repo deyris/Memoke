@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="es.barcelona.dey.memoke" >
 
+    <uses-sdk
+        android:minSdkVersion="13"
+        android:targetSdkVersion="18" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -18,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".CreationActivity" />
-
+        <activity android:name=".BoardActivity" />
     </application>
 
 </manifest>
