@@ -1,6 +1,8 @@
 package es.barcelona.dey.memoke;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,10 +15,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,44 +29,31 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
+import es.barcelona.dey.memoke.beans.Pair;
+import es.barcelona.dey.memoke.beans.Tab;
 
 /**
- * Created by deyris.drake on 26/1/16.
+ * Created by deyris.drake on 18/2/16.
  */
 public class ContentFragment extends Fragment {
 
     LinearLayout mLayout;
 
-    Button mBtnPhoto1;
-    Button mBtnText1 = null;
-    Button mBtnFig1 = null;
-    ImageView mImg1 = null;
+    FrameLayout mFrameTab1;
 
-    Button mBtnPhoto2 = null;
-    Button mBtnText2 = null;
-    Button mBtnFig2 = null;
-    ImageView mImg2 = null;
+    FrameLayout mFrameTab2;
 
-    LinearLayout mLinearLayout1 = null;
-    LinearLayout mLinearLayout2 = null;
-
-    String mCurrentPhotoPath;
-    /*Para mostrar la foto, se refiere a la ficha 1 o la 2*/
-    int mCurrentLinearPhoto;
-    /*Para mostra el texto, se refiere dentro de una ficha, al frame a ocultar (el de los botones)*/
-    int mCurrentFrameTextHide;
-    /*Para mostra el texto, se refiere dentro de una ficha, al frame a mostrar */
-    int mCurrentFrameTextShow;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final String ID_CURRENT_TAB = "ID_CURRENT_TAB";
     static final int PHOTO_FROM_CAMERA = 1;
     static final int PHOTO_FROM_GALLERY = 2;
-
-    public static int createdPair = 0;
-
-
+    static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_SELECT_PICTURE = 2;
+
+    String mCurrentPhotoPath;
+
+    private Pair mCurrentPair;
+    int mCurrentTab;
+    int mCurrentFrameResultShow;
+
 
 
     public interface OnDataPass {
@@ -75,115 +62,81 @@ public class ContentFragment extends Fragment {
 
     }
 
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (mCurrentPair == null) {
+            mCurrentPair = new Pair(getActivity());
+        }
+    }
+
+
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        mLayout = (LinearLayout) inflater.inflate(R.layout.fragment_content,
+        mLayout = (LinearLayout) inflater.inflate(R.layout.fragment_creation_content,
                 container, false);
 
-        mBtnPhoto1 = (Button)mLayout.findViewById(R.id.btnPhoto1);
+        mFrameTab1 = (FrameLayout) mLayout.findViewById(R.id.editContent1);
+        mFrameTab2 = (FrameLayout) mLayout.findViewById(R.id.editContent2);
+        setListenerFrame(mFrameTab1);
+        setListenerFrame(mFrameTab2);
 
-
-        mBtnText1 = (Button) mLayout.findViewById(R.id.btnText1);
-        mBtnFig1 = (Button) mLayout.findViewById(R.id.btnFig1);
-
-        mBtnPhoto2 = (Button)mLayout.findViewById(R.id.btnPhoto2);
-        mBtnText2 = (Button) mLayout.findViewById(R.id.btnText2);
-
-        mLinearLayout1 = (LinearLayout)mLayout.findViewById(R.id.editContent1);
-        mLinearLayout2 = (LinearLayout)mLayout.findViewById(R.id.editContent2);
-
-        genPhotoButton(mBtnPhoto1);
-        genPhotoButton(mBtnPhoto2);
-
-        genTextButton(mBtnText1);
-        genTextButton(mBtnText2);
-
-
-
-        //pair = new Pair();
-       // pair.setIdPair(createdPair++);
-
-        return  mLayout;
-
+        return mLayout;
     }
 
-    public void genEditButtonFromPhoto(ImageView image, final boolean isClickinForEdit){
-        image.setOnClickListener(new View.OnClickListener() {
-                                      @Override
-                                      public void onClick(View v) {
-                                          LinearLayout parent = (LinearLayout)v.getParent();
-
-                                          for (int i = 0; i < parent.getChildCount()-1; i++) {
-                                              try {
-                                                  Button button = (Button) parent.getChildAt(i);
-                                                  if (button instanceof Button) {
-                                                      if (isClickinForEdit) {
-                                                          button.setVisibility(View.VISIBLE);
-                                                      }else{
-                                                          button.setVisibility(View.GONE);
-                                                      }
-                                                  }
-                                              }catch (Exception e){
-
-                                              }
-
-                                          }
-                                          if (isClickinForEdit) {
-                                              //Hay que cambiar el icono poniendo el de cancel
-                                              fixIconCancelEdit(parent);
-                                          }else{
-                                              fixIconEdit(parent);
-                                          }
-
-                                      }
-
-                                  }
-
-        );
+    private Tab.Type getTypeById(int id){
+        switch (id){
+            case 0: return Tab.Type.TEXT;
+            case 1: return Tab.Type.PHOTO;
+            default:return Tab.Type.FIGURE;
+        }
     }
 
-    public void genCancelEditButtonFromPhoto(ImageView image){
-        image.setOnClickListener(new View.OnClickListener() {
-                                     @Override
-                                     public void onClick(View v) {
-                                         LinearLayout parent = (LinearLayout)v.getParent();
-
-                                         for (int i = 0; i < parent.getChildCount()-1; i++) {
-                                             try {
-                                                 Button button = (Button) parent.getChildAt(i);
-                                                 if (button instanceof Button) {
-                                                     button.setVisibility(View.VISIBLE);
-                                                 }
-                                             }catch (Exception e){
-
-                                             }
-
-                                         }
-
-                                         fixIconCancelEdit(parent);
 
 
-                                     }
+    public  void setListenerFrame(FrameLayout frame) {
 
-                                 }
+        frame.setOnClickListener(new View.OnClickListener() {
 
-        );
-    }
+            @Override
+            public void onClick(View v) {
+                final CharSequence[] items = {"Un texto", "Una foto", "Una figura"};
 
-    public void genEditButtonFromText(ImageView image){
-        image.setOnClickListener(new View.OnClickListener() {
-                                     @Override
-                                     public void onClick(View v) {
+                //Determinamos en que ficha estamos basándonos Ficha 1/Ficha 2
+                LinearLayout parent = (LinearLayout) v.getParent();
+                TextView textTab = (TextView) parent.getChildAt(0);
+                mCurrentTab = (textTab.getText().toString().indexOf("1")>0?1:2);
 
+                //Determinamos donde mostrar el resultado
+                FrameLayout thisFrame = (FrameLayout)mLayout.findViewById(v.getId());
+                mCurrentFrameResultShow = thisFrame.getChildAt(0).getId();
 
-                                     }
+                //Abrimos un dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("¿Cómo será esta ficha?");
 
-                                 }
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        // Do something with the selection
+                        mCurrentPair.getTabs()[mCurrentTab -1]=new Tab();
+                        mCurrentPair.getTabs()[mCurrentTab -1].setType(getTypeById(item));
+                        initChargeTab();
+                    }
+                });
 
-        );
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
+
     }
 
     public void receivingFromDialog(int data){
@@ -195,100 +148,55 @@ public class ContentFragment extends Fragment {
         }
     }
 
-    public void receivingFromDialog(EditText data){
-
-
-        FrameLayout frameLayout = (FrameLayout)mLayout.findViewById(mCurrentFrameTextHide);
-        frameLayout.setVisibility(View.GONE);
-
-
-        FrameLayout frameLayout1 = (FrameLayout)mLayout.findViewById(mCurrentFrameTextShow);
-        frameLayout1.setVisibility(View.VISIBLE);
-
-        TextView textView = (TextView)frameLayout1.getChildAt(0);
-        textView.setText(data.getText());
-        textView.setTextSize(data.getTextSize()/2);
-
-        ImageView imageView = (ImageView)frameLayout1.getChildAt(1);
-        genEditButtonFromText(imageView);
+    private void initChargeTab(){
+        if (this.mCurrentPair.getTabs()[mCurrentTab -1].getType()==Tab.Type.TEXT) {
+            DialogText textDialog = new DialogText((CreationActivity) getActivity());
+            textDialog.show();
+        }
+        if (this.mCurrentPair.getTabs()[mCurrentTab -1].getType()==Tab.Type.PHOTO) {
+            DialogPhoto cdd = new DialogPhoto((CreationActivity) getActivity());
+            cdd.show();
+        }
     }
 
+    public void receivingFromDialog(EditText data){
 
+        TextView textView = (TextView)mLayout.findViewById(mCurrentFrameResultShow);
+        textView.setText(data.getText());
+        textView.setTextSize(data.getTextSize() / 2);
+
+        mCurrentPair.getTabs()[mCurrentTab -1].setText(data.getText().toString());
+        mCurrentPair.getTabs()[mCurrentTab -1].setSize((int) data.getTextSize());
+    }
 
     private void openingCamera(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                                              // Ensure that there's a camera activity to handle the intent
-                                              if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                                                  // Create the File where the photo should go
-                                                  File photoFile = null;
-                                                  try {
-                                                      photoFile = createImageFile();
-                                                  } catch (IOException ex) {
-                                                      // Error occurred while creating the File
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
 
-                                                  }
-                                                  // Continue only if the File was successfully created
-                                                  if (photoFile != null) {
-                                                      takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                                              Uri.fromFile(photoFile));
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(photoFile));
 
-                                                      startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
 
-                                                  }
-                                              }
+            }
+        }
     }
 
     private void openingGallery(){
-       Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
 
         startActivityForResult(intent, REQUEST_SELECT_PICTURE);
-    }
-
-    public void genPhotoButton(Button button){
-
-
-        button.setOnClickListener(new View.OnClickListener() {
-                                      @Override
-                                      public void onClick(View v) {
-                                          LinearLayout t = (LinearLayout) v.getParent();
-                                          mCurrentLinearPhoto = t.getId();
-                                          DialogPhoto cdd = new DialogPhoto((CreationActivity) getActivity());
-                                          cdd.show();
-
-                                      }
-
-                                  }
-
-        );
-
-    }
-
-    private void genTextButton(Button button){
-
-
-        button.setOnClickListener(new View.OnClickListener() {
-                                      @Override
-                                      public void onClick(View v) {
-                                          LinearLayout t = (LinearLayout) v.getParent();
-                                          FrameLayout f = (FrameLayout) t.getParent();
-                                          t = (LinearLayout) f.getParent();
-
-                                          int a = t.getChildCount();
-
-                                          FrameLayout fHide = (FrameLayout) t.getChildAt(1); //A esconder
-                                          FrameLayout fShow = (FrameLayout) t.getChildAt(2); //A mostrar
-                                          mCurrentFrameTextHide = fHide.getId();
-                                          mCurrentFrameTextShow = fShow.getId();
-
-                                          DialogText textDialog = new DialogText((CreationActivity) getActivity());
-                                          textDialog.show();
-                                      }
-
-                                  }
-
-        );
-
     }
 
     private File createImageFile() throws IOException {
@@ -324,65 +232,13 @@ public class ContentFragment extends Fragment {
 
     }
 
-    private void fixIconCancelEdit(LinearLayout linearLayout){
-        ImageView imageViewPencil = (ImageView)linearLayout.getChildAt(3);
-        imageViewPencil.setImageResource(R.drawable.ic_action_name3);
-
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(imageViewPencil.getLayoutParams());
-        //64 tamanho del icono
-        int top = linearLayout.getHeight() - 64 + 5;
-        int left = linearLayout.getWidth() - 64 + 5;
-        lp.setMargins(left, 0, 0, 0);
-
-        imageViewPencil.setLayoutParams(lp);
-
-        imageViewPencil.setVisibility(View.VISIBLE);
-
-        //Ponemos listener para poner icono de edicion
-        genEditButtonFromPhoto(imageViewPencil, false);
-    }
-
-    private void fixIconEdit(LinearLayout linearLayout){
-
-        ImageView imageView = (ImageView)linearLayout.getChildAt(3);
-        imageView.setImageResource(R.drawable.ic_action_name2);
-        imageView.setVisibility(View.VISIBLE);
-
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(imageView.getLayoutParams());
-        //64 tamanho del icono
-        int heigh = linearLayout.getHeight() - 64 + 5;
-        int width = linearLayout.getWidth() - 64 + 5;
-        lp.setMargins(width, heigh, 0, 0);
-        imageView.setLayoutParams(lp);
-
-        //Ponemos listener para cancelar la edición
-        genEditButtonFromPhoto(imageView, true);
-    }
-
     public void setPicToBackground(){
 
-        LinearLayout linearLayout = (LinearLayout)mLayout.findViewById(mCurrentLinearPhoto);
-
-        int a = linearLayout.getChildCount();//3 botones y 1 icono
-
-        for (int i = 0; i < linearLayout.getChildCount()-1; i++) {
-            try {
-                Button button = (Button) linearLayout.getChildAt(i);
-                if (button instanceof Button) {
-                    button.setVisibility(View.GONE);
-                }
-            }catch (Exception e){
-
-            }
-
-        }
-        //Recolocar el icono para editar
-        fixIconEdit(linearLayout);
-
-
+        TextView textResult = (TextView)mLayout.findViewById(mCurrentFrameResultShow);
+        textResult.setText("");
 
         Picasso.with(getActivity()).load(mCurrentPhotoPath)
-                .resize(linearLayout.getHeight(), linearLayout.getWidth())
+                .resize(textResult.getHeight(), textResult.getWidth())
                 .centerCrop().into(new Target() {
 
             @Override
@@ -394,10 +250,10 @@ public class ContentFragment extends Fragment {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
                 // TODO Auto-generated method stub
-                LinearLayout LinearLayout = (LinearLayout)mLayout.findViewById(mCurrentLinearPhoto);
+                TextView textResult = (TextView)mLayout.findViewById(mCurrentFrameResultShow);
 
-                LinearLayout.setBackground(new BitmapDrawable(getActivity().getApplicationContext().getResources(), bitmap));
-                saveData();
+                textResult.setBackground(new BitmapDrawable(getActivity().getApplicationContext().getResources(), bitmap));
+                mCurrentPair.getTabs()[mCurrentTab-1].setUri(mCurrentPhotoPath);
             }
 
             @Override
@@ -407,8 +263,4 @@ public class ContentFragment extends Fragment {
             }
         });
     }
-    public void saveData(){
-
-    }
-
 }

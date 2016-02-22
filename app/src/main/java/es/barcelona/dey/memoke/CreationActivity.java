@@ -15,13 +15,23 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
     private ContentFragment mContentFragment;
     public static int mCurrentPair = 1;
 
-
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getFragmentManager().putFragment(outState, "contentfragment", mContentFragment);
+    }
+
+
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creation);
 
+       if  (savedInstanceState!=null) {
+           mContentFragment = (ContentFragment) getFragmentManager().getFragment(savedInstanceState, "contentfragment");
 
+       } else {
+           mContentFragment = new ContentFragment();
 
         // Get a reference to the FragmentManager
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -32,13 +42,13 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
 
         mCreationFragment = new CreationFragment();
         mCreationFragment.setArguments(bundle);
-        fragmentTransaction.add(R.id.header_frame, mCreationFragment);
-      //  fragmentTransaction.commit();
+        fragmentTransaction.replace(R.id.header_frame, mCreationFragment);
 
-        mContentFragment = new ContentFragment();
+
         fragmentTransaction.replace(R.id.content_frame, mContentFragment);
         fragmentTransaction.commit();
 
+        }
     }
 
 
