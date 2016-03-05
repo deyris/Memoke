@@ -17,12 +17,6 @@ public class Pair {
     private State state;
     private boolean simetric;
 
-    static Context mContext;
-
-    public Pair(Context context){
-        mContext = context;
-    }
-
 
     public Tab[] getTabs() {
         return tabs;

@@ -32,6 +32,10 @@
                 android:id="@+id/txtContent1"
                 android:layout_height="fill_parent"
                 android:layout_width="fill_parent"/>
+            <ImageView
+                android:id="@+id/imgContent1"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"/>
 
             </FrameLayout>
 
@@ -63,6 +67,10 @@
             android:clickable="true">
             <TextView
                 android:id="@+id/txtContent2"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"/>
+            <ImageView
+                android:id="@+id/imgContent2"
                 android:layout_height="fill_parent"
                 android:layout_width="fill_parent"/>
         </FrameLayout>
