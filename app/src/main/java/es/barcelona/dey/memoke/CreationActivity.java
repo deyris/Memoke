@@ -136,7 +136,14 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                             ContentFragment.TAG).addToBackStack(ContentFragment.TAG).commit();
 
                     //Actualizamos creationFragment con el numero de la pareja
-                    mCreationFragment.mTxtNumber.setText();
+                    CreationFragment cf = (CreationFragment)getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+                    Bundle bundleFromMain = getIntent().getExtras();
+
+                    long number = 1;
+                    if(bundleFromMain.getString(MainFragment.PARAM_NUMBER)!= null){
+                        number = Integer.valueOf(bundleFromMain.getString(MainFragment.PARAM_NUMBER));
+                    }
+                    cf.mTxtNumber.setText(String.valueOf(number));
                 }
             });
         }

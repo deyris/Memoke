@@ -17,6 +17,8 @@ import android.widget.TextView;
  */
 public class CreationFragment extends Fragment {
 
+    public static final String TAG = "MMKCreationFragment";
+
     public static String PARAM_TITLE = "TITLE";
 
     TextView mTxtTitle;
