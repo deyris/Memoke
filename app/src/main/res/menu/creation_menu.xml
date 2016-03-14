@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/listPairsTab"
+        android:title="Listar parejas"
+       />
+    <item android:id="@+id/showBoardTab"
+        android:title="Ver tablero" />
+</menu>

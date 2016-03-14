@@ -9,7 +9,7 @@ import es.barcelona.dey.memoke.beans.Tab;
  */
 public class Pair {
     public enum State {
-        IN_PROCESS, SAVED
+        IN_PROCESS, SAVED, EMPTY, COMPLETED
     }
 
     private Tab[] tabs = new Tab[2];
@@ -18,12 +18,16 @@ public class Pair {
     private boolean simetric;
 
 
+    public Pair(){
+        this.state = State.EMPTY;
+    }
     public Tab[] getTabs() {
         return tabs;
     }
 
     public void setTabs(Tab[] tabs) {
         this.tabs = tabs;
+
     }
 
     public int getNumber() {
@@ -35,6 +39,9 @@ public class Pair {
     }
 
     public State getState() {
+        if(null==tabs[0] || null==tabs[1]){
+            this.state=State.IN_PROCESS;
+        }
         return state;
     }
 

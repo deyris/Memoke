@@ -20,8 +20,28 @@ import android.widget.Toast;
 public class DialogText extends Dialog implements android.view.View.OnClickListener {
 
     public CreationActivity c;
-    public Button btnAceptDialogText, btnCancelDialogText;
+    public Button btnAceptDialogText, btnCancelDialogText, btnDelDialogText;
     public EditText mEditText;
+    public String textFromFragment;
+    public long textSizeFromFragment;
+
+    public String getTextFromFragment() {
+        return textFromFragment;
+    }
+
+    public void setTextFromFragment(String textFromFragment) {
+        this.textFromFragment = textFromFragment;
+    }
+
+    public long getTextSizeFromFragment() {
+        return textSizeFromFragment;
+    }
+
+    public void setTextSizeFromFragment(long textSizeFromFragment) {
+        this.textSizeFromFragment = textSizeFromFragment;
+    }
+
+
 
     public DialogText(CreationActivity a) {
         super(a);
@@ -55,7 +75,8 @@ public class DialogText extends Dialog implements android.view.View.OnClickListe
         setContentView(R.layout.dialog_text);
 
 
-        mEditText = (EditText)findViewById(R.id.txtDialogText);
+        mEditText = (EditText) findViewById(R.id.txtDialogText);
+
 
         SeekBar seekBar = (SeekBar)findViewById(R.id.seekDialogText);
         seekBar.setOnSeekBarChangeListener(new seekListener());
@@ -78,6 +99,25 @@ public class DialogText extends Dialog implements android.view.View.OnClickListe
 
             }
         });
+        btnDelDialogText = (Button)findViewById(R.id.btnDelDialogText);
+        mEditText.setText("");
+        if (null !=getTextFromFragment()){
+            //Si tenemos texto dentro ya, entonces el btnDel, se verá
+             mEditText.setText(getTextFromFragment());
+             mEditText.setHint("");
+             btnDelDialogText.setVisibility(View.VISIBLE);
+             btnDelDialogText.setOnClickListener(new View.OnClickListener() {
 
+                @Override
+                public void onClick(View v) {
+                    mEditText.setText("");
+
+                }
+            });
+        }
+        if (0 !=getTextSizeFromFragment()){
+            //Si tenemos texto dentro ya, entonces el btnDel, se verá
+            mEditText.setTextSize(getTextSizeFromFragment()/2);
+        }
     }
 }

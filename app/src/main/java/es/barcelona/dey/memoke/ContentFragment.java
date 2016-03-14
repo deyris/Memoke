@@ -1,10 +1,13 @@
 package es.barcelona.dey.memoke;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -17,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -42,6 +46,8 @@ import es.barcelona.dey.memoke.database.TabDatabase;
  */
 public class ContentFragment extends Fragment {
 
+    public static final String TAG = "MMKContentFragment";
+
     LinearLayout mLayout;
 
     FrameLayout mFrameTab1;
@@ -56,14 +62,14 @@ public class ContentFragment extends Fragment {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_SELECT_PICTURE = 2;
 
-    String mCurrentPhotoPath;
+    static String mCurrentPhotoPath;
 
 
-    private Pair mCurrentPair;
-    int mCurrentTab;
-    int mCurrentTextResultShow;
-    int mCurrentImgResultShow;
-    int mCurrentFrame;
+    static private Pair mCurrentPair = new Pair();
+    static int mCurrentTab;
+    static int mCurrentTextResultShow;
+    static int mCurrentImgResultShow;
+    static int mCurrentFrame;
 
     TextView  mTextView1;
     TextView  mTextView2;
@@ -72,6 +78,7 @@ public class ContentFragment extends Fragment {
     ImageView  mImageView2;
 
     static int finalHeight, finalWidth;
+    private FragmentIterationListener mCallback = null;
 
 
     public interface OnDataPass {
@@ -80,9 +87,13 @@ public class ContentFragment extends Fragment {
 
     }
 
+    public interface FragmentIterationListener{
+        public void onFragmentIteration(Bundle parameters);
+    }
+
     public static ContentFragment newInstance(Bundle arguments){
         ContentFragment f = new ContentFragment();
-        f.setRetainInstance(true);
+       // f.setRetainInstance(true);
         if(arguments != null){
             f.setArguments(arguments);
         }
@@ -93,44 +104,42 @@ public class ContentFragment extends Fragment {
 
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    /*Sobrecarga de los metodos del ciclo de vida de un Fragment*/
 
-        //Serializamos nuestro currentPair
-        final Gson gson = new Gson();
-        String jsonCurrentPair = gson.toJson(mCurrentPair).toString();
-        outState.putString("PARAM_CURRENT_PAIR", jsonCurrentPair);
-        // outState.putInt("CURRENT_TAB",mCurrentTab);
-    //    outState.putSerializable();
-
-    }
-
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d("DEY", "Estoy en ContentFragment.onActivityCreated");
-    }
-
+    //El Activity que contiene el Fragment ha terminado su creación
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d("DEY", "Estoy en ContentFragment.onCreate");
+        super.onActivityCreated(savedInstanceState);
+        Log.d("DEY", "Estoy en ContentFragment.onCreated ");
 
-        if (savedInstanceState!=null){
-            Log.d("DEY", "Estoy en ContentFragment.onCreate con bundle not null");
-            String jsonCurrentPair = savedInstanceState.getString("PARAM_CURRENT_PAIR");
-            final Gson gson = new Gson();
-            mCurrentPair = gson.fromJson(jsonCurrentPair,Pair.class);
+        try{
+            mCallback = (FragmentIterationListener) getActivity();
+        }catch(Exception ex){
+            Log.e("ContentFragment", "El Activity debe implementar la interfaz FragmentIterationListener");
         }
+    }
 
+
+    @Override
+    public void onDetach() {
+        mCallback = null;
+        super.onDetach();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        if (container == null) {
+            // We have different layouts, and in one of them this
+            // fragment's containing frame doesn't exist.  The fragment
+            // may still be created from its saved state, but there is
+            // no reason to try to create its view hierarchy because it
+            // won't be displayed.  Note this is not needed -- we could
+            // just run the code below, where we would create and return
+            // the view hierarchy; it would just never be used.
+            return null;
+        }
 
         Log.d("DEY", "Estoy en ContentFragment.onCreateView");
         mLayout = (LinearLayout) inflater.inflate(R.layout.fragment_creation_content,
@@ -139,8 +148,7 @@ public class ContentFragment extends Fragment {
         if (mLayout!=null) {
             mFrameTab1 = (FrameLayout) mLayout.findViewById(R.id.editContent1);
             mFrameTab2 = (FrameLayout) mLayout.findViewById(R.id.editContent2);
-            setListenerFrame(mFrameTab1);
-            setListenerFrame(mFrameTab2);
+
 
             mTextView1 = (TextView) mLayout.findViewById(R.id.txtContent1);
             mTextView2 = (TextView) mLayout.findViewById(R.id.txtContent2);
@@ -152,34 +160,73 @@ public class ContentFragment extends Fragment {
         return mLayout;
     }
 
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        if (mCurrentPair == null) {
-            mCurrentPair = TabDatabase.getSelectedPair(this.getActivity());
-            if(null == mCurrentPair){
-                mCurrentPair = new Pair();
+        setListenerFrame(mFrameTab1);
+        setListenerFrame(mFrameTab2);
+
+        if (savedInstanceState!=null) {
+            Log.d("DEY", "Estoy en ContentFragment.onCreate con bundle not null");
+            String jsonCurrentPair = savedInstanceState.getString("PARAM_CURRENT_PAIR");
+            if(null!=jsonCurrentPair) {
+                Log.d("DEY", "jsonCurrentPair not null: " + jsonCurrentPair);
+                final Gson gson = new Gson();
+                mCurrentPair = gson.fromJson(jsonCurrentPair, Pair.class);
+
+                Thread t =new Thread() {
+                    public void run() {
+                        fillResultWithCurrent(mTextView1.getId(), 1);
+
+                    }};
+                t.start();
+
+                t =new Thread() {
+                    public void run() {
+                        fillResultWithCurrent(mTextView2.getId(), 2);
+
+                    }};
+                t.start();
+
+                fillImgsWithCurrent();
             }
-        }else{
-            fillResultWithCurrent(mTextView1, 1);
-            fillResultWithCurrent(mTextView2, 2);
-            fillImgsWithCurrent();
-
-
         }
     }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //Serializamos nuestro currentPair
+        if (null!=mCurrentPair && mCurrentPair.getState()!=Pair.State.EMPTY) {
+            Log.d("DEY", "Estoy en ContentFragment.onSaveInstanceState con mCurrentPair not null");
+
+            final Gson gson = new Gson();
+            String jsonCurrentPair = gson.toJson(mCurrentPair).toString();
+
+            outState.putString("PARAM_CURRENT_PAIR", jsonCurrentPair);
+
+        }
+
+    }
+
+
 
     @Override
     public void onDestroy(){
         super.onDestroy();
         Log.d("DEY", "Estoy en ContentFragment.onDestroy");
         //Salvamos en fichero
-        TabDatabase.addPair(this.getActivity(),mCurrentPair);
+       // TabDatabase.addPair(this.getActivity(), mCurrentPair);
     }
 
+    /*Metodos internos para interaccion entre los objetos del fragment*/
 
-    private void fillResultWithCurrent(TextView mText, int tab){
-
+    private void fillResultWithCurrent(int idText, int tab){
+        TextView mText = (TextView) mLayout.findViewById(idText);
         if (mCurrentPair!=null && mCurrentPair.getTabs()[tab - 1] != null) {
 
             if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.TEXT) {
@@ -189,71 +236,65 @@ public class ContentFragment extends Fragment {
                 imageView.setVisibility(View.GONE);
                 imageView.setBackground(null);
 
-                Log.d("DEY", "texto:" + mCurrentPair.getTabs()[tab - 1].getText());
                 mText.setVisibility(View.VISIBLE);
-                mText.setText("");
-                mText.setText(mCurrentPair.getTabs()[tab - 1].getText());
-                mText.setTextSize(mCurrentPair.getTabs()[tab - 1].getSize()/2);
+                if (!mCurrentPair.getTabs()[tab - 1].getText().isEmpty()) {
+                    String val = mCurrentPair.getTabs()[tab - 1].getText();
+
+                    mText.setText("");
+                    mText.setText(val);
+                    mText.setTextSize(mCurrentPair.getTabs()[tab - 1].getSize() / 2);
+                }
+
             }
 
         }
     }
+
+    private void preDrawPhoto(ImageView imageView, int currentTabTemp, String uri){
+        final ImageView imageViewTmp = imageView;
+        final int tabTmp = currentTabTemp;
+        final String uriTemp = uri;
+        ViewTreeObserver vto = imageViewTmp.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            public boolean onPreDraw() {
+                mImageView1.getViewTreeObserver().removeOnPreDrawListener(this);
+                finalHeight = imageViewTmp.getMeasuredHeight();
+                finalWidth = imageViewTmp.getMeasuredWidth();
+
+                int tempImg = mCurrentImgResultShow;
+                String tempPhoto = mCurrentPhotoPath;
+                int tempTab = mCurrentTab;
+
+                mCurrentImgResultShow = imageViewTmp.getId();
+                mCurrentPhotoPath = uriTemp;
+                mCurrentTab = tabTmp;
+                setPicToImg(imageViewTmp, finalHeight, finalWidth);
+
+                mCurrentImgResultShow = tempImg;
+                mCurrentPhotoPath = tempPhoto;
+                mCurrentTab = tempTab;
+
+                return true;
+            }
+        });
+    }
+
+
     private void fillImgsWithCurrent(){
 
         if (mCurrentPair!=null && mCurrentPair.getTabs()[0]!=null) {
 
             if (mCurrentPair.getTabs()[0].getType() == Tab.Type.PHOTO) {
                 mTextView1.setVisibility(View.GONE);
-                ViewTreeObserver vto = mImageView1.getViewTreeObserver();
-                vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                    public boolean onPreDraw() {
-                        mImageView1.getViewTreeObserver().removeOnPreDrawListener(this);
-                        finalHeight = mImageView1.getMeasuredHeight();
-                        finalWidth = mImageView1.getMeasuredWidth();
-
-                        int tempImg = mCurrentImgResultShow;
-                        String tempPhoto = mCurrentPhotoPath;
-                        int tempTab = mCurrentTab;
-
-                        mCurrentImgResultShow = mImageView1.getId();
-                        mCurrentPhotoPath = mCurrentPair.getTabs()[0].getUri();
-                        mCurrentTab=1;
-                        setPicToImg(mImageView1, finalHeight, finalWidth);
-
-                        mCurrentImgResultShow = tempImg;
-                        mCurrentPhotoPath = tempPhoto;
-                        mCurrentTab=tempTab;
-
-                        return true;
-                    }
-                });
-            }
+                preDrawPhoto(mImageView1,1,mCurrentPair.getTabs()[0].getUri());
+             }
         }
 
         if (mCurrentPair!=null && mCurrentPair.getTabs()[1]!=null) {
             mTextView2.setVisibility(View.GONE);
             if (mCurrentPair.getTabs()[1].getType() == Tab.Type.PHOTO) {
-                ViewTreeObserver vto = mImageView2.getViewTreeObserver();
-                vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                    public boolean onPreDraw() {
-                        mImageView2.getViewTreeObserver().removeOnPreDrawListener(this);
-                        finalHeight = mImageView2.getMeasuredHeight();
-                        finalWidth = mImageView2.getMeasuredWidth();
-                        int tempImg = mCurrentImgResultShow;
-                        String tempPhoto = mCurrentPhotoPath;
-                        int tempTab = mCurrentTab;
-                        mCurrentImgResultShow = mImageView2.getId();
-                        mCurrentPhotoPath = mCurrentPair.getTabs()[1].getUri();
-                        mCurrentTab = 2;
+              preDrawPhoto(mImageView2, 2, mCurrentPair.getTabs()[1].getUri());
 
-                        setPicToImg(mImageView2, finalHeight, finalWidth);
-
-                        mCurrentImgResultShow = tempImg;
-                        mCurrentPhotoPath = tempPhoto;
-                        mCurrentTab = tempTab;
-                        return true;
-                    }
-                });
             }
         }
 
@@ -295,8 +336,10 @@ public class ContentFragment extends Fragment {
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         // Do something with the selection
-                        mCurrentPair.getTabs()[mCurrentTab -1]=new Tab();
-                        mCurrentPair.getTabs()[mCurrentTab -1].setType(getTypeById(item));
+                        if (null == mCurrentPair.getTabs()[mCurrentTab - 1]) {
+                            mCurrentPair.getTabs()[mCurrentTab - 1] = new Tab();
+                        }
+                        mCurrentPair.getTabs()[mCurrentTab - 1].setType(getTypeById(item));
                         initChargeTab();
                     }
                 });
@@ -321,6 +364,12 @@ public class ContentFragment extends Fragment {
         if (this.mCurrentPair.getTabs()[mCurrentTab -1].getType()==Tab.Type.TEXT) {
 
             DialogText textDialog = new DialogText((CreationActivity) getActivity());
+            if (null != this.mCurrentPair.getTabs()[mCurrentTab -1].getText()){
+                textDialog.setTextFromFragment(this.mCurrentPair.getTabs()[mCurrentTab - 1].getText());
+                textDialog.setTextSizeFromFragment(this.mCurrentPair.getTabs()[mCurrentTab -1].getSize());
+
+            }
+
             textDialog.show();
         }
         if (this.mCurrentPair.getTabs()[mCurrentTab -1].getType()==Tab.Type.PHOTO) {
@@ -335,16 +384,27 @@ public class ContentFragment extends Fragment {
         imageView.setBackground(null);
         imageView.setVisibility(View.GONE);
 
+
         TextView textView = (TextView)mLayout.findViewById(mCurrentTextResultShow);
         textView.setVisibility(View.VISIBLE);
         textView.setText("");
         textView.setText(data.getText());
         textView.setTextSize(data.getTextSize() / 2);
 
-        mCurrentPair.getTabs()[mCurrentTab -1].setText(data.getText().toString());
-        mCurrentPair.getTabs()[mCurrentTab -1].setSize((int) data.getTextSize());
+        mCurrentPair.getTabs()[mCurrentTab - 1].setText(data.getText().toString());
+        mCurrentPair.getTabs()[mCurrentTab - 1].setSize((int) data.getTextSize());
+        showContinueButton();
     }
 
+    private void showContinueButton(){
+        validatePairState();
+        if (mCurrentPair.getState().equals(Pair.State.COMPLETED)){
+
+           Button b = (Button)getActivity().findViewById(R.id.btnSgte);
+            b.setVisibility(View.VISIBLE);
+        }
+
+    }
     private void openingCamera(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -413,7 +473,11 @@ public class ContentFragment extends Fragment {
 
      Picasso.with(getActivity()).load(mCurrentPhotoPath)
                 .resize(height, width)
-                .centerCrop().into(new Target() {
+             .centerCrop().into(img);
+        mCurrentPair.getTabs()[mCurrentTab - 1].setUri(mCurrentPhotoPath);
+        showContinueButton();
+
+          /*   .centerCrop().into(new Target() {
 
          @Override
          public void onPrepareLoad(Drawable arg0) {
@@ -426,7 +490,8 @@ public class ContentFragment extends Fragment {
              // TODO Auto-generated method stub
 
              ImageView imageView = (ImageView) mLayout.findViewById(mCurrentImgResultShow);
-             imageView.setBackground(new BitmapDrawable(getActivity().getApplicationContext().getResources(), bitmap));
+             imageView.setBackground(new BitmapDrawable(getResources(), bitmap));
+
              mCurrentPair.getTabs()[mCurrentTab - 1].setUri(mCurrentPhotoPath);
 
          }
@@ -436,7 +501,7 @@ public class ContentFragment extends Fragment {
              // TODO Auto-generated method stub
              Toast.makeText(getActivity().getApplicationContext(), "Failed Loading", Toast.LENGTH_SHORT).show();
          }
-     });
+     });*/
     }
 
     public void setPicToBackground(){
@@ -448,38 +513,44 @@ public class ContentFragment extends Fragment {
         ImageView imageView = (ImageView)mLayout.findViewById(mCurrentImgResultShow);
         imageView.setVisibility(View.VISIBLE);
 
+        preDrawPhoto(imageView, mCurrentTab, mCurrentPhotoPath);
 
-        Picasso.with(getActivity()).load(mCurrentPhotoPath)
-                .resize(imageView.getHeight(), imageView.getWidth())
-                .centerCrop().into(new Target() {
 
-            @Override
-            public void onPrepareLoad(Drawable arg0) {
-                // TODO Auto-generated method stub
-                Toast.makeText(getActivity().getApplicationContext(), "Start Loading", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
-                // TODO Auto-generated method stub
-
-                ImageView imageView = (ImageView) mLayout.findViewById(mCurrentImgResultShow);
-                imageView.setBackground(new BitmapDrawable(getActivity().getApplicationContext().getResources(), bitmap));
-                mCurrentPair.getTabs()[mCurrentTab - 1].setUri(mCurrentPhotoPath);
-
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable arg0) {
-                // TODO Auto-generated method stub
-                Toast.makeText(getActivity().getApplicationContext(), "Failed Loading", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
+    private void validatePairState(){
+        boolean valid = false;
+
+        if (validTab(1) && validTab(2) ){
+            mCurrentPair.setState(Pair.State.COMPLETED);
+        }
+
+    }
+
+    private boolean validTab(int tab){
+        boolean valid = false;
+        if (mCurrentPair!=null){
+            if (mCurrentPair.getTabs()[tab -1]!=null){
+                if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.TEXT){
+                    if (mCurrentPair.getTabs()[tab -1].getText()!=null && !mCurrentPair.getTabs()[tab -1].getText().isEmpty()){
+                        valid = true;
+                    }
+                }
+                if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.PHOTO){
+                    if (!mCurrentPair.getTabs()[tab -1].getUri().isEmpty()){
+                        valid = true;
+                    }
+                }
+                if(!valid){
+                    mCurrentPair.getTabs()[tab -1].setState(Tab.State.IN_PROCESS);
+                }
+            }
+
+        }
 
 
-
+        return valid;
+    }
 
     public Pair getmCurrentPair() {
         return mCurrentPair;

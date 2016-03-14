@@ -41,20 +41,7 @@ public class CreationFragment extends Fragment {
             mTxtNumber.setText(String.format(res.getString(R.string.creation_number), bundle1.getInt("CURRENT_PAIR")));
         }
 
-        Button btnTablero = (Button)mLinearLayout.findViewById(R.id.btnTablero);
-        btnTablero.setOnClickListener(new View.OnClickListener() {
-                                     @Override
-                                     public void onClick(View v) {
 
-                                         Intent i = new Intent(getActivity(),BoardActivity.class);
-
-                                         //i.putExtra(PARAM_TITLE,mTxtTitle.getText().toString());
-                                         startActivity(i);
-                                     }
-
-                                 }
-
-        );
 
         return mLinearLayout;
 

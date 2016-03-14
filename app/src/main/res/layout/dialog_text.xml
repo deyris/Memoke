@@ -44,6 +44,13 @@
                 android:layout_width="wrap_content"
                 android:text="Cancelar"
                 android:layout_gravity="center_horizontal" />
+            <Button
+                android:id="@+id/btnDelDialogText"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Borrar"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"/>
         </LinearLayout>
 
     </LinearLayout>
