@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.barcelona.dey.memoke.ContentFragment;
 import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Pair;
 
@@ -62,6 +63,23 @@ public class BoardDatabase {
             addBoard(context, board);
         }
 
+
+    }
+
+    public static  Board getBoard(Context context, String title){
+        Board board = null;
+
+        List<Board>boards = getBoards(context);
+
+        for(Board b: boards){
+            if (b.getTitle().equals(title)){
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                preferences.edit().putString(PREF_BOARD_SELECTED, GSON.toJson(b)).commit();
+                return b;
+            }
+        }
+
+        return board;
 
     }
 

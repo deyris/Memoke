@@ -168,9 +168,16 @@ public class ContentFragment extends Fragment {
         setListenerFrame(mFrameTab1);
         setListenerFrame(mFrameTab2);
 
-        if (savedInstanceState!=null) {
-            Log.d("DEY", "Estoy en ContentFragment.onCreate con bundle not null");
-            String jsonCurrentPair = savedInstanceState.getString("PARAM_CURRENT_PAIR");
+        if (savedInstanceState!=null || (getArguments()!=null && getArguments().getString(CreationActivity.PARAM_CURRENT_PAIR)!=null)) {
+            String jsonCurrentPair = null;
+            if (getArguments()!=null ){
+                savedInstanceState = getArguments();
+
+            }
+            if (savedInstanceState!=null) {
+                jsonCurrentPair = savedInstanceState.getString(CreationActivity.PARAM_CURRENT_PAIR);
+            }
+
             if(null!=jsonCurrentPair) {
                 Log.d("DEY", "jsonCurrentPair not null: " + jsonCurrentPair);
                 final Gson gson = new Gson();
@@ -178,21 +185,35 @@ public class ContentFragment extends Fragment {
 
                 Thread t =new Thread() {
                     public void run() {
-                        fillResultWithCurrent(mTextView1.getId(), 1);
+                        fillResultWithCurrent(mTextView1.getId(), 1, mImageView1);
 
                     }};
                 t.start();
 
                 t =new Thread() {
                     public void run() {
-                        fillResultWithCurrent(mTextView2.getId(), 2);
+                        fillResultWithCurrent(mTextView2.getId(), 2, mImageView2);
 
                     }};
                 t.start();
 
+
                 fillImgsWithCurrent();
+
             }
+
         }
+
+        if (getArguments()!=null && getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER)!=0) {
+            int currentPair = getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER);
+            if (mCurrentPair.getNumber()< currentPair){
+                mCurrentPair = new Pair();
+            }
+            mCurrentPair.setNumber(getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER));
+        }
+        //Comprobamos botones de Anterior y Siguiente
+        showAntButton();
+        showContinueButton();
     }
 
 
@@ -207,7 +228,7 @@ public class ContentFragment extends Fragment {
             final Gson gson = new Gson();
             String jsonCurrentPair = gson.toJson(mCurrentPair).toString();
 
-            outState.putString("PARAM_CURRENT_PAIR", jsonCurrentPair);
+            outState.putString(CreationActivity.PARAM_CURRENT_PAIR, jsonCurrentPair);
 
         }
 
@@ -225,16 +246,18 @@ public class ContentFragment extends Fragment {
 
     /*Metodos internos para interaccion entre los objetos del fragment*/
 
-    private void fillResultWithCurrent(int idText, int tab){
+    private void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1){
+       final  ImageView imgToHide = imgToHide1;
         TextView mText = (TextView) mLayout.findViewById(idText);
         if (mCurrentPair!=null && mCurrentPair.getTabs()[tab - 1] != null) {
 
             if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.TEXT) {
                 //Ocultar foto de ese frame
-                FrameLayout parent = (FrameLayout)mText.getParent();
-                ImageView imageView = (ImageView)parent.getChildAt(1);
-                imageView.setVisibility(View.GONE);
-                imageView.setBackground(null);
+
+                imgToHide.setVisibility(View.GONE);
+
+
+                imgToHide.setBackground(null);
 
                 mText.setVisibility(View.VISIBLE);
                 if (!mCurrentPair.getTabs()[tab - 1].getText().isEmpty()) {
@@ -243,6 +266,7 @@ public class ContentFragment extends Fragment {
                     mText.setText("");
                     mText.setText(val);
                     mText.setTextSize(mCurrentPair.getTabs()[tab - 1].getSize() / 2);
+
                 }
 
             }
@@ -396,12 +420,13 @@ public class ContentFragment extends Fragment {
         showContinueButton();
     }
 
-    private void showContinueButton(){
+    public  void showContinueButton(){
         validatePairState();
-        if (mCurrentPair.getState().equals(Pair.State.COMPLETED)){
-
-           Button b = (Button)getActivity().findViewById(R.id.btnSgte);
+        Button b = (Button)getActivity().findViewById(R.id.btnSgte);
+        if (mCurrentPair.getState().equals(Pair.State.COMPLETED) || mCurrentPair.getState().equals(Pair.State.SAVED)){
             b.setVisibility(View.VISIBLE);
+        }else{
+            b.setVisibility(View.GONE);
         }
 
     }
@@ -521,7 +546,8 @@ public class ContentFragment extends Fragment {
     private void validatePairState(){
         boolean valid = false;
 
-        if (validTab(1) && validTab(2) ){
+        if (mCurrentPair.getState()!=Pair.State.SAVED &&
+                (validTab(1) && validTab(2)) ){
             mCurrentPair.setState(Pair.State.COMPLETED);
         }
 
@@ -550,6 +576,17 @@ public class ContentFragment extends Fragment {
 
 
         return valid;
+    }
+
+    public void showAntButton(){
+        if (null!=mCurrentPair) {
+            Button btnAnt = (Button) getActivity().findViewById(R.id.btnAnt);
+            if (mCurrentPair.getNumber() > 1) {
+                btnAnt.setVisibility(View.VISIBLE);
+            } else {
+                btnAnt.setVisibility(View.GONE);
+            }
+        }
     }
 
     public Pair getmCurrentPair() {

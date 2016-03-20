@@ -42,7 +42,7 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                Intent i = new Intent(getActivity(),CreationActivity.class);
 
-                i.putExtra(PARAM_TITLE,mTxtTitle.getText().toString());
+                i.putExtra(PARAM_TITLE,mTxtTitle.getText().toString().trim());
                 startActivity(i);
             }
 

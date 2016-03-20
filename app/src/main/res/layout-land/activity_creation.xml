@@ -24,12 +24,22 @@
         android:layout_weight="2">
     </FrameLayout>
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnSgte"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <Button
+        android:id="@+id/btnAnt"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_weight="0.10"
-        android:text="Siguiente"/>
+        android:text="Anterior"/>
+        <Button
+            android:id="@+id/btnSgte"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.10"
+            android:text="Siguiente"/>
+        </LinearLayout>
 
 </LinearLayout>

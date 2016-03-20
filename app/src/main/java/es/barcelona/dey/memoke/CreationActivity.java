@@ -42,6 +42,9 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
     final Gson gson = new Gson();
     BoardDatabase bd = new BoardDatabase();
 
+    public static String PARAM_CURRENT_PAIR = "PARAM_CURRENT_PAIR";
+    public static String PARAM_CURRENT_PAIR_NUMBER = "PARAM_CURRENT_PAIR_NUMBER";
+
     Bundle contentBundle;
 
     @Override
@@ -52,7 +55,7 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
 
     public void onFragmentIteration(Bundle arguments){
         Log.d("DEY", "Estoy en CreationActivity.onFragmentIteration");
-        if (mContentFragment!=null && arguments!=null && arguments.get("PARAM_CURRENT_PAIR")!=null){
+        if (mContentFragment!=null && arguments!=null && arguments.get(PARAM_CURRENT_PAIR)!=null){
             Log.d("DEY", "Estoy en CreationActivity.onFragmentIteration distinto de null");
             contentBundle = arguments;
         }else{
@@ -65,7 +68,17 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
         }
     }
 
-        @Override
+      @Override
+    public void onSaveInstanceState(Bundle outState) {
+          super.onSaveInstanceState(outState);
+
+          if (null != mBoard)   {
+              //Salvamos lo que hay en mBoard
+                BoardDatabase.updateOrAddBoard(getBaseContext(), mBoard);
+          }     List<Board> testBoard = BoardDatabase.getBoards(getBaseContext());
+      }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_creation);
@@ -83,7 +96,7 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
             mCreationFragment.setArguments(bundle);
 
             fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.header_frame, mCreationFragment);
+            fragmentTransaction.replace(R.id.header_frame, mCreationFragment, CreationFragment.TAG);
             fragmentTransaction.commit();
 
             if (!FragmentAlreadyRestoredFromSavedState(ContentFragment.TAG)) {
@@ -100,52 +113,24 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
             if(bundleFromMain.getString(MainFragment.PARAM_TITLE)!= null){
                 title = bundleFromMain.getString(MainFragment.PARAM_TITLE).toString();
             }
-            mBoard.setTitle(title);
+
            // bd.addBoard(getBaseContext(), mBoard);
+
+            //Cargamos los valores de board si es que ya existía
+            fillBoard(title);
+            mBoard.setTitle(title);
 
             //Boton siguiente
             Button btnSgte = (Button) findViewById(R.id.btnSgte);
-            btnSgte.setVisibility(View.INVISIBLE);
-            btnSgte.setOnClickListener(new View.OnClickListener() {
+            btnSgte.setVisibility(View.GONE);
+            setListenerBtnSgte();
 
-                @Override
-                public void onClick(View v) {
-                    //Comunicamos que nos vamos
-                    ContentFragment f = (ContentFragment)getFragmentManager().findFragmentByTag(ContentFragment.TAG);
-                    Pair pair = f.getmCurrentPair();
-                    pair.setNumber(mCurrentPair);
+            //Boton anterior
+            Button btnAnt = (Button)findViewById(R.id.btnAnt);
+            btnAnt.setVisibility(View.GONE);
+            setListenerBtnAnterior();
 
-                    if (null == mBoard.getPairs()){
-                        mBoard.setPairs(new HashMap<Integer,Pair>());
-                    }
-                    //Verificamos si ya pair existe para agregarlo o modificarlo
-                    if (mBoard.getPairs().containsKey(pair.getNumber())){
-                        mBoard.getPairs().remove(pair.getNumber());
-                    }
-                    mBoard.getPairs().put(pair.getNumber(), pair);
 
-                   //Persistimos lo que hay en el fragment
-
-                    BoardDatabase.updateOrAddBoard(getBaseContext(), mBoard);
-                    List<Board> testBoard = BoardDatabase.getBoards(getBaseContext());
-
-                    //Vaciamos fragment y nos vamos al sgte
-                    FragmentManager fragmentManager = getFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content_frame,
-                            ContentFragment.newInstance(null),
-                            ContentFragment.TAG).addToBackStack(ContentFragment.TAG).commit();
-
-                    //Actualizamos creationFragment con el numero de la pareja
-                    CreationFragment cf = (CreationFragment)getFragmentManager().findFragmentByTag(CreationFragment.TAG);
-                    Bundle bundleFromMain = getIntent().getExtras();
-
-                    long number = 1;
-                    if(bundleFromMain.getString(MainFragment.PARAM_NUMBER)!= null){
-                        number = Integer.valueOf(bundleFromMain.getString(MainFragment.PARAM_NUMBER));
-                    }
-                    cf.mTxtNumber.setText(String.valueOf(number));
-                }
-            });
         }
 
     @Override
@@ -171,16 +156,24 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
         }
     }
 
+
+
+    private void fillBoard(String title)       {
+        mBoard =  BoardDatabase.getBoard(getBaseContext(), title);
+
+     if (mBoard==null){
+         mBoard = new Board();
+     }
+    }
     private boolean FragmentAlreadyRestoredFromSavedState(String tag) {
         return (getFragmentManager().findFragmentByTag(tag) != null ? true : false);
     }
 
     @Override
     public void onDataPass(int data) {
-      //  if (mContentFragment!=null) {
         ContentFragment f = (ContentFragment)getFragmentManager().findFragmentByTag(ContentFragment.TAG);
         f.receivingFromDialog(data);
-       // }
+
     }
 
     @Override
@@ -190,7 +183,124 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
 
     }
 
+    public void setListenerBtnSgte(){
+        Button btnSgte = (Button)findViewById(R.id.btnSgte);
+        btnSgte.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                ContentFragment f = (ContentFragment) getFragmentManager().findFragmentByTag(ContentFragment.TAG);
+                Pair pair = f.getmCurrentPair();
+
+                //Guardamos sólo si no está guardado ya
+                if (!pair.getState().equals(Pair.State.SAVED)) {
+
+                    pair.setNumber(mCurrentPair);
+
+                    if (null == mBoard.getPairs()) {
+                        mBoard.setPairs(new HashMap<Integer, Pair>());
+                    }
+                    //Verificamos si ya pair existe para agregarlo o modificarlo
+                    if (mBoard.getPairs().containsKey(pair.getNumber())) {
+                        mBoard.getPairs().remove(pair.getNumber());
+                    }
+                    pair.setState(Pair.State.SAVED);
+                    mBoard.getPairs().put(pair.getNumber(), pair);
+
+                    //Persistimos lo que hay en el fragment
+
+                    BoardDatabase.updateOrAddBoard(getBaseContext(), mBoard);
+                    List<Board> testBoard = BoardDatabase.getBoards(getBaseContext());
+
+                    //Vaciamos fragment y nos vamos al sgte
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction ft = fragmentManager.beginTransaction();
+
+                    //Incrementamos la pareja y pasamos el bundle
+                    Bundle bundleSgte = new Bundle();
+                    bundleSgte.putInt(PARAM_CURRENT_PAIR_NUMBER, ++mCurrentPair);
+
+                    ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up).replace(R.id.content_frame,
+                            ContentFragment.newInstance(bundleSgte),
+                            ContentFragment.TAG).addToBackStack(null).commit();
+
+
+                    //Actualizamos creationFragment con el numero de la pareja
+                    CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+                    Bundle bundleFromMain = getIntent().getExtras();
+
+                    if (null != cf) {
+                        cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), mCurrentPair));
+
+                    }
+                    //Ponemos el boton Siguiente invisible de nuevo
+                    Button button = (Button) findViewById(v.getId());
+                    button.setVisibility(View.GONE);
+
+                }else{
+                    Log.d("DEY","currentPair no tiene estado Save y por eso no hago nada");
+                    mCurrentPair++;
+
+                    if (null == mBoard.getPairs()) {
+                        mBoard.setPairs(new HashMap<Integer, Pair>());
+                    }
 
 
 
+                    //Vaciamos fragment y nos vamos al sgte
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction ft = fragmentManager.beginTransaction();
+
+                    //Incrementamos la pareja y pasamos el bundle
+                    Bundle bundleSgte = new Bundle();
+                    bundleSgte.putInt(PARAM_CURRENT_PAIR_NUMBER, ++mCurrentPair);
+
+                    ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up).replace(R.id.content_frame,
+                            ContentFragment.newInstance(bundleSgte),
+                            ContentFragment.TAG).addToBackStack(null).commit();
+
+                    //Actualizamos creationFragment con el numero de la pareja
+                    CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+                    Bundle bundleFromMain = getIntent().getExtras();
+
+                    if (null != cf) {
+                        cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), mCurrentPair));
+
+                    }
+
+
+                }
+
+
+            }
+        });
+    }
+
+    public void setListenerBtnAnterior(){
+        Button btnAnt = (Button)findViewById(R.id.btnAnt);
+
+        btnAnt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mCurrentPair--;
+                ContentFragment f = (ContentFragment)getFragmentManager().findFragmentByTag(ContentFragment.TAG);
+                Pair pairAnt = mBoard.getPairs().get(mCurrentPair);
+
+                //Actualizamos fragment
+                Bundle bundleAnt = new Bundle();
+                String jsonPairAnt = gson.toJson(pairAnt);
+                bundleAnt.putSerializable(PARAM_CURRENT_PAIR,jsonPairAnt);
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction ft =fragmentManager.beginTransaction();
+                ft.setCustomAnimations(R.anim.slide_out_up_ant, R.anim.slide_in_up_ant).replace(R.id.content_frame,
+                        ContentFragment.newInstance(bundleAnt),
+                        ContentFragment.TAG).addToBackStack(null).commit();
+
+                setListenerBtnSgte();
+
+            }
+        });
+    }
 }
