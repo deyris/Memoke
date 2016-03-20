@@ -345,6 +345,8 @@ public class ContentFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 final CharSequence[] items = {"Un texto", "Una foto", "Una figura"};
+                //Actualizamos estado de la ficha, siempre que se clicke en el frame, pasa a IN PROGRESS
+                mCurrentPair.setState(Pair.State.IN_PROCESS);
 
                 //Determinamos en que ficha estamos basándonos Ficha 1/Ficha 2
                 LinearLayout parent = (LinearLayout) v.getParent();
