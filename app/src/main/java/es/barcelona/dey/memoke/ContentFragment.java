@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -183,19 +184,24 @@ public class ContentFragment extends Fragment {
                 final Gson gson = new Gson();
                 mCurrentPair = gson.fromJson(jsonCurrentPair, Pair.class);
 
-                Thread t =new Thread() {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
                     public void run() {
                         fillResultWithCurrent(mTextView1.getId(), 1, mImageView1);
 
-                    }};
-                t.start();
+                    }
+                }, 1000); // after 3 sec
 
-                t =new Thread() {
+                final Handler handler1 = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
                     public void run() {
                         fillResultWithCurrent(mTextView2.getId(), 2, mImageView2);
 
-                    }};
-                t.start();
+
+                    }
+                }, 1000); // after 3 sec
 
 
                 fillImgsWithCurrent();
@@ -248,18 +254,16 @@ public class ContentFragment extends Fragment {
 
     private void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1){
        final  ImageView imgToHide = imgToHide1;
-        TextView mText = (TextView) mLayout.findViewById(idText);
+       final TextView mText = (TextView) mLayout.findViewById(idText);
         if (mCurrentPair!=null && mCurrentPair.getTabs()[tab - 1] != null) {
 
             if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.TEXT) {
                 //Ocultar foto de ese frame
-
-                imgToHide.setVisibility(View.GONE);
-
-
-                imgToHide.setBackground(null);
+                 imgToHide.setVisibility(View.GONE);
+                 imgToHide.setBackground(null);
 
                 mText.setVisibility(View.VISIBLE);
+
                 if (!mCurrentPair.getTabs()[tab - 1].getText().isEmpty()) {
                     String val = mCurrentPair.getTabs()[tab - 1].getText();
 
@@ -421,12 +425,14 @@ public class ContentFragment extends Fragment {
     }
 
     public  void showContinueButton(){
-        validatePairState();
-        Button b = (Button)getActivity().findViewById(R.id.btnSgte);
-        if (mCurrentPair.getState().equals(Pair.State.COMPLETED) || mCurrentPair.getState().equals(Pair.State.SAVED)){
-            b.setVisibility(View.VISIBLE);
-        }else{
-            b.setVisibility(View.GONE);
+        if (null!=mCurrentPair) {
+            validatePairState();
+            Button b = (Button) getActivity().findViewById(R.id.btnSgte);
+            if (mCurrentPair.getState().equals(Pair.State.COMPLETED) || mCurrentPair.getState().equals(Pair.State.SAVED)) {
+                b.setVisibility(View.VISIBLE);
+            } else {
+                b.setVisibility(View.GONE);
+            }
         }
 
     }
@@ -545,12 +551,12 @@ public class ContentFragment extends Fragment {
 
     private void validatePairState(){
         boolean valid = false;
-
-        if (mCurrentPair.getState()!=Pair.State.SAVED &&
-                (validTab(1) && validTab(2)) ){
-            mCurrentPair.setState(Pair.State.COMPLETED);
+        if (null!=mCurrentPair) {
+            if (mCurrentPair.getState() != Pair.State.SAVED &&
+                    (validTab(1) && validTab(2))) {
+                mCurrentPair.setState(Pair.State.COMPLETED);
+            }
         }
-
     }
 
     private boolean validTab(int tab){
