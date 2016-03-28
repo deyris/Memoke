@@ -212,7 +212,7 @@ public class ContentFragment extends Fragment {
 
         if (getArguments()!=null && getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER)!=0) {
             int currentPair = getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER);
-            if (mCurrentPair.getNumber()< currentPair){
+            if (null==mCurrentPair || mCurrentPair.getNumber() < currentPair){
                 mCurrentPair = new Pair();
             }
             mCurrentPair.setNumber(getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER));
@@ -346,6 +346,9 @@ public class ContentFragment extends Fragment {
             public void onClick(View v) {
                 final CharSequence[] items = {"Un texto", "Una foto", "Una figura"};
                 //Actualizamos estado de la ficha, siempre que se clicke en el frame, pasa a IN PROGRESS
+                if (mCurrentPair==null){
+                    mCurrentPair = new Pair();
+                }
                 mCurrentPair.setState(Pair.State.IN_PROCESS);
 
                 //Determinamos en que ficha estamos basándonos Ficha 1/Ficha 2
@@ -553,7 +556,7 @@ public class ContentFragment extends Fragment {
 
     private void validatePairState(){
         boolean valid = false;
-        if (null!=mCurrentPair) {
+        if (null!=mCurrentPair && !mCurrentPair.getState().equals(Pair.State.EMPTY)) {
             if (mCurrentPair.getState() != Pair.State.SAVED &&
                     (validTab(1) && validTab(2))) {
                 mCurrentPair.setState(Pair.State.COMPLETED);

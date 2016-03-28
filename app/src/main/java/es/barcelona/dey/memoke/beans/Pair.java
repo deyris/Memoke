@@ -39,8 +39,12 @@ public class Pair {
     }
 
     public State getState() {
+
         if(null==tabs[0] || null==tabs[1]){
             this.state=State.IN_PROCESS;
+        }
+        if (null==tabs[0] && null==tabs[1]){
+            this.state=State.EMPTY;
         }
         return state;
     }

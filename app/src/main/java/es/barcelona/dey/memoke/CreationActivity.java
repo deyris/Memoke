@@ -41,6 +41,7 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
     public static Board mBoard;
     final Gson gson = new Gson();
     BoardDatabase bd = new BoardDatabase();
+    BoardServices boardServices = new BoardServices();
 
     public static String PARAM_CURRENT_PAIR = "PARAM_CURRENT_PAIR";
     public static String PARAM_CURRENT_PAIR_NUMBER = "PARAM_CURRENT_PAIR_NUMBER";
@@ -202,15 +203,8 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                         mBoard.setPairs(new HashMap<Integer, Pair>());
                     }
                     //Verificamos si ya pair existe para agregarlo o modificarlo
-                    if (mBoard.getPairs().containsKey(pair.getNumber())) {
-                        mBoard.getPairs().remove(pair.getNumber());
-                    }
-                    pair.setState(Pair.State.SAVED);
-                    mBoard.getPairs().put(pair.getNumber(), pair);
+                    boardServices.savePairInBoard(getBaseContext(),mBoard,pair);
 
-                    //Persistimos lo que hay en el fragment
-
-                    BoardDatabase.updateOrAddBoard(getBaseContext(), mBoard);
                     List<Board> testBoard = BoardDatabase.getBoards(getBaseContext());
 
                     //Vaciamos fragment y nos vamos al sgte
@@ -219,7 +213,8 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
 
                     //Incrementamos la pareja y pasamos el bundle
                     Bundle bundleSgte = new Bundle();
-                    bundleSgte.putInt(PARAM_CURRENT_PAIR_NUMBER, ++mCurrentPair);
+                    mCurrentPair++;
+                    bundleSgte.putInt(PARAM_CURRENT_PAIR_NUMBER, mCurrentPair);
 
                     ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up).replace(R.id.content_frame,
                             ContentFragment.newInstance(bundleSgte),
@@ -254,7 +249,12 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
 
                     //Incrementamos la pareja y pasamos el bundle
                     Bundle bundleSgte = new Bundle();
-                    bundleSgte.putInt(PARAM_CURRENT_PAIR_NUMBER, ++mCurrentPair);
+                    bundleSgte.putInt(PARAM_CURRENT_PAIR_NUMBER, mCurrentPair);
+
+                    //Rescatamos la pareja
+                    Pair pairSgte = BoardDatabase.getBoard(getBaseContext(),mBoard.getTitle()).getPairs().get(mCurrentPair);
+                    String jsonPairAnt = gson.toJson(pairSgte);
+                    bundleSgte.putSerializable(PARAM_CURRENT_PAIR,jsonPairAnt);
 
                     ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up).replace(R.id.content_frame,
                             ContentFragment.newInstance(bundleSgte),
@@ -284,8 +284,14 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
 
             @Override
             public void onClick(View v) {
-                mCurrentPair--;
+                //En caso de que se haya completado el estado de la pareja, guardamos
                 ContentFragment f = (ContentFragment)getFragmentManager().findFragmentByTag(ContentFragment.TAG);
+                Pair pairForSave = f.getmCurrentPair();
+                if (pairForSave.getState().equals(Pair.State.COMPLETED)) {
+                    boardServices.savePairInBoard(getBaseContext(),mBoard,pairForSave);
+
+                }
+                mCurrentPair--;
                 Pair pairAnt = mBoard.getPairs().get(mCurrentPair);
 
                 //Actualizamos fragment
