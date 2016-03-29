@@ -205,9 +205,7 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                     //Verificamos si ya pair existe para agregarlo o modificarlo
                     boardServices.savePairInBoard(getBaseContext(),mBoard,pair);
 
-                    List<Board> testBoard = BoardDatabase.getBoards(getBaseContext());
-
-                    //Vaciamos fragment y nos vamos al sgte
+                   //Vaciamos fragment y nos vamos al sgte
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction ft = fragmentManager.beginTransaction();
 
@@ -305,6 +303,15 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                         ContentFragment.TAG).addToBackStack(null).commit();
 
                 setListenerBtnSgte();
+
+                //Actualizamos creationFragment con el numero de la pareja
+                CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+                Bundle bundleFromMain = getIntent().getExtras();
+
+                if (null != cf) {
+                    cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), mCurrentPair));
+
+                }
 
             }
         });

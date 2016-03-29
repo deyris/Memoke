@@ -84,5 +84,19 @@ public class BoardDatabase {
     }
 
 
+    public static void deleteBoard (Context context, String title){
+
+        List<Board>boards = getBoards(context);
+
+        for(Board b: boards){
+            if (b.getTitle().equals(title)){
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                preferences.edit().remove(GSON.toJson(b)).commit();
+                break;
+            }
+        }
+
+        boards = getBoards(context);
+    }
 
 }
