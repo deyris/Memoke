@@ -191,7 +191,7 @@ public class ContentFragment extends Fragment {
                         fillResultWithCurrent(mTextView1.getId(), 1, mImageView1);
 
                     }
-                }, 1000); // after 3 sec
+                }, 1000); // after 1 sec
 
                 final Handler handler1 = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -201,7 +201,7 @@ public class ContentFragment extends Fragment {
 
 
                     }
-                }, 1000); // after 3 sec
+                }, 1000); // after 1 sec
 
 
                 fillImgsWithCurrent();

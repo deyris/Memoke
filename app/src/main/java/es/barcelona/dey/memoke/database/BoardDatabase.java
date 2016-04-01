@@ -49,19 +49,23 @@ public class BoardDatabase {
     public static void updateOrAddBoard(Context context, Board board){
         List<Board>boards = getBoards(context);
         boolean existBoard = false;
-
+        int loc = -1;
         for(Board b: boards){
-            if (b.getTitle().equals(board.getTitle())){
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                preferences.edit().putString(PREF_BOARD_SELECTED, GSON.toJson(b)).commit();
+            loc++;
+            if (null!=b.getTitle() && b.getTitle().equals(board.getTitle())){
                 existBoard = true;
                 break;
             }
+
         }
-        if (!existBoard){
-            //Añadimos el board nuevo
-            addBoard(context, board);
+        if (existBoard){
+            //Borramos
+            boards.remove(loc);
         }
+        boards.add(board);
+
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_BOARD_LIST, GSON.toJson(boards)).commit();
+
 
 
     }
@@ -85,18 +89,18 @@ public class BoardDatabase {
 
 
     public static void deleteBoard (Context context, String title){
-
-        List<Board>boards = getBoards(context);
-
-        for(Board b: boards){
-            if (b.getTitle().equals(title)){
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                preferences.edit().remove(GSON.toJson(b)).commit();
-                break;
-            }
+        List<Board> boards = getBoards(context);
+        Board board = getBoard(context, title);
+        if (null!=board) {
+            boards.remove(board);
+            PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_BOARD_LIST, GSON.toJson(boards)).commit();
+            clearCache();
         }
-
-        boards = getBoards(context);
     }
+
+    private static void clearCache(){
+        boards = null;
+    }
+
 
 }

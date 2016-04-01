@@ -45,6 +45,7 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
 
     public static String PARAM_CURRENT_PAIR = "PARAM_CURRENT_PAIR";
     public static String PARAM_CURRENT_PAIR_NUMBER = "PARAM_CURRENT_PAIR_NUMBER";
+    public static String PARAM_CURRENT_BOARD ="PARAM_CURRENT_BOARD";
 
     Bundle contentBundle;
 
@@ -90,6 +91,37 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             FragmentManager fragmentManager = getFragmentManager();
 
+
+
+
+            //Verificamos si venimos o no de un fichero ya existente
+            Bundle bundleFromMain = getIntent().getExtras();
+            String title = "";
+            if(bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD)!= null){
+                final Gson gson = new Gson();
+
+                mBoard = gson.fromJson(bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD), Board.class);
+                title = mBoard.getTitle();
+                //Buscamos currentPair
+                mCurrentPair = mBoard.getPairs().size();
+                //Actualizamos currentPair
+                Pair currentPair = mBoard.getPairs().get(mCurrentPair);
+
+                String jsonCurrentPair = gson.toJson(currentPair).toString();
+                if (null==savedInstanceState){
+                    savedInstanceState = new Bundle();
+                }
+               savedInstanceState.putString(PARAM_CURRENT_PAIR,jsonCurrentPair);
+
+
+            }else {
+
+                //Creamos tablero
+                mBoard = new Board();
+                if(bundleFromMain.getString(MainFragment.PARAM_TITLE)!= null){
+                    title = bundleFromMain.getString(MainFragment.PARAM_TITLE).toString();
+                }
+            }
             Bundle bundle = new Bundle();
             bundle.putInt("CURRENT_PAIR", mCurrentPair);
 
@@ -106,20 +138,11 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                         ContentFragment.newInstance(savedInstanceState),
                         ContentFragment.TAG).addToBackStack(ContentFragment.TAG).commit();
             }
-            //Creamos tablero
-            mBoard = new Board();
-            String title = "";
-            Bundle bundleFromMain = getIntent().getExtras();
-
-            if(bundleFromMain.getString(MainFragment.PARAM_TITLE)!= null){
-                title = bundleFromMain.getString(MainFragment.PARAM_TITLE).toString();
-            }
-
            // bd.addBoard(getBaseContext(), mBoard);
 
             //Cargamos los valores de board si es que ya existía
-            fillBoard(title);
-            mBoard.setTitle(title);
+          //  fillBoard(title);
+         //   mBoard.setTitle(title);
 
             //Boton siguiente
             Button btnSgte = (Button) findViewById(R.id.btnSgte);
@@ -143,14 +166,13 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.showBoardTab:
                 Intent i = new Intent(this, BoardActivity.class);
 
-                //i.putExtra(PARAM_TITLE,mTxtTitle.getText().toString());
+                i.putExtra(PARAM_CURRENT_BOARD,gson.toJson(mBoard));
                 startActivity(i);
-
                 return true;
             default:
                 return false;
@@ -166,6 +188,8 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
          mBoard = new Board();
      }
     }
+
+
     private boolean FragmentAlreadyRestoredFromSavedState(String tag) {
         return (getFragmentManager().findFragmentByTag(tag) != null ? true : false);
     }

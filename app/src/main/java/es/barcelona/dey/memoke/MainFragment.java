@@ -17,6 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 
+import com.google.gson.Gson;
+
 import java.util.List;
 
 import es.barcelona.dey.memoke.beans.Board;
@@ -30,6 +32,7 @@ public class MainFragment extends Fragment {
 
     public static String PARAM_TITLE = "TITLE";
     public static String PARAM_NUMBER = "NUMERO";
+    public static String PARAM_SELECTED_BOARD = "PARAM_SELECTED_BOARD";
 
     EditText mTxtTitle= null;
     EditText mTxtNumber = null;
@@ -70,8 +73,7 @@ public class MainFragment extends Fragment {
                     });
                     builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            //TODO
-                           //
+
                             openToCreateBoard(false);
                             dialog.dismiss();
                         }
@@ -79,6 +81,8 @@ public class MainFragment extends Fragment {
                     AlertDialog dialog = builder.create();
                     dialog.show();
 
+                }else{
+                    openToCreateBoard(true);
                 }
 
 
@@ -105,7 +109,15 @@ public class MainFragment extends Fragment {
 
     public void openToCreateBoard(boolean createFromZero){
         Intent i = new Intent(getActivity(),CreationActivity.class);
-        i.putExtra(PARAM_TITLE,mTxtTitle.getText().toString().trim());
+        i.putExtra(PARAM_TITLE, mTxtTitle.getText().toString().trim());
+        if(!createFromZero){
+            //Restablecer el board
+            Board board = boardServices.getBoard(mTxtTitle.getText().toString().trim(),MainFragment.this.getActivity());
+            final Gson gson = new Gson();
+            String jsonSelectedBoard = gson.toJson(board).toString();
+            i.putExtra(PARAM_SELECTED_BOARD,jsonSelectedBoard);
+
+        }
         startActivity(i);
     }
 

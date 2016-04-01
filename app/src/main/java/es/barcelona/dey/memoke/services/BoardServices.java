@@ -37,7 +37,7 @@ public class BoardServices {
         List<Board> testBoard = BoardDatabase.getBoards(context);
 
         for (Board board: testBoard){
-            if (board.getTitle().equals(title)){
+            if (null!=board.getTitle() && board.getTitle().equals(title)){
                 return true;
             }
         }
@@ -48,5 +48,9 @@ public class BoardServices {
     public void deleteBoard(String title, Context context){
         BoardDatabase.deleteBoard(context,title.trim());
 
+    }
+
+    public Board getBoard(String title, Context context){
+        return BoardDatabase.getBoard(context, title);
     }
 }
