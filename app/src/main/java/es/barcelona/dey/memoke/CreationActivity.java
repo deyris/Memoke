@@ -97,9 +97,10 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
             //Verificamos si venimos o no de un fichero ya existente
             Bundle bundleFromMain = getIntent().getExtras();
             String title = "";
-            if(bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD)!= null ||
-                    (null!=savedInstanceState && null!=savedInstanceState.getString(CreationActivity.PARAM_CURRENT_PAIR_NUMBER))) {
+            boolean existeContentFragment = FragmentAlreadyRestoredFromSavedState(ContentFragment.TAG);
+            if(!existeContentFragment) {
                 if (bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD) != null) {
+
                     final Gson gson = new Gson();
 
                     mBoard = gson.fromJson(bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD), Board.class);
@@ -114,13 +115,15 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                         savedInstanceState = new Bundle();
                     }
                     savedInstanceState.putString(PARAM_CURRENT_PAIR, jsonCurrentPair);
-                }
-            }else {
 
-                //Creamos tablero
-                mBoard = new Board();
-                if(bundleFromMain.getString(MainFragment.PARAM_TITLE)!= null){
-                    title = bundleFromMain.getString(MainFragment.PARAM_TITLE).toString();
+                } else {
+
+                    //Creamos tablero
+                    mBoard = new Board();
+                    if (bundleFromMain.getString(MainFragment.PARAM_TITLE) != null) {
+                        title = bundleFromMain.getString(MainFragment.PARAM_TITLE).toString();
+                        mBoard.setTitle(title);
+                    }
                 }
             }
             Bundle bundle = new Bundle();
@@ -133,7 +136,7 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
             fragmentTransaction.replace(R.id.header_frame, mCreationFragment, CreationFragment.TAG);
             fragmentTransaction.commit();
 
-            if (!FragmentAlreadyRestoredFromSavedState(ContentFragment.TAG)) {
+            if (!existeContentFragment) {
                 // mContentFragment = ContentFragment.newInstance(savedInstanceState);
                 fragmentManager.beginTransaction().add(R.id.content_frame,
                         ContentFragment.newInstance(savedInstanceState),
@@ -275,9 +278,11 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                     bundleSgte.putInt(PARAM_CURRENT_PAIR_NUMBER, mCurrentPair);
 
                     //Rescatamos la pareja
-                    Pair pairSgte = BoardDatabase.getBoard(getBaseContext(),mBoard.getTitle()).getPairs().get(mCurrentPair);
-                    String jsonPairAnt = gson.toJson(pairSgte);
-                    bundleSgte.putSerializable(PARAM_CURRENT_PAIR,jsonPairAnt);
+                    if (mBoard.getPairs().size()<= mCurrentPair) {
+                        Pair pairSgte = mBoard.getPairs().get(mCurrentPair);
+                        String jsonPairAnt = gson.toJson(pairSgte);
+                        bundleSgte.putSerializable(PARAM_CURRENT_PAIR, jsonPairAnt);
+                    }
 
                     ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up).replace(R.id.content_frame,
                             ContentFragment.newInstance(bundleSgte),
