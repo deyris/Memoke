@@ -2,6 +2,7 @@ package es.barcelona.dey.memoke.services;
 
 import android.content.Context;
 
+import java.util.HashMap;
 import java.util.List;
 
 import es.barcelona.dey.memoke.beans.Board;
@@ -15,10 +16,12 @@ public class BoardServices {
 
 
     public void savePairInBoard(Context context, Board mBoard, Pair pair){
-        if (mBoard.getPairs().containsKey(pair.getNumber())) {
+
+        if (null!=mBoard.getPairs() && mBoard.getPairs().containsKey(pair.getNumber())) {
             mBoard.getPairs().remove(pair.getNumber());
         }
         pair.setState(Pair.State.SAVED);
+
         mBoard.getPairs().put(pair.getNumber(), pair);
 
         //Persistimos lo que hay en el fragment

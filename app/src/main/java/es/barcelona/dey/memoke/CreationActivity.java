@@ -97,23 +97,24 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
             //Verificamos si venimos o no de un fichero ya existente
             Bundle bundleFromMain = getIntent().getExtras();
             String title = "";
-            if(bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD)!= null){
-                final Gson gson = new Gson();
+            if(bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD)!= null ||
+                    (null!=savedInstanceState && null!=savedInstanceState.getString(CreationActivity.PARAM_CURRENT_PAIR_NUMBER))) {
+                if (bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD) != null) {
+                    final Gson gson = new Gson();
 
-                mBoard = gson.fromJson(bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD), Board.class);
-                title = mBoard.getTitle();
-                //Buscamos currentPair
-                mCurrentPair = mBoard.getPairs().size();
-                //Actualizamos currentPair
-                Pair currentPair = mBoard.getPairs().get(mCurrentPair);
+                    mBoard = gson.fromJson(bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD), Board.class);
+                    title = mBoard.getTitle();
+                    //Buscamos currentPair
+                    mCurrentPair = mBoard.getPairs().size();
+                    //Actualizamos currentPair
+                    Pair currentPair = mBoard.getPairs().get(mCurrentPair);
 
-                String jsonCurrentPair = gson.toJson(currentPair).toString();
-                if (null==savedInstanceState){
-                    savedInstanceState = new Bundle();
+                    String jsonCurrentPair = gson.toJson(currentPair).toString();
+                    if (null == savedInstanceState) {
+                        savedInstanceState = new Bundle();
+                    }
+                    savedInstanceState.putString(PARAM_CURRENT_PAIR, jsonCurrentPair);
                 }
-               savedInstanceState.putString(PARAM_CURRENT_PAIR,jsonCurrentPair);
-
-
             }else {
 
                 //Creamos tablero

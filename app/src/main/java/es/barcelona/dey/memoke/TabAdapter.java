@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,16 +37,16 @@ public class TabAdapter extends BaseAdapter {
         return 0;
     }
 
+    public FrameLayout[] frames;
+
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
-        LinearLayout linearLayout;
+        FrameLayout linearLayout;
         if (convertView == null) {
-            // if it's not recycled, initialize some attributes
-
 
             //LayoutInflater inflater = LayoutInflater.from();
-            linearLayout = (LinearLayout)  LayoutInflater.from(mContext).inflate(R.layout.tab_inside, parent, false);
+            linearLayout = (FrameLayout)  LayoutInflater.from(mContext).inflate(R.layout.tab_inside, parent, false);
 
 
             final LinearLayout cardFront = (LinearLayout) linearLayout.findViewById(R.id.card_front_layout);
@@ -70,37 +71,48 @@ public class TabAdapter extends BaseAdapter {
             rightIn.setTarget(cardBack);
             showBackAnim.playTogether(leftOut, rightIn);
 
-            LinearLayout cardContainer = (LinearLayout)
-                    linearLayout.findViewById(R.id.card_container_layout);
+           /* final FrameLayout cardContainer = (FrameLayout) getItem(position);
+
+
+        //   FrameLayout cardContainer = (FrameLayout)
+           //         linearLayout.findViewById(R.id.card_container_layout);
             // Set the flip animation to be triggered on container clicking
             cardContainer.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v)
                 {
+
                     if (isShowingBack) {
-                        cardFront.setVisibility(View.GONE);
-                        cardBack.setVisibility(View.VISIBLE);
                         showFrontAnim.start();
                         isShowingBack = false;
-
-                    }
-                    else {
-                        cardFront.setVisibility(View.VISIBLE);
-                        cardBack.setVisibility(View.GONE);
+                    } else {
                         showBackAnim.start();
                         isShowingBack = true;
                     }
                 }
-            });
+            });*/
 
         } else {
-           // imageView = (ImageView) convertView;
-            linearLayout = (LinearLayout)convertView;
+            linearLayout = (FrameLayout)convertView;
         }
+
+
+
+
 
        // imageView.setImageResource(mThumbIds[position]);
         return linearLayout;
+    }
+
+    public void girar(){
+        if (isShowingBack) {
+            showFrontAnim.start();
+            isShowingBack = false;
+        } else {
+            showBackAnim.start();
+            isShowingBack = true;
+        }
     }
 
     // references to our images
@@ -118,6 +130,27 @@ public class TabAdapter extends BaseAdapter {
             R.drawable.ic_action_name, R.drawable.ic_action_name
     };
 
+    public AnimatorSet getShowFrontAnim() {
+        return showFrontAnim;
+    }
 
+    public void setShowFrontAnim(AnimatorSet showFrontAnim) {
+        this.showFrontAnim = showFrontAnim;
+    }
 
+    public AnimatorSet getShowBackAnim() {
+        return showBackAnim;
+    }
+
+    public void setShowBackAnim(AnimatorSet showBackAnim) {
+        this.showBackAnim = showBackAnim;
+    }
+
+    public boolean isShowingBack() {
+        return isShowingBack;
+    }
+
+    public void setIsShowingBack(boolean isShowingBack) {
+        this.isShowingBack = isShowingBack;
+    }
 }
