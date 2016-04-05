@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -16,56 +18,63 @@ import android.widget.Toast;
  */
 public class BoardActivity extends AppCompatActivity {
 
+    static final String[] numbers = new String[] {
+
+
+            "A", "B", "C", "D", "E",
+            "F", "G", "H", "I", "J",
+            "K", "L", "M", "N", "O",
+            "P", "Q", "R", "S", "T",
+            "U", "V", "W", "X", "Y", "Z"
+
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(new TabAdapter(this));
+
+        TabAdapter adapter = new TabAdapter(this,
+                 numbers);
+
+        gridview.setAdapter(adapter);
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+
+            @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Toast.makeText(BoardActivity.this, "" + position,
-                        Toast.LENGTH_SHORT).show();
 
-
-
-
-
-                GridView gridView = (GridView)parent;
-                FrameLayout frame = (FrameLayout) parent.getSelectedView();
-             //  String idSelected =  parent.getItemAtPosition(position).toString();
-            //   FrameLayout idSelected =  (FrameLayout) gridView.getSelectedItem();
-
-
-
-            //    setAnimationToFrame(idSelected);
-                ;
-             //   TabAdapter tabAdapter = (TabAdapter)gridView.getAdapter();
-             //   tabAdapter.girar();
-
-
-              //  final LinearLayout cardFront = (LinearLayout) v.findViewById(R.id.card_front_layout);
-             //   final LinearLayout cardBack = (LinearLayout) v.findViewById(R.id.card_back_layout);
-
-
-
-
+                FrameLayout frameLayout = (FrameLayout) v;
+                LinearLayout linearLayout = (LinearLayout)frameLayout.getChildAt(0);
+                TextView textView = (TextView)linearLayout.getChildAt(0);
+                Toast.makeText(getApplicationContext(),
+                        textView.getText()  , Toast.LENGTH_SHORT).show();
+                TabAdapter adapter = (TabAdapter) parent.getAdapter();
+                setAnimationToFrame(frameLayout, position,adapter.isShowingBack());
+                adapter.setIsShowingBack(!adapter.isShowingBack());
             }
         });
+
+
+
     }
 
-    public void setAnimationToFrame(FrameLayout frame){
+    public void setAnimationToFrame(FrameLayout frame, int position, boolean isShowingBackAdapter){
 
 
          AnimatorSet showFrontAnim = new AnimatorSet();
          AnimatorSet showBackAnim = new AnimatorSet();
-         boolean isShowingBack = false;
+         boolean isShowingBack = isShowingBackAdapter;
 
         final LinearLayout cardFront = (LinearLayout) frame.findViewById(R.id.card_front_layout);
         final LinearLayout cardBack = (LinearLayout) frame.findViewById(R.id.card_back_layout);
+
+
 
         // Load the animator sets from XML and group them together
 
@@ -89,9 +98,15 @@ public class BoardActivity extends AppCompatActivity {
         if (isShowingBack) {
             showFrontAnim.start();
             isShowingBack = false;
+
         } else {
+            cardBack.setVisibility(View.VISIBLE);
+
+            //TextView textView = (TextView) cardFront.getChildAt(0);
+           // textView.setText(numbers[position]);
             showBackAnim.start();
             isShowingBack = true;
+
         }
     }
 }

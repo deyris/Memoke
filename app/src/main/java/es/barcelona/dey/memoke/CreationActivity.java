@@ -106,9 +106,12 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                     mBoard = gson.fromJson(bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD), Board.class);
                     title = mBoard.getTitle();
                     //Buscamos currentPair
-                    mCurrentPair = mBoard.getPairs().size();
-                    //Actualizamos currentPair
-                    Pair currentPair = mBoard.getPairs().get(mCurrentPair);
+                    Pair currentPair = new Pair();
+                    if (null!=mBoard.getPairs()) {
+                        mCurrentPair = (null != mBoard.getPairs()) ? mBoard.getPairs().size() : 0;
+                        //Actualizamos currentPair
+                        currentPair = mBoard.getPairs().get(mCurrentPair);
+                    }
 
                     String jsonCurrentPair = gson.toJson(currentPair).toString();
                     if (null == savedInstanceState) {

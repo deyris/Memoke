@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 /**
  * Created by deyris.drake on 1/4/16.
@@ -20,13 +21,15 @@ public class TabAdapter extends BaseAdapter {
     private AnimatorSet showFrontAnim = new AnimatorSet();
     private AnimatorSet showBackAnim = new AnimatorSet();
     private boolean isShowingBack = false;
+    String[] textos;
 
-    public TabAdapter(Context mContext) {
+    public TabAdapter(Context mContext, String[] numbers) {
         this.mContext = mContext;
+        this.textos = numbers;
     }
 
     public int getCount() {
-        return mThumbIds.length;
+        return textos.length;
     }
 
     public Object getItem(int position) {
@@ -50,7 +53,11 @@ public class TabAdapter extends BaseAdapter {
 
 
             final LinearLayout cardFront = (LinearLayout) linearLayout.findViewById(R.id.card_front_layout);
+
             final LinearLayout cardBack = (LinearLayout) linearLayout.findViewById(R.id.card_back_layout);
+            TextView textView = (TextView) cardBack.getChildAt(0);
+            textView.setText(textos[position]);
+            cardBack.setVisibility(View.GONE);
 
             // Load the animator sets from XML and group them together
 
@@ -115,20 +122,7 @@ public class TabAdapter extends BaseAdapter {
         }
     }
 
-    // references to our images
-    private Integer[] mThumbIds = {
-            R.drawable.ic_action_name, R.drawable.ic_action_name,
-            R.drawable.ic_action_name, R.drawable.ic_action_name,
-            R.drawable.ic_action_name, R.drawable.ic_action_name,
-            R.drawable.ic_action_name, R.drawable.ic_action_name,
-            R.drawable.ic_action_name, R.drawable.ic_action_name,
-            R.drawable.ic_action_name, R.drawable.ic_action_name,
-            R.drawable.ic_action_name, R.drawable.ic_action_name,
-            R.drawable.ic_action_name, R.drawable.ic_action_name,
-            R.drawable.ic_action_name, R.drawable.ic_action_name,
-            R.drawable.ic_action_name, R.drawable.ic_action_name,
-            R.drawable.ic_action_name, R.drawable.ic_action_name
-    };
+
 
     public AnimatorSet getShowFrontAnim() {
         return showFrontAnim;
