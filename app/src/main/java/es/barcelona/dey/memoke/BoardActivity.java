@@ -2,6 +2,9 @@ package es.barcelona.dey.memoke;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -29,11 +32,26 @@ public class BoardActivity extends AppCompatActivity {
 
     };
 
+    private void doLock(boolean locked) {
+        if (locked) {
+            int o = getResources().getConfiguration().orientation;
+            if (o == Configuration.ORIENTATION_LANDSCAPE)
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            else if (o == Configuration.ORIENTATION_PORTRAIT)
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+        else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
+        doLock(true);
+
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
 
@@ -96,14 +114,15 @@ public class BoardActivity extends AppCompatActivity {
         showBackAnim.playTogether(leftOut, rightIn);
 
         if (isShowingBack) {
+            TextView textView = (TextView) cardBack.getChildAt(0);
+            textView.setText(numbers[position]);
             showFrontAnim.start();
             isShowingBack = false;
 
         } else {
             cardBack.setVisibility(View.VISIBLE);
 
-            //TextView textView = (TextView) cardFront.getChildAt(0);
-           // textView.setText(numbers[position]);
+
             showBackAnim.start();
             isShowingBack = true;
 
