@@ -13,20 +13,13 @@ public class Tab {
         IN_PROCESS, SAVED
     }
 
-    private int number;
     private Type type;
     private State state;
     private String uri;
     private String text;
     private int size;
 
-    public int getNumber() {
-        return number;
-    }
 
-    public void setNumber(int number) {
-        this.number = number;
-    }
 
     public Type getType() {
         return type;

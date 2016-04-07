@@ -13,6 +13,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import es.barcelona.dey.memoke.beans.Tab;
+import es.barcelona.dey.memoke.beans.TabForPlay;
+
 /**
  * Created by deyris.drake on 1/4/16.
  */
@@ -22,14 +27,24 @@ public class TabAdapter extends BaseAdapter {
     private AnimatorSet showBackAnim = new AnimatorSet();
     private boolean isShowingBack = false;
     String[] textos;
+    Integer[] imgs;
+    TabForPlay[] tabsForPlay;
 
     public TabAdapter(Context mContext, String[] numbers) {
         this.mContext = mContext;
         this.textos = numbers;
     }
+    public TabAdapter(Context mContext, Integer[] imgs) {
+        this.mContext = mContext;
+        this.imgs = imgs;
+    }
+    public TabAdapter(Context mContext, TabForPlay[] tabs) {
+        this.mContext = mContext;
+        this.tabsForPlay = tabs;
+    }
 
     public int getCount() {
-        return textos.length;
+        return tabsForPlay.length;
     }
 
     public Object getItem(int position) {
@@ -44,7 +59,6 @@ public class TabAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
         FrameLayout linearLayout;
         if (convertView == null) {
 
@@ -55,8 +69,27 @@ public class TabAdapter extends BaseAdapter {
             final LinearLayout cardFront = (LinearLayout) linearLayout.findViewById(R.id.card_front_layout);
 
             final LinearLayout cardBack = (LinearLayout) linearLayout.findViewById(R.id.card_back_layout);
+
+          //  textView.setBackgroundResource(imgs[position]);
+          //  textView.setText(textos[position]);
+            Tab tabForPlay = tabsForPlay[position];
             TextView textView = (TextView) cardBack.getChildAt(0);
-            textView.setText(textos[position]);
+            ImageView imageView = (ImageView)cardBack.getChildAt(1);
+
+            if (tabForPlay.getType().equals(Tab.Type.TEXT)){
+                imageView.setVisibility(View.GONE);
+                textView.setVisibility(View.VISIBLE);
+                textView.setText(tabForPlay.getText());
+                textView.setTextSize(tabForPlay.getSize());
+            }
+            if (tabForPlay.getType().equals(Tab.Type.PHOTO)){
+                textView.setVisibility(View.GONE);
+                imageView.setVisibility(View.VISIBLE);
+                Picasso.with(mContext).load(tabForPlay.getUri())
+                        .resize(180, 180)
+                        .centerCrop()
+                        .into(imageView);
+            }
             cardBack.setVisibility(View.GONE);
 
             // Load the animator sets from XML and group them together

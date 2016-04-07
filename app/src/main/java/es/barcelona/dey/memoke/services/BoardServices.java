@@ -7,6 +7,7 @@ import java.util.List;
 
 import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Pair;
+import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.database.BoardDatabase;
 
 /**

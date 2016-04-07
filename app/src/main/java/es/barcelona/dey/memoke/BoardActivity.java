@@ -12,9 +12,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
+
+import es.barcelona.dey.memoke.beans.Board;
+import es.barcelona.dey.memoke.beans.Tab;
+import es.barcelona.dey.memoke.beans.TabForPlay;
+import es.barcelona.dey.memoke.services.PlayServices;
 
 /**
  * Created by deyris.drake on 13/2/16.
@@ -24,13 +33,13 @@ public class BoardActivity extends AppCompatActivity {
     static final String[] numbers = new String[] {
 
 
-            "A", "B", "C", "D", "E",
-            "F", "G", "H", "I", "J",
-            "K", "L", "M", "N", "O",
-            "P", "Q", "R", "S", "T",
-            "U", "V", "W", "X", "Y", "Z"
+            "R", "B", "C", "D"
 
     };
+
+    static  TabForPlay[] tabsForPlay = new TabForPlay[]{};
+    PlayServices playServices = new PlayServices();
+
 
     private void doLock(boolean locked) {
         if (locked) {
@@ -52,11 +61,25 @@ public class BoardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_board);
         doLock(true);
 
+        //Recuperamos tablero actual
+        Board currentBoard = null;
+        Bundle bundle = getIntent().getExtras();
+
+
+        if (bundle!=null && null!=bundle.getString(CreationActivity.PARAM_CURRENT_BOARD)) {
+            String jsonCurrentPair = bundle.getString(CreationActivity.PARAM_CURRENT_BOARD);
+            final Gson gson = new Gson();
+            currentBoard = gson.fromJson(jsonCurrentPair,Board.class);
+
+        }
+        if (null!=currentBoard){
+            tabsForPlay = playServices.getTabsForPlay(currentBoard);
+        }
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
 
         TabAdapter adapter = new TabAdapter(this,
-                 numbers);
+                 tabsForPlay);
 
         gridview.setAdapter(adapter);
 
@@ -113,19 +136,34 @@ public class BoardActivity extends AppCompatActivity {
         rightIn.setTarget(cardBack);
         showBackAnim.playTogether(leftOut, rightIn);
 
-        if (isShowingBack) {
+        if (tabsForPlay[position].isShowingFront()) {
             TextView textView = (TextView) cardBack.getChildAt(0);
-            textView.setText(numbers[position]);
+            ImageView imageView = (ImageView)cardBack.getChildAt(1);
+
+            if (tabsForPlay[position].getType().equals(Tab.Type.TEXT)){
+                imageView.setVisibility(View.GONE);
+                textView.setVisibility(View.VISIBLE);
+                textView.setText(tabsForPlay[position].getText());
+                textView.setTextSize(tabsForPlay[position].getSize());
+            }
+            if (tabsForPlay[position].getType().equals(Tab.Type.PHOTO)){
+                textView.setVisibility(View.GONE);
+                imageView.setVisibility(View.VISIBLE);
+                Picasso.with(this).load(tabsForPlay[position].getUri())
+                        .resize(180, 180)
+                        .centerCrop()
+                        .into(imageView);
+            }
+            //textView.setBackgroundResource(imgs[position]);
             showFrontAnim.start();
-            isShowingBack = false;
+            tabsForPlay[position].setShowingFront(false);
 
         } else {
             cardBack.setVisibility(View.VISIBLE);
 
 
             showBackAnim.start();
-            isShowingBack = true;
-
+            tabsForPlay[position].setShowingFront(true);
         }
     }
 }

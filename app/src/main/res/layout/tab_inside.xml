@@ -13,13 +13,18 @@
         android:layout_margin="10dp"
         android:gravity="center"
         android:background="@drawable/border"
+        android:orientation="vertical"
         >
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/ic_action_name"
-            android:textColor="#ff000000"
-            android:textSize="200sp"/>
+            android:id="@+id/txtForPlay1"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:height="100dp"/>
+        <ImageView
+            android:id="@+id/imgForPlay1"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:height="100dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -29,15 +34,18 @@
         android:gravity="center"
         android:layout_margin="10dp"
         android:background="@drawable/border"
-
+        android:orientation="vertical"
         >
-
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textColor="#ff000000"
-            android:textSize="200sp"
-            android:gravity="center"/>
+            android:id="@+id/txtForPlay2"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:height="100dp"/>
+        <ImageView
+            android:id="@+id/imgForPlay2"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:height="100dp"/>
 
     </LinearLayout>
 </FrameLayout>
