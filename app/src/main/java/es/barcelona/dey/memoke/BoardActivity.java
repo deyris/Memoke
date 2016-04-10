@@ -4,12 +4,10 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -20,9 +18,13 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 import es.barcelona.dey.memoke.beans.Board;
+import es.barcelona.dey.memoke.beans.Game;
+import es.barcelona.dey.memoke.beans.Play;
 import es.barcelona.dey.memoke.beans.Tab;
-import es.barcelona.dey.memoke.beans.TabForPlay;
+import es.barcelona.dey.memoke.beans.TabForGame;
 import es.barcelona.dey.memoke.services.PlayServices;
 
 /**
@@ -30,14 +32,9 @@ import es.barcelona.dey.memoke.services.PlayServices;
  */
 public class BoardActivity extends AppCompatActivity {
 
-    static final String[] numbers = new String[] {
 
-
-            "R", "B", "C", "D"
-
-    };
-
-    static  TabForPlay[] tabsForPlay = new TabForPlay[]{};
+    Game game = new Game();
+    static  TabForGame[] tabsForGame = new TabForGame[]{};
     PlayServices playServices = new PlayServices();
 
 
@@ -73,13 +70,13 @@ public class BoardActivity extends AppCompatActivity {
 
         }
         if (null!=currentBoard){
-            tabsForPlay = playServices.getTabsForPlay(currentBoard);
+           inicialiceGame(currentBoard);
         }
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
 
         TabAdapter adapter = new TabAdapter(this,
-                 tabsForPlay);
+                tabsForGame);
 
         gridview.setAdapter(adapter);
 
@@ -91,13 +88,16 @@ public class BoardActivity extends AppCompatActivity {
                                     int position, long id) {
 
                 FrameLayout frameLayout = (FrameLayout) v;
-                LinearLayout linearLayout = (LinearLayout)frameLayout.getChildAt(0);
-                TextView textView = (TextView)linearLayout.getChildAt(0);
+                LinearLayout linearLayout = (LinearLayout) frameLayout.getChildAt(0);
+                TextView textView = (TextView) linearLayout.getChildAt(0);
                 Toast.makeText(getApplicationContext(),
-                        textView.getText()  , Toast.LENGTH_SHORT).show();
+                        textView.getText(), Toast.LENGTH_SHORT).show();
                 TabAdapter adapter = (TabAdapter) parent.getAdapter();
-                setAnimationToFrame(frameLayout, position,adapter.isShowingBack());
-                adapter.setIsShowingBack(!adapter.isShowingBack());
+                setAnimationToFrame(frameLayout, position);
+                tabsForGame[position].setIdFrame(frameLayout.getId());
+                tabsForGame[position].setPositionInBoard(position);
+                //Actualizar jugada
+                actualicePlays(position);
             }
         });
 
@@ -105,12 +105,12 @@ public class BoardActivity extends AppCompatActivity {
 
     }
 
-    public void setAnimationToFrame(FrameLayout frame, int position, boolean isShowingBackAdapter){
+    public void setAnimationToFrame(FrameLayout frame, int position){
 
 
          AnimatorSet showFrontAnim = new AnimatorSet();
          AnimatorSet showBackAnim = new AnimatorSet();
-         boolean isShowingBack = isShowingBackAdapter;
+
 
         final LinearLayout cardFront = (LinearLayout) frame.findViewById(R.id.card_front_layout);
         final LinearLayout cardBack = (LinearLayout) frame.findViewById(R.id.card_back_layout);
@@ -136,34 +136,102 @@ public class BoardActivity extends AppCompatActivity {
         rightIn.setTarget(cardBack);
         showBackAnim.playTogether(leftOut, rightIn);
 
-        if (tabsForPlay[position].isShowingFront()) {
+        if (tabsForGame[position].isShowingFront()) {
             TextView textView = (TextView) cardBack.getChildAt(0);
             ImageView imageView = (ImageView)cardBack.getChildAt(1);
 
-            if (tabsForPlay[position].getType().equals(Tab.Type.TEXT)){
+            if (tabsForGame[position].getType().equals(Tab.Type.TEXT)){
                 imageView.setVisibility(View.GONE);
                 textView.setVisibility(View.VISIBLE);
-                textView.setText(tabsForPlay[position].getText());
-                textView.setTextSize(tabsForPlay[position].getSize());
+                textView.setText(tabsForGame[position].getText());
+                textView.setTextSize(tabsForGame[position].getSize()/2);
             }
-            if (tabsForPlay[position].getType().equals(Tab.Type.PHOTO)){
+            if (tabsForGame[position].getType().equals(Tab.Type.PHOTO)){
                 textView.setVisibility(View.GONE);
                 imageView.setVisibility(View.VISIBLE);
-                Picasso.with(this).load(tabsForPlay[position].getUri())
+                Picasso.with(this).load(tabsForGame[position].getUri())
                         .resize(180, 180)
                         .centerCrop()
                         .into(imageView);
             }
             //textView.setBackgroundResource(imgs[position]);
             showFrontAnim.start();
-            tabsForPlay[position].setShowingFront(false);
+            tabsForGame[position].setShowingFront(false);
 
         } else {
             cardBack.setVisibility(View.VISIBLE);
 
 
             showBackAnim.start();
-            tabsForPlay[position].setShowingFront(true);
+            tabsForGame[position].setShowingFront(true);
         }
     }
+
+    public void inicialiceGame(Board currentBoard){
+        this.game = new Game();
+        tabsForGame = playServices.getTabsForPlay(currentBoard);
+        game.setTabForGames(tabsForGame);
+        game.setTitle(currentBoard.getTitle());
+    }
+
+    public void actualicePlays(int position){
+        TabForGame tab = tabsForGame[position];
+        int totalPlays = (null!=this.game.getPlays())?this.game.getPlays().size():0;
+        Play lastPlay = null;
+        if (totalPlays > 0) {
+            lastPlay = (Play) this.game.getPlays().get(totalPlays - 1);
+        }
+        if (lastPlay==null || lastPlay.isFinished()){
+            //Se abre una nueva jugada
+            Play newPlay = new Play();
+            newPlay.getMovedTabs()[0]=tab;
+            if (lastPlay==null){
+                this.game.setPlays(new ArrayList<Play>());
+            }
+            this.game.getPlays().add(newPlay);
+        }else{
+            //Guardo la ficha movida
+            lastPlay.getMovedTabs()[1]=tab;
+            //Finalizo la jugada
+            finalicePlays(lastPlay, position);
+        }
+    }
+
+    public void finalicePlays(Play currentPlay, int position){
+        //Analizamos acierto o fail
+        TabForGame tab1 = currentPlay.getMovedTabs()[0];
+        TabForGame tab2 = currentPlay.getMovedTabs()[1];
+
+        if (tab1.getNumberOfPair()==tab2.getNumberOfPair()){
+            //Success
+            this.game.setTotalSuccess(this.game.getTotalSuccess() + 1);
+            //Se actualiza ok de TabForGame
+            tab1.setOk(true);
+            tab2.setOk(true);
+            //Desaparecen la fichas
+           // disappearsTabForGame(currentPlay, position);
+            turnTabForGame(currentPlay);
+
+        }else{
+            //Fail
+            this.game.setTotalFailure(this.game.getTotalFailure() + 1);
+            //Se giran las fichas
+            turnTabForGame(currentPlay);
+        }
+
+        //Se actualiza finished en Play
+        currentPlay.setFinished(true);
+
+
+
+    }
+
+    public void turnTabForGame(Play currentPlay){
+
+        for(TabForGame tab:currentPlay.getMovedTabs()) {
+            FrameLayout frameLayout = (FrameLayout) findViewById(tab.getIdFrame());
+            setAnimationToFrame(frameLayout, tab.getPositionInBoard());
+        }
+    }
+
 }

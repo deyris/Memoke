@@ -226,7 +226,7 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                 Pair pair = f.getmCurrentPair();
 
                 //Guardamos sólo si no está guardado ya
-                if (!pair.getState().equals(Pair.State.SAVED)) {
+                if (pair.getState().equals(Pair.State.COMPLETED) || pair.getState().equals(Pair.State.IN_PROCESS)) {
 
                     pair.setNumber(mCurrentPair);
 
@@ -234,9 +234,9 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                         mBoard.setPairs(new HashMap<Integer, Pair>());
                     }
                     //Verificamos si ya pair existe para agregarlo o modificarlo
-                    boardServices.savePairInBoard(getBaseContext(),mBoard,pair);
+                    boardServices.savePairInBoard(getBaseContext(), mBoard, pair);
 
-                   //Vaciamos fragment y nos vamos al sgte
+                    //Vaciamos fragment y nos vamos al sgte
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction ft = fragmentManager.beginTransaction();
 
@@ -251,26 +251,15 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
 
 
                     //Actualizamos creationFragment con el numero de la pareja
-                    CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
-                    Bundle bundleFromMain = getIntent().getExtras();
+                    actualicePairNumber();
 
-                    if (null != cf) {
-                        cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), mCurrentPair));
-
-                    }
                     //Ponemos el boton Siguiente invisible de nuevo
                     Button button = (Button) findViewById(v.getId());
                     button.setVisibility(View.GONE);
 
-                }else{
-                    Log.d("DEY","currentPair no tiene estado Save y por eso no hago nada");
+                } else {
+                    Log.d("DEY", "currentPair ya está salvado  y por eso no hago nada");
                     mCurrentPair++;
-
-                    if (null == mBoard.getPairs()) {
-                        mBoard.setPairs(new HashMap<Integer, Pair>());
-                    }
-
-
 
                     //Vaciamos fragment y nos vamos al sgte
                     FragmentManager fragmentManager = getFragmentManager();
@@ -281,8 +270,9 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                     bundleSgte.putInt(PARAM_CURRENT_PAIR_NUMBER, mCurrentPair);
 
                     //Rescatamos la pareja
-                    if (mBoard.getPairs().size()<= mCurrentPair) {
-                        Pair pairSgte = mBoard.getPairs().get(mCurrentPair);
+                    Pair pairSgte = new Pair();
+                    if (mBoard.getPairs().size() >= mCurrentPair) {
+                        pairSgte = mBoard.getPairs().get(mCurrentPair);
                         String jsonPairAnt = gson.toJson(pairSgte);
                         bundleSgte.putSerializable(PARAM_CURRENT_PAIR, jsonPairAnt);
                     }
@@ -292,20 +282,24 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                             ContentFragment.TAG).addToBackStack(null).commit();
 
                     //Actualizamos creationFragment con el numero de la pareja
-                    CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
-                    Bundle bundleFromMain = getIntent().getExtras();
-
-                    if (null != cf) {
-                        cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), mCurrentPair));
-
-                    }
-
+                    actualicePairNumber();
 
                 }
 
 
             }
         });
+    }
+
+    public void actualicePairNumber(){
+        //Actualizamos creationFragment con el numero de la pareja
+        CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+        Bundle bundleFromMain = getIntent().getExtras();
+
+        if (null != cf) {
+            cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), mCurrentPair));
+
+        }
     }
 
     public void setListenerBtnAnterior(){

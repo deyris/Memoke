@@ -1,72 +1,26 @@
 package es.barcelona.dey.memoke.beans;
 
-import java.sql.Time;
-
 /**
- * Created by deyris.drake on 8/4/16.
+ * Created by deyris.drake on 9/4/16.
+ * A Play is formed by two moves
  */
 public class Play {
-    private String title;
-    private TabForPlay[] tabForPlays;
-    private int moveNumber;
-    private long score;
-    private Time time;
-    private int totalSuccess;
-    private int totalFailure;
+    private TabForGame[] movedTabs = new TabForGame[2];
+    private boolean finished;
 
-    public String getTitle() {
-        return title;
+    public TabForGame[] getMovedTabs() {
+        return movedTabs;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setMovedTabs(TabForGame[] movedTabs) {
+        this.movedTabs = movedTabs;
     }
 
-    public TabForPlay[] getTabForPlays() {
-        return tabForPlays;
+    public boolean isFinished() {
+        return finished;
     }
 
-    public void setTabForPlays(TabForPlay[] tabForPlays) {
-        this.tabForPlays = tabForPlays;
-    }
-
-    public int getMoveNumber() {
-        return moveNumber;
-    }
-
-    public void setMoveNumber(int moveNumber) {
-        this.moveNumber = moveNumber;
-    }
-
-    public long getScore() {
-        return score;
-    }
-
-    public void setScore(long score) {
-        this.score = score;
-    }
-
-    public Time getTime() {
-        return time;
-    }
-
-    public void setTime(Time time) {
-        this.time = time;
-    }
-
-    public int getTotalSuccess() {
-        return totalSuccess;
-    }
-
-    public void setTotalSuccess(int totalSuccess) {
-        this.totalSuccess = totalSuccess;
-    }
-
-    public int getTotalFailure() {
-        return totalFailure;
-    }
-
-    public void setTotalFailure(int totalFailure) {
-        this.totalFailure = totalFailure;
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }

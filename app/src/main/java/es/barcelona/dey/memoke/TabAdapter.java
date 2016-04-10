@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,7 +15,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import es.barcelona.dey.memoke.beans.Tab;
-import es.barcelona.dey.memoke.beans.TabForPlay;
+import es.barcelona.dey.memoke.beans.TabForGame;
 
 /**
  * Created by deyris.drake on 1/4/16.
@@ -25,20 +24,10 @@ public class TabAdapter extends BaseAdapter {
     private Context mContext;
     private AnimatorSet showFrontAnim = new AnimatorSet();
     private AnimatorSet showBackAnim = new AnimatorSet();
-    private boolean isShowingBack = false;
-    String[] textos;
-    Integer[] imgs;
-    TabForPlay[] tabsForPlay;
+    TabForGame[] tabsForPlay;
 
-    public TabAdapter(Context mContext, String[] numbers) {
-        this.mContext = mContext;
-        this.textos = numbers;
-    }
-    public TabAdapter(Context mContext, Integer[] imgs) {
-        this.mContext = mContext;
-        this.imgs = imgs;
-    }
-    public TabAdapter(Context mContext, TabForPlay[] tabs) {
+
+    public TabAdapter(Context mContext, TabForGame[] tabs) {
         this.mContext = mContext;
         this.tabsForPlay = tabs;
     }
@@ -55,7 +44,7 @@ public class TabAdapter extends BaseAdapter {
         return 0;
     }
 
-    public FrameLayout[] frames;
+
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -80,7 +69,7 @@ public class TabAdapter extends BaseAdapter {
                 imageView.setVisibility(View.GONE);
                 textView.setVisibility(View.VISIBLE);
                 textView.setText(tabForPlay.getText());
-                textView.setTextSize(tabForPlay.getSize());
+                textView.setTextSize(tabForPlay.getSize()/2);
             }
             if (tabForPlay.getType().equals(Tab.Type.PHOTO)){
                 textView.setVisibility(View.GONE);
@@ -137,24 +126,8 @@ public class TabAdapter extends BaseAdapter {
             linearLayout = (FrameLayout)convertView;
         }
 
-
-
-
-
-       // imageView.setImageResource(mThumbIds[position]);
         return linearLayout;
     }
-
-    public void girar(){
-        if (isShowingBack) {
-            showFrontAnim.start();
-            isShowingBack = false;
-        } else {
-            showBackAnim.start();
-            isShowingBack = true;
-        }
-    }
-
 
 
     public AnimatorSet getShowFrontAnim() {
@@ -173,11 +146,5 @@ public class TabAdapter extends BaseAdapter {
         this.showBackAnim = showBackAnim;
     }
 
-    public boolean isShowingBack() {
-        return isShowingBack;
-    }
 
-    public void setIsShowingBack(boolean isShowingBack) {
-        this.isShowingBack = isShowingBack;
-    }
 }

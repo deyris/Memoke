@@ -3,13 +3,15 @@ package es.barcelona.dey.memoke.beans;
 /**
  * Created by deyris.drake on 7/4/16.
  */
-public class TabForPlay extends Tab {
+public class TabForGame extends Tab {
 
     private int numberOfPair;
     private boolean showingFront = false;
     private boolean ok;
+    private int idFrame;
+    private int positionInBoard;
 
-    public TabForPlay(Tab tab){
+    public TabForGame(Tab tab){
        this.setText(tab.getText());
         this.setSize(tab.getSize());
         this.setUri(tab.getUri());
@@ -17,7 +19,7 @@ public class TabForPlay extends Tab {
 
     }
 
-    public TabForPlay(){
+    public TabForGame(){
 
     }
     public int getNumberOfPair() {
@@ -42,5 +44,21 @@ public class TabForPlay extends Tab {
 
     public void setOk(boolean ok) {
         this.ok = ok;
+    }
+
+    public int getIdFrame() {
+        return idFrame;
+    }
+
+    public void setIdFrame(int idFrame) {
+        this.idFrame = idFrame;
+    }
+
+    public int getPositionInBoard() {
+        return positionInBoard;
+    }
+
+    public void setPositionInBoard(int positionInBoard) {
+        this.positionInBoard = positionInBoard;
     }
 }
