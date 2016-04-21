@@ -36,8 +36,8 @@ public class TabAdapter extends BaseAdapter {
         return tabsForPlay.length;
     }
 
-    public Object getItem(int position) {
-        return null;
+    public TabForGame getItem(int position) {
+        return tabsForPlay[position];
     }
 
     public long getItemId(int position) {
@@ -62,8 +62,8 @@ public class TabAdapter extends BaseAdapter {
           //  textView.setBackgroundResource(imgs[position]);
           //  textView.setText(textos[position]);
             Tab tabForPlay = tabsForPlay[position];
-            TextView textView = (TextView) cardBack.getChildAt(0);
-            ImageView imageView = (ImageView)cardBack.getChildAt(1);
+            TextView textView = (TextView) cardFront.getChildAt(0);
+            ImageView imageView = (ImageView)cardFront.getChildAt(1);
 
             if (tabForPlay.getType().equals(Tab.Type.TEXT)){
                 imageView.setVisibility(View.GONE);
@@ -79,7 +79,7 @@ public class TabAdapter extends BaseAdapter {
                         .centerCrop()
                         .into(imageView);
             }
-            cardBack.setVisibility(View.GONE);
+            cardFront.setVisibility(View.GONE);
 
             // Load the animator sets from XML and group them together
 
@@ -92,35 +92,14 @@ public class TabAdapter extends BaseAdapter {
             AnimatorSet rightIn  = (AnimatorSet) AnimatorInflater
                     .loadAnimator(mContext, R.animator.card_flip_right_in);
 
-            leftIn.setTarget(cardFront);
-            rightOut.setTarget(cardBack);
+            leftIn.setTarget(cardBack);
+            rightOut.setTarget(cardFront);
             showFrontAnim.playTogether(leftIn, rightOut);
 
-            leftOut.setTarget(cardFront);
-            rightIn.setTarget(cardBack);
+            leftOut.setTarget(cardBack);
+            rightIn.setTarget(cardFront);
             showBackAnim.playTogether(leftOut, rightIn);
 
-           /* final FrameLayout cardContainer = (FrameLayout) getItem(position);
-
-
-        //   FrameLayout cardContainer = (FrameLayout)
-           //         linearLayout.findViewById(R.id.card_container_layout);
-            // Set the flip animation to be triggered on container clicking
-            cardContainer.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-
-                    if (isShowingBack) {
-                        showFrontAnim.start();
-                        isShowingBack = false;
-                    } else {
-                        showBackAnim.start();
-                        isShowingBack = true;
-                    }
-                }
-            });*/
 
         } else {
             linearLayout = (FrameLayout)convertView;

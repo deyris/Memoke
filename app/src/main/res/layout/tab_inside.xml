@@ -7,6 +7,27 @@
     >
 
     <LinearLayout
+        android:id="@+id/card_back_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:background="@drawable/border"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/txtMemoke"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:height="100dp"/>
+        <ImageView
+            android:id="@+id/imgMemoke"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:height="100dp"/>
+
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/card_front_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,25 +48,5 @@
             android:height="100dp"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/card_back_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:layout_margin="10dp"
-        android:background="@drawable/border"
-        android:orientation="vertical"
-        >
-        <TextView
-            android:id="@+id/txtForPlay2"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent"
-            android:height="100dp"/>
-        <ImageView
-            android:id="@+id/imgForPlay2"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent"
-            android:height="100dp"/>
 
-    </LinearLayout>
 </FrameLayout>

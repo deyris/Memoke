@@ -6,9 +6,9 @@ package es.barcelona.dey.memoke.beans;
 public class TabForGame extends Tab {
 
     private int numberOfPair;
-    private boolean showingFront = false;
+    private boolean showingBack = false;
     private boolean ok;
-    private int idFrame;
+    private long idFrame;
     private int positionInBoard;
 
     public TabForGame(Tab tab){
@@ -30,12 +30,12 @@ public class TabForGame extends Tab {
         this.numberOfPair = numberOfPair;
     }
 
-    public boolean isShowingFront() {
-        return showingFront;
+    public boolean isShowingBack() {
+        return showingBack;
     }
 
-    public void setShowingFront(boolean showingFront) {
-        this.showingFront = showingFront;
+    public void setShowingBack(boolean showingBack) {
+        this.showingBack = showingBack;
     }
 
     public boolean isOk() {
@@ -46,11 +46,11 @@ public class TabForGame extends Tab {
         this.ok = ok;
     }
 
-    public int getIdFrame() {
+    public long getIdFrame() {
         return idFrame;
     }
 
-    public void setIdFrame(int idFrame) {
+    public void setIdFrame(long idFrame) {
         this.idFrame = idFrame;
     }
 
