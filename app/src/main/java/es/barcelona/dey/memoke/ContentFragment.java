@@ -497,9 +497,11 @@ public class ContentFragment extends Fragment {
         if (requestCode==REQUEST_IMAGE_CAPTURE){
             setPicToBackground();
         }else if (requestCode==REQUEST_SELECT_PICTURE){
-            Uri selectedImage = data.getData();
-            mCurrentPhotoPath = selectedImage.toString();
-            setPicToBackground();
+            if (null!=data && null!=data.getData()) {
+                Uri selectedImage = data.getData();
+                mCurrentPhotoPath = selectedImage.toString();
+                setPicToBackground();
+            }
         }
 
 
