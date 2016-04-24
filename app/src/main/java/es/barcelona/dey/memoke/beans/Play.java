@@ -7,6 +7,7 @@ package es.barcelona.dey.memoke.beans;
 public class Play {
     private TabForGame[] movedTabs = new TabForGame[2];
     private boolean finished;
+    private boolean completed;
 
     public TabForGame[] getMovedTabs() {
         return movedTabs;
@@ -22,5 +23,14 @@ public class Play {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public boolean isCompleted() {
+
+        return (null!=getMovedTabs()[0] && null!=getMovedTabs()[1]);
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }

@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 
 import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Game;
@@ -39,9 +39,9 @@ public class BoardActivity extends AppCompatActivity {
     Game game = new Game();
     static  TabForGame[] tabsForGame = new TabForGame[]{};
     PlayServices playServices = new PlayServices();
-    static FrameLayout[] currentFrame = new FrameLayout[2];
-    static int countFrame=0;
+    static HashMap<Integer,FrameLayout> currentFrame = new HashMap<Integer,FrameLayout>();
     static  ArrayList clickedPositions;
+    static Tab currentTab;
 
     private void doLock(boolean locked) {
         if (locked) {
@@ -92,57 +92,81 @@ public class BoardActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
-                    final Handler handler = new Handler();
-                    final int pos = position;
-                    clickedPositions.add(pos);
-                    Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            //Actualizar jugada
-                            actualicePlays(pos);
-                            Log.i("DEY", "acabando: " + countFrame);
+                final Handler handler = new Handler();
+                final int pos = position;
+                boolean itsTheSame = false;
+                if (tabsForGame[pos].getPositionInBoard()==pos) {
+                    itsTheSame = true;
+                }
+                clickedPositions.add(pos);
 
-                        }
-                    };
-                   // int lastPlay = lastPlayIsFinished();
-                    FrameLayout frameLayout = (FrameLayout) v;
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        finaliceLastPlay();
 
-
-                    LinearLayout linearLayout = (LinearLayout) frameLayout.getChildAt(0);
-
-                    tabsForGame[position].setPositionInBoard(position);
-                    if (countFrame == 2) {
-                        countFrame = 0;
                     }
-                    currentFrame[countFrame++] = frameLayout;
+                };
+                // int lastPlay = lastPlayIsFinished();
+                FrameLayout frameLayout = (FrameLayout) v;
+
+
+                LinearLayout linearLayout = (LinearLayout) frameLayout.getChildAt(0);
+
+                tabsForGame[position].setPositionInBoard(position);
+
+                currentFrame.put(position, frameLayout);
+
+                if (clickedPositions.size() % 2 != 0 && clickedPositions.size() > 1) { //Si es impar las analizo ya
+
+                    finaliceLastPlay();
+                    actualicePlays(pos);
 
                     setAnimationToFrame(frameLayout, position);
-                    handler.postDelayed(runnable, 1000); // after 3 sec
+
+                } else {
+                    actualicePlays(pos);
+
+                    setAnimationToFrame(frameLayout, position);
+                    handler.postDelayed(runnable, 3000); // after 3 sec
+
+                }
 
                 }
 
 
         });
 
+    }
+
+    public void saveOnClickedPosition(int position){
 
 
     }
 
-    public int lastPlayIsFinished(){
-        if (null!=game && null!=game.getPlays()) {
-            int totalJugadas = game.getPlays().size();
-            Play lastPlay = (Play) game.getPlays().get(totalJugadas -1);
-            if (!lastPlay.isFinished()) {
-                return 0;
-            } else {
-                return (int) clickedPositions.get(clickedPositions.size() - 3);
+    public Play getLastPlayCompleted(){
+        int totalPlays = (null!=this.game.getPlays())?this.game.getPlays().size():0;
+        Play lastPlay = null;
+        if (totalPlays > 0) {
+            for (int i=totalPlays-1;i>=0;i--){
+                lastPlay = (Play) this.game.getPlays().get(i);
+                if (lastPlay.isFinished()){
+                    return null;
+                }else{
+                    if (lastPlay.isCompleted() && !lastPlay.isFinished()){
+                        return lastPlay;
+                    }else{
+                        lastPlay = null;
+                    }
+                }
             }
-        }else if (clickedPositions.size()==3){//For first play
-            return (int)clickedPositions.get(1);
-        }else{
-            return 0;
+
         }
-     }
+
+        return lastPlay;
+    }
+
+
 
     public void setAnimationToFrame(FrameLayout frame, int position){
 
@@ -200,8 +224,6 @@ public class BoardActivity extends AppCompatActivity {
 
         } else {
             cardFront.setVisibility(View.VISIBLE);
-
-
             showBackAnim.start();
             tabsForGame[position].setShowingBack(true);
         }
@@ -235,14 +257,17 @@ public class BoardActivity extends AppCompatActivity {
         }else{
             //Guardo la ficha movida
             lastPlay.getMovedTabs()[1]=tab;
-            //Finalizo la jugada
-            finalicePlays(lastPlay);
+
         }
-
-
     }
 
-    public void finalicePlays(Play currentPlay){
+
+    public void finaliceLastPlay(){
+        Play currentPlay = getLastPlayCompleted();
+        if (null==currentPlay || currentPlay.isFinished() || null==currentPlay.getMovedTabs()[1])    {
+            return;
+        }
+
         //Analizamos acierto o fail
         TabForGame tab1 = currentPlay.getMovedTabs()[0];
         TabForGame tab2 = currentPlay.getMovedTabs()[1];
@@ -270,16 +295,14 @@ public class BoardActivity extends AppCompatActivity {
         //Se actualiza finished en Play
         currentPlay.setFinished(true);
 
-
-
     }
 
     public void turnTabForGame(Play currentPlay){
 
         //for(TabForGame tab:currentPlay.getMovedTabs()) {
-            FrameLayout frameLayout0 = currentFrame[0];
+            FrameLayout frameLayout0 = currentFrame.get(currentPlay.getMovedTabs()[0].getPositionInBoard());
             setAnimationToFrame(frameLayout0, currentPlay.getMovedTabs()[0].getPositionInBoard());
-        FrameLayout frameLayout1 = currentFrame[1];
+        FrameLayout frameLayout1 = currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard());
         setAnimationToFrame(frameLayout1, currentPlay.getMovedTabs()[1].getPositionInBoard());
        // }
 
@@ -288,9 +311,9 @@ public class BoardActivity extends AppCompatActivity {
 
     public void disappearsTabForGame(Play currentPlay){
 
-        FrameLayout frameLayout0 = currentFrame[0];
+        FrameLayout frameLayout0 = currentFrame.get(currentPlay.getMovedTabs()[0].getPositionInBoard());
         frameLayout0.setVisibility(View.GONE);
-        FrameLayout frameLayout1 = currentFrame[1];
+        FrameLayout frameLayout1 = currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard());
         frameLayout1.setVisibility(View.GONE);
     }
 
