@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
@@ -41,7 +40,6 @@ public class BoardActivity extends AppCompatActivity {
     PlayServices playServices = new PlayServices();
     static HashMap<Integer,FrameLayout> currentFrame = new HashMap<Integer,FrameLayout>();
     static  ArrayList clickedPositions;
-    static Tab currentTab;
 
     private void doLock(boolean locked) {
         if (locked) {
@@ -95,11 +93,6 @@ public class BoardActivity extends AppCompatActivity {
                 final Handler handler = new Handler();
                 final int pos = position;
                 boolean itsTheSame = false;
-                if (tabsForGame[pos].getPositionInBoard()==pos) {
-                    itsTheSame = true;
-                }
-                clickedPositions.add(pos);
-
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
@@ -107,11 +100,17 @@ public class BoardActivity extends AppCompatActivity {
 
                     }
                 };
+
+                if (tabsForGame[pos].isShowingBack()) {
+                    handler.removeCallbacks(runnable);
+                     setAnimationToFrame((FrameLayout) v, position);
+                    removeTabFromPlay(position);
+                    return;
+                }
+                clickedPositions.add(pos);
+
                 // int lastPlay = lastPlayIsFinished();
                 FrameLayout frameLayout = (FrameLayout) v;
-
-
-                LinearLayout linearLayout = (LinearLayout) frameLayout.getChildAt(0);
 
                 tabsForGame[position].setPositionInBoard(position);
 
@@ -132,19 +131,40 @@ public class BoardActivity extends AppCompatActivity {
 
                 }
 
-                }
+            }
 
 
         });
 
     }
 
-    public void saveOnClickedPosition(int position){
+    private void removeTabFromPlay(int position){
+        Play lastPlay = getLastPlayNotFinished(false);
+        if (position < clickedPositions.size()) {
+            clickedPositions.remove(position);
+        }
 
+        if (null!=lastPlay) {
+
+            if (lastPlay.getMovedTabs()[0].getPositionInBoard() == position) {
+                lastPlay.getMovedTabs()[0]=null;
+                if (lastPlay.isEmpty()){
+                    removeLastPlayFromGame();
+                }
+                return;
+            }
+            if (lastPlay.getMovedTabs()[1].getPositionInBoard() == position) {
+                lastPlay.getMovedTabs()[1] = null;
+                if (lastPlay.isEmpty()){
+                    removeLastPlayFromGame();                }
+                return;
+            }
+
+        }
 
     }
 
-    public Play getLastPlayCompleted(){
+    public Play getLastPlayNotFinished(boolean needCompleted){
         int totalPlays = (null!=this.game.getPlays())?this.game.getPlays().size():0;
         Play lastPlay = null;
         if (totalPlays > 0) {
@@ -153,10 +173,14 @@ public class BoardActivity extends AppCompatActivity {
                 if (lastPlay.isFinished()){
                     return null;
                 }else{
-                    if (lastPlay.isCompleted() && !lastPlay.isFinished()){
-                        return lastPlay;
+                    if (needCompleted) {
+                        if (lastPlay.isCompleted() && !lastPlay.isFinished()) {
+                            return lastPlay;
+                        } else {
+                            lastPlay = null;
+                        }
                     }else{
-                        lastPlay = null;
+                        return  lastPlay;
                     }
                 }
             }
@@ -165,6 +189,26 @@ public class BoardActivity extends AppCompatActivity {
 
         return lastPlay;
     }
+
+   /* public Play getLastPlayCompleted(){
+        int totalPlays = (null!=this.game.getPlays())?this.game.getPlays().size():0;
+        Play lastPlay = null;
+        if (totalPlays > 0) {
+            for (int i=totalPlays-1;i>=0;i--){
+                lastPlay = (Play) this.game.getPlays().get(i);
+                if (lastPlay.isFinished()){
+                    return null;
+                }else{
+
+                         return  lastPlay;
+
+                }
+            }
+
+        }
+
+        return lastPlay;
+    }*/
 
 
 
@@ -261,10 +305,13 @@ public class BoardActivity extends AppCompatActivity {
         }
     }
 
+    private void removeLastPlayFromGame(){
+        this.game.getPlays().remove(this.game.getPlays().size()-1);
+    }
 
     public void finaliceLastPlay(){
-        Play currentPlay = getLastPlayCompleted();
-        if (null==currentPlay || currentPlay.isFinished() || null==currentPlay.getMovedTabs()[1])    {
+        Play currentPlay = getLastPlayNotFinished(true);
+        if (null==currentPlay || currentPlay.isFinished() || !currentPlay.isCompleted())    {
             return;
         }
 

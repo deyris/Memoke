@@ -9,7 +9,7 @@ public class TabForGame extends Tab {
     private boolean showingBack = false;
     private boolean ok;
     private long idFrame;
-    private int positionInBoard;
+    private int positionInBoard = -1;
 
     public TabForGame(Tab tab){
        this.setText(tab.getText());

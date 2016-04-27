@@ -8,6 +8,7 @@ public class Play {
     private TabForGame[] movedTabs = new TabForGame[2];
     private boolean finished;
     private boolean completed;
+    private boolean empty;
 
     public TabForGame[] getMovedTabs() {
         return movedTabs;
@@ -28,6 +29,11 @@ public class Play {
     public boolean isCompleted() {
 
         return (null!=getMovedTabs()[0] && null!=getMovedTabs()[1]);
+    }
+
+    public boolean isEmpty() {
+
+        return (null==getMovedTabs()[0] && null==getMovedTabs()[1]);
     }
 
     public void setCompleted(boolean completed) {
