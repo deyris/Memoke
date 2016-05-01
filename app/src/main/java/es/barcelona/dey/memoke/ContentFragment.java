@@ -111,12 +111,11 @@ public class ContentFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("DEY", "Estoy en ContentFragment.onCreated ");
 
         try{
             mCallback = (FragmentIterationListener) getActivity();
         }catch(Exception ex){
-            Log.e("ContentFragment", "El Activity debe implementar la interfaz FragmentIterationListener");
+
         }
     }
 
@@ -169,9 +168,11 @@ public class ContentFragment extends Fragment {
         setListenerFrame(mFrameTab1);
         setListenerFrame(mFrameTab2);
 
+
         if (savedInstanceState!=null || (getArguments()!=null && getArguments().getString(CreationActivity.PARAM_CURRENT_PAIR)!=null)) {
             String jsonCurrentPair = null;
-            if (getArguments()!=null ){
+
+            if (null!=getArguments() && null == savedInstanceState){
                 savedInstanceState = getArguments();
 
             }
@@ -180,7 +181,6 @@ public class ContentFragment extends Fragment {
             }
 
             if(null!=jsonCurrentPair) {
-                Log.d("DEY", "jsonCurrentPair not null: " + jsonCurrentPair);
                 final Gson gson = new Gson();
                 mCurrentPair = gson.fromJson(jsonCurrentPair, Pair.class);
 
@@ -217,6 +217,7 @@ public class ContentFragment extends Fragment {
             }
             mCurrentPair.setNumber(getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER));
         }
+
         //Comprobamos botones de Anterior y Siguiente
         showAntButton();
         showContinueButton();
@@ -229,7 +230,6 @@ public class ContentFragment extends Fragment {
 
         //Serializamos nuestro currentPair
         if (null!=mCurrentPair && mCurrentPair.getState()!=Pair.State.EMPTY) {
-            Log.d("DEY", "Estoy en ContentFragment.onSaveInstanceState con mCurrentPair not null");
 
             final Gson gson = new Gson();
             String jsonCurrentPair = gson.toJson(mCurrentPair).toString();
@@ -245,7 +245,6 @@ public class ContentFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        Log.d("DEY", "Estoy en ContentFragment.onDestroy");
         //Salvamos en fichero
        // TabDatabase.addPair(this.getActivity(), mCurrentPair);
     }

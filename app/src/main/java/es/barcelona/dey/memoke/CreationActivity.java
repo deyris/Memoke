@@ -91,9 +91,6 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             FragmentManager fragmentManager = getFragmentManager();
 
-
-
-
             //Verificamos si venimos o no de un fichero ya existente
             Bundle bundleFromMain = getIntent().getExtras();
             String title = "";
@@ -108,9 +105,13 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                     //Buscamos currentPair
                     Pair currentPair = new Pair();
                     if (null!=mBoard.getPairs()) {
-                        mCurrentPair = (null != mBoard.getPairs()) ? mBoard.getPairs().size() : 0;
+                        mCurrentPair = (null != mBoard.getPairs()) ? mBoard.getPairs().size() : 1;
                         //Actualizamos currentPair
                         currentPair = mBoard.getPairs().get(mCurrentPair);
+                    }else{
+                        //Es un tablero vacío, que existe pero no tiene ninguna pareja aún
+                        mCurrentPair = 1;
+
                     }
 
                     String jsonCurrentPair = gson.toJson(currentPair).toString();
@@ -123,6 +124,13 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
 
                     //Creamos tablero
                     mBoard = new Board();
+                    mCurrentPair = 1;
+                    Pair newPair = new Pair();
+                    String jsonCurrentPair = gson.toJson(newPair).toString();
+                    if (null == savedInstanceState) {
+                        savedInstanceState = new Bundle();
+                    }
+                    savedInstanceState.putString(PARAM_CURRENT_PAIR, jsonCurrentPair);
                     if (bundleFromMain.getString(MainFragment.PARAM_TITLE) != null) {
                         title = bundleFromMain.getString(MainFragment.PARAM_TITLE).toString();
                         mBoard.setTitle(title);
@@ -140,16 +148,10 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
             fragmentTransaction.commit();
 
             if (!existeContentFragment) {
-                // mContentFragment = ContentFragment.newInstance(savedInstanceState);
                 fragmentManager.beginTransaction().add(R.id.content_frame,
                         ContentFragment.newInstance(savedInstanceState),
                         ContentFragment.TAG).addToBackStack(ContentFragment.TAG).commit();
             }
-           // bd.addBoard(getBaseContext(), mBoard);
-
-            //Cargamos los valores de board si es que ya existía
-          //  fillBoard(title);
-         //   mBoard.setTitle(title);
 
             //Boton siguiente
             Button btnSgte = (Button) findViewById(R.id.btnSgte);
@@ -258,7 +260,6 @@ public class CreationActivity extends AppCompatActivity implements ContentFragme
                     button.setVisibility(View.GONE);
 
                 } else {
-                    Log.d("DEY", "currentPair ya está salvado  y por eso no hago nada");
                     mCurrentPair++;
 
                     //Vaciamos fragment y nos vamos al sgte

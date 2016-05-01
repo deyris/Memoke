@@ -190,27 +190,6 @@ public class BoardActivity extends AppCompatActivity {
         return lastPlay;
     }
 
-   /* public Play getLastPlayCompleted(){
-        int totalPlays = (null!=this.game.getPlays())?this.game.getPlays().size():0;
-        Play lastPlay = null;
-        if (totalPlays > 0) {
-            for (int i=totalPlays-1;i>=0;i--){
-                lastPlay = (Play) this.game.getPlays().get(i);
-                if (lastPlay.isFinished()){
-                    return null;
-                }else{
-
-                         return  lastPlay;
-
-                }
-            }
-
-        }
-
-        return lastPlay;
-    }*/
-
-
 
     public void setAnimationToFrame(FrameLayout frame, int position){
 
