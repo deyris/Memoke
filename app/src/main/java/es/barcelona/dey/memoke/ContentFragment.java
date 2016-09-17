@@ -263,7 +263,7 @@ public class ContentFragment extends Fragment {
 
                 mText.setVisibility(View.VISIBLE);
 
-                if (!mCurrentPair.getTabs()[tab - 1].getText().isEmpty()) {
+                if (null!= mCurrentPair.getTabs()[tab - 1].getText() && !mCurrentPair.getTabs()[tab - 1].getText().isEmpty()) {
                     String val = mCurrentPair.getTabs()[tab - 1].getText();
 
                     mText.setText("");
@@ -575,7 +575,7 @@ public class ContentFragment extends Fragment {
                     }
                 }
                 if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.PHOTO){
-                    if (!mCurrentPair.getTabs()[tab -1].getUri().isEmpty()){
+                    if (null!= mCurrentPair.getTabs()[tab -1].getUri() && !mCurrentPair.getTabs()[tab -1].getUri().isEmpty()){
                         valid = true;
                     }
                 }
