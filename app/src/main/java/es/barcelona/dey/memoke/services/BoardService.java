@@ -13,8 +13,14 @@ import es.barcelona.dey.memoke.database.BoardDatabase;
 /**
  * Created by deyris.drake on 13/3/16.
  */
-public class BoardServices {
+public class BoardService {
 
+
+    private Context context;
+
+    public BoardService(Context context) {
+        this.context = context;
+    }
 
     public void savePairInBoard(Context context, Board mBoard, Pair pair){
 
@@ -31,13 +37,13 @@ public class BoardServices {
     }
 
 
-    public boolean existsBoards(Context context){
+    public boolean existsBoards(){
         List<Board> testBoard = BoardDatabase.getBoards(context);
 
         return testBoard.size()>0;
     }
 
-    public boolean existThisBoard(String title, Context context){
+    public boolean existThisBoard(String title){
         List<Board> testBoard = BoardDatabase.getBoards(context);
 
         for (Board board: testBoard){

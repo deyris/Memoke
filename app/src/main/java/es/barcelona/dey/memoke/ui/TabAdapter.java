@@ -1,4 +1,4 @@
-package es.barcelona.dey.memoke;
+package es.barcelona.dey.memoke.ui;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.beans.TabForGame;
 

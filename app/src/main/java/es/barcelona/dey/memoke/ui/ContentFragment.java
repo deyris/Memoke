@@ -1,15 +1,9 @@
-package es.barcelona.dey.memoke;
+package es.barcelona.dey.memoke.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,25 +21,24 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.beans.Tab;
-import es.barcelona.dey.memoke.database.TabDatabase;
+import es.barcelona.dey.memoke.views.MainView;
 
 /**
  * Created by deyris.drake on 18/2/16.
  */
-public class ContentFragment extends Fragment {
+public class ContentFragment extends Fragment{
 
     public static final String TAG = "MMKContentFragment";
 

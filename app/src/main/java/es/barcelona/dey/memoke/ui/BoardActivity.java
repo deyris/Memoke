@@ -1,4 +1,4 @@
-package es.barcelona.dey.memoke;
+package es.barcelona.dey.memoke.ui;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
@@ -22,12 +22,13 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Game;
 import es.barcelona.dey.memoke.beans.Play;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.beans.TabForGame;
-import es.barcelona.dey.memoke.services.PlayServices;
+import es.barcelona.dey.memoke.services.PlayService;
 
 /**
  * Created by deyris.drake on 13/2/16.
@@ -37,7 +38,7 @@ public class BoardActivity extends AppCompatActivity {
 
     Game game = new Game();
     static  TabForGame[] tabsForGame = new TabForGame[]{};
-    PlayServices playServices = new PlayServices();
+    PlayService playService = new PlayService();
     static HashMap<Integer,FrameLayout> currentFrame = new HashMap<Integer,FrameLayout>();
     static  ArrayList clickedPositions;
 
@@ -256,7 +257,7 @@ public class BoardActivity extends AppCompatActivity {
 
     public void inicialiceGame(Board currentBoard){
         this.game = new Game();
-        tabsForGame = playServices.getTabsForPlay(currentBoard);
+        tabsForGame = playService.getTabsForPlay(currentBoard);
         game.setTabForGames(tabsForGame);
         game.setTitle(currentBoard.getTitle());
         clickedPositions = new ArrayList();

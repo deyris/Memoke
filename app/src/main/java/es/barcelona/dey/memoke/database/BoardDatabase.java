@@ -6,12 +6,9 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import es.barcelona.dey.memoke.ContentFragment;
 import es.barcelona.dey.memoke.beans.Board;
-import es.barcelona.dey.memoke.beans.Pair;
 
 /**
  * Created by deyris.drake on 13/3/16.

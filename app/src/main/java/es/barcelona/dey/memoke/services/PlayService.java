@@ -12,7 +12,7 @@ import es.barcelona.dey.memoke.beans.TabForGame;
 /**
  * Created by deyris.drake on 7/4/16.
  */
-public class PlayServices {
+public class PlayService {
 
     public TabForGame[] getTabsForPlay(Board board){
         ArrayList<TabForGame> tabs = new ArrayList<TabForGame>();

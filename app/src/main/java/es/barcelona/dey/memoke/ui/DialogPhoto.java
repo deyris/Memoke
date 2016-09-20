@@ -1,10 +1,12 @@
-package es.barcelona.dey.memoke;
+package es.barcelona.dey.memoke.ui;
 
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+
+import es.barcelona.dey.memoke.R;
 
 /**
  * Created by deyris.drake on 2/2/16.

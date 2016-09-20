@@ -1,12 +1,11 @@
-package es.barcelona.dey.memoke;
+package es.barcelona.dey.memoke.ui;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+
+import es.barcelona.dey.memoke.R;
 
 public class MainActivity extends AppCompatActivity {
 
