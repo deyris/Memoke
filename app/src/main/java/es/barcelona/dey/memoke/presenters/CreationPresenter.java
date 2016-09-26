@@ -1,9 +1,14 @@
 package es.barcelona.dey.memoke.presenters;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.gson.Gson;
 
+import java.util.HashMap;
+
+import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.database.BoardDatabase;
@@ -40,7 +45,7 @@ public class CreationPresenter implements Presenter<CreationView>{
         BoardDatabase.updateOrAddBoard(creationView.getContext(),board);
     }
 
-    public void verifyIfExistPairInBoard(Board board, Pair pair){
+    public void savePairInBoard(Board board, Pair pair){
         creationInteractor.savePairInBoard(board, pair);
     }
 
@@ -115,4 +120,25 @@ public class CreationPresenter implements Presenter<CreationView>{
     public void setmBoard(Board mBoard) {
         this.mBoard = mBoard;
     }
+
+
+    public boolean pairNotSavedYet(Pair pair){
+        return pair.getState().equals(Pair.State.COMPLETED) || pair.getState().equals(Pair.State.IN_PROCESS);
+    }
+
+    public String getNextPairOnBoard(int mCurrentPair, Board mBoard){
+        Pair pairSgte = new Pair();
+        String jsonPairAnt = null;
+        if (mBoard.getPairs().size() >= mCurrentPair) {
+            pairSgte = mBoard.getPairs().get(mCurrentPair);
+            jsonPairAnt = gson.toJson(pairSgte);
+        }
+
+        return jsonPairAnt;
+
+    }
+
+
+
+
 }

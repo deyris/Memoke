@@ -11,4 +11,7 @@ public interface CreationView {
     Context getContext();
 
     Bundle actualizeBundle(Bundle bundle, String nameData, String data);
+
+
+
 }

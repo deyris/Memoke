@@ -48,9 +48,6 @@ public class ContentFragment extends Fragment{
 
     FrameLayout mFrameTab2;
 
-    Bundle savedState;
-
-
     static final int PHOTO_FROM_CAMERA = 1;
     static final int PHOTO_FROM_GALLERY = 2;
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -87,7 +84,7 @@ public class ContentFragment extends Fragment{
 
     public static ContentFragment newInstance(Bundle arguments){
         ContentFragment f = new ContentFragment();
-       // f.setRetainInstance(true);
+
         if(arguments != null){
             f.setArguments(arguments);
         }
@@ -134,7 +131,6 @@ public class ContentFragment extends Fragment{
             return null;
         }
 
-        Log.d("DEY", "Estoy en ContentFragment.onCreateView");
         mLayout = (LinearLayout) inflater.inflate(R.layout.fragment_creation_content,
                 container, false);
 
@@ -153,6 +149,24 @@ public class ContentFragment extends Fragment{
         return mLayout;
     }
 
+    private String getCurrentPairFromContext(Bundle savedInstanceState){
+        String jsonCurrentPair = null;
+
+        if (savedInstanceState!=null || existCurrentPairFromArguments()) {
+
+
+            if (null != getArguments() && null == savedInstanceState) {
+                savedInstanceState = getArguments();
+
+            }
+            if (savedInstanceState != null) {
+                jsonCurrentPair = savedInstanceState.getString(CreationActivity.PARAM_CURRENT_PAIR);
+            }
+
+        }
+
+        return jsonCurrentPair;
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -162,7 +176,8 @@ public class ContentFragment extends Fragment{
         setListenerFrame(mFrameTab2);
 
 
-        if (savedInstanceState!=null || (getArguments()!=null && getArguments().getString(CreationActivity.PARAM_CURRENT_PAIR)!=null)) {
+        if (savedInstanceState!=null || existCurrentPairFromArguments()){
+
             String jsonCurrentPair = null;
 
             if (null!=getArguments() && null == savedInstanceState){
@@ -184,7 +199,7 @@ public class ContentFragment extends Fragment{
                         fillResultWithCurrent(mTextView1.getId(), 1, mImageView1);
 
                     }
-                }, 1000); // after 1 sec
+                }, 500); // after 0.5 sec
 
                 final Handler handler1 = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -194,7 +209,7 @@ public class ContentFragment extends Fragment{
 
 
                     }
-                }, 1000); // after 1 sec
+                }, 500); // after 0.5 sec
 
 
                 fillImgsWithCurrent();
@@ -328,7 +343,9 @@ public class ContentFragment extends Fragment{
         }
     }
 
-
+    private boolean existCurrentPairFromArguments(){
+        return getArguments()!=null && getArguments().getString(CreationActivity.PARAM_CURRENT_PAIR)!=null;
+    }
 
     public  void setListenerFrame(FrameLayout frame) {
 
