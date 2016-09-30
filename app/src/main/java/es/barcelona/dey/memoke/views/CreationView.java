@@ -13,5 +13,4 @@ public interface CreationView {
     Bundle actualizeBundle(Bundle bundle, String nameData, String data);
 
 
-
 }

@@ -2,6 +2,7 @@ package es.barcelona.dey.memoke.ui;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,7 +11,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -33,12 +32,13 @@ import java.util.Date;
 import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.beans.Tab;
-import es.barcelona.dey.memoke.views.MainView;
+import es.barcelona.dey.memoke.presenters.ContentPresenter;
+import es.barcelona.dey.memoke.views.ContentView;
 
 /**
  * Created by deyris.drake on 18/2/16.
  */
-public class ContentFragment extends Fragment{
+public class ContentFragment extends Fragment implements ContentView{
 
     public static final String TAG = "MMKContentFragment";
 
@@ -70,6 +70,12 @@ public class ContentFragment extends Fragment{
 
     static int finalHeight, finalWidth;
     private FragmentIterationListener mCallback = null;
+    public ContentPresenter contentPresenter;
+
+    @Override
+    public Context getContext(){
+        return this.getActivity();
+    }
 
 
     public interface OnDataPass {
@@ -131,6 +137,8 @@ public class ContentFragment extends Fragment{
             return null;
         }
 
+        instancePresenter();
+
         mLayout = (LinearLayout) inflater.inflate(R.layout.fragment_creation_content,
                 container, false);
 
@@ -149,87 +157,27 @@ public class ContentFragment extends Fragment{
         return mLayout;
     }
 
-    private String getCurrentPairFromContext(Bundle savedInstanceState){
-        String jsonCurrentPair = null;
-
-        if (savedInstanceState!=null || existCurrentPairFromArguments()) {
-
-
-            if (null != getArguments() && null == savedInstanceState) {
-                savedInstanceState = getArguments();
-
-            }
-            if (savedInstanceState != null) {
-                jsonCurrentPair = savedInstanceState.getString(CreationActivity.PARAM_CURRENT_PAIR);
-            }
-
-        }
-
-        return jsonCurrentPair;
-    }
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        setListenerFrame(mFrameTab1);
-        setListenerFrame(mFrameTab2);
+        setListenerFrame(mFrameTab1,1);
+        setListenerFrame(mFrameTab2,2);
 
+        String jsonCurrentPair = getCurrentPairFromContext(savedInstanceState);
 
-        if (savedInstanceState!=null || existCurrentPairFromArguments()){
-
-            String jsonCurrentPair = null;
-
-            if (null!=getArguments() && null == savedInstanceState){
-                savedInstanceState = getArguments();
-
-            }
-            if (savedInstanceState!=null) {
-                jsonCurrentPair = savedInstanceState.getString(CreationActivity.PARAM_CURRENT_PAIR);
-            }
-
-            if(null!=jsonCurrentPair) {
-                final Gson gson = new Gson();
-                mCurrentPair = gson.fromJson(jsonCurrentPair, Pair.class);
-
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        fillResultWithCurrent(mTextView1.getId(), 1, mImageView1);
-
-                    }
-                }, 500); // after 0.5 sec
-
-                final Handler handler1 = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        fillResultWithCurrent(mTextView2.getId(), 2, mImageView2);
-
-
-                    }
-                }, 500); // after 0.5 sec
-
-
-                fillImgsWithCurrent();
-
-            }
+        if(null!=jsonCurrentPair) {
+            mCurrentPair = contentPresenter.getCurrentPair(jsonCurrentPair);
+            contentPresenter.fillPairOnView(jsonCurrentPair);
 
         }
 
-        if (getArguments()!=null && getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER)!=0) {
-            int currentPair = getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER);
-            if (null==mCurrentPair || mCurrentPair.getNumber() < currentPair){
-                mCurrentPair = new Pair();
-            }
-            mCurrentPair.setNumber(getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER));
-        }
+        fillNumberInCurrentPair();
 
         //Comprobamos botones de Anterior y Siguiente
-        showAntButton();
-        showContinueButton();
+       contentPresenter.controlButtonsAntSgte();
     }
+
 
 
     @Override
@@ -238,10 +186,8 @@ public class ContentFragment extends Fragment{
 
         //Serializamos nuestro currentPair
         if (null!=mCurrentPair && mCurrentPair.getState()!=Pair.State.EMPTY) {
-
-            final Gson gson = new Gson();
-            String jsonCurrentPair = gson.toJson(mCurrentPair).toString();
-
+            instancePresenter();
+            String jsonCurrentPair = contentPresenter.getJsonCurrentPair(mCurrentPair);
             outState.putString(CreationActivity.PARAM_CURRENT_PAIR, jsonCurrentPair);
 
         }
@@ -257,26 +203,156 @@ public class ContentFragment extends Fragment{
        // TabDatabase.addPair(this.getActivity(), mCurrentPair);
     }
 
+     /* Métodos Override de la view*/
+
+    @Override
+    public void fillFirstTab(){
+        fillHandlerWithTextAndHideImg(mTextView1.getId(), 1, mImageView1);
+
+    }
+    @Override
+    public void fillSecondTab(){
+        fillHandlerWithTextAndHideImg(mTextView2.getId(), 2, mImageView2);
+
+    }
+
+
+
+    @Override
+    public void fillImgsWithCurrent(){
+
+        if (mCurrentPair!=null && mCurrentPair.getTabs()[0]!=null) {
+
+            if (mCurrentPair.getTabs()[0].getType() == Tab.Type.PHOTO) {
+                mTextView1.setVisibility(View.GONE);
+                preDrawPhoto(mImageView1,1,mCurrentPair.getTabs()[0].getUri());
+            }
+        }
+
+        if (mCurrentPair!=null && mCurrentPair.getTabs()[1]!=null) {
+            mTextView2.setVisibility(View.GONE);
+            if (mCurrentPair.getTabs()[1].getType() == Tab.Type.PHOTO) {
+                preDrawPhoto(mImageView2, 2, mCurrentPair.getTabs()[1].getUri());
+
+            }
+        }
+
+    }
+
+    @Override
+    public  void showContinueButton(){
+        if (null!=mCurrentPair) {
+            validatePairState();
+            Button b = (Button) getActivity().findViewById(R.id.btnSgte);
+            if (mCurrentPair.getState().equals(Pair.State.COMPLETED) || mCurrentPair.getState().equals(Pair.State.SAVED)) {
+                b.setVisibility(View.VISIBLE);
+            } else {
+                b.setVisibility(View.GONE);
+            }
+        }
+
+    }
+
+    @Override
+    public void showAntButton(){
+        if (null!=mCurrentPair) {
+            Button btnAnt = (Button) getActivity().findViewById(R.id.btnAnt);
+            if (mCurrentPair.getNumber() > 1) {
+                btnAnt.setVisibility(View.VISIBLE);
+            } else {
+                btnAnt.setVisibility(View.GONE);
+            }
+        }
+    }
+
+
+
+    @Override
+    public void fillTextInTab(int idText, String val, int size){
+        final TextView mText = (TextView) mLayout.findViewById(idText);
+
+        mText.setText("");
+        mText.setText(val);
+        mText.setTextSize(size);
+
+    }
+
+    @Override
+    public void hideImageInTab(int idText, int idImg){
+        final TextView mText = (TextView) mLayout.findViewById(idText);
+        final ImageView imgToHide = (ImageView) mLayout.findViewById(idImg);
+
+        imgToHide.setVisibility(View.GONE);
+        imgToHide.setBackground(null);
+
+        mText.setVisibility(View.VISIBLE);
+    }
+
+
+
+
     /*Metodos internos para interaccion entre los objetos del fragment*/
 
+    public void instancePresenter(){
+        if (null==contentPresenter){
+            contentPresenter = new ContentPresenter();
+            contentPresenter.setView(ContentFragment.this);
+        }
+    }
+
+    private String getCurrentPairFromContext(Bundle savedInstanceState){
+        String jsonCurrentPair = null;
+
+        if (savedInstanceState!=null || existCurrentPairFromArguments()) {
+            if (null != getArguments() && null == savedInstanceState) {
+                savedInstanceState = getArguments();
+
+            }
+            if (savedInstanceState != null) {
+                jsonCurrentPair = savedInstanceState.getString(CreationActivity.PARAM_CURRENT_PAIR);
+            }
+
+        }
+
+        return jsonCurrentPair;
+    }
+
+    public void fillHandlerWithTextAndHideImg(int textId, int position, ImageView imageView){
+        final Handler handler = new Handler();
+        final int finalTextId = textId;
+        final int finalPosition = position;
+        final ImageView finalImageView = imageView;
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fillResultWithCurrent(finalTextId, finalPosition, finalImageView);
+
+            }
+        }, 500); // after 0.5 sec
+    }
+
+    public void fillNumberInCurrentPair(){
+        if (getArguments()!=null && getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER)!=0) {
+            int currentPair = getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER);
+            if (null==mCurrentPair || mCurrentPair.getNumber() < currentPair){
+                mCurrentPair = new Pair();
+            }
+            mCurrentPair.setNumber(getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER));
+        }
+    }
+
     private void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1){
-       final  ImageView imgToHide = imgToHide1;
-       final TextView mText = (TextView) mLayout.findViewById(idText);
+        final  ImageView imgToHide = imgToHide1;
+        final TextView mText = (TextView) mLayout.findViewById(idText);
         if (mCurrentPair!=null && mCurrentPair.getTabs()[tab - 1] != null) {
 
             if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.TEXT) {
                 //Ocultar foto de ese frame
-                 imgToHide.setVisibility(View.GONE);
-                 imgToHide.setBackground(null);
+                contentPresenter.hideImageInTab(idText,imgToHide.getId());
 
-                mText.setVisibility(View.VISIBLE);
-
-                if (null!= mCurrentPair.getTabs()[tab - 1].getText() && !mCurrentPair.getTabs()[tab - 1].getText().isEmpty()) {
-                    String val = mCurrentPair.getTabs()[tab - 1].getText();
-
-                    mText.setText("");
-                    mText.setText(val);
-                    mText.setTextSize(mCurrentPair.getTabs()[tab - 1].getSize() / 2);
+                if (contentPresenter.existTextToShowInView(mCurrentPair,tab)) {
+                    contentPresenter.fillTextInTab(mCurrentPair,tab, idText);
 
                 }
 
@@ -284,6 +360,7 @@ public class ContentFragment extends Fragment{
 
         }
     }
+
 
     private void preDrawPhoto(ImageView imageView, int currentTabTemp, String uri){
         final ImageView imageViewTmp = imageView;
@@ -314,56 +391,24 @@ public class ContentFragment extends Fragment{
         });
     }
 
-
-    private void fillImgsWithCurrent(){
-
-        if (mCurrentPair!=null && mCurrentPair.getTabs()[0]!=null) {
-
-            if (mCurrentPair.getTabs()[0].getType() == Tab.Type.PHOTO) {
-                mTextView1.setVisibility(View.GONE);
-                preDrawPhoto(mImageView1,1,mCurrentPair.getTabs()[0].getUri());
-             }
-        }
-
-        if (mCurrentPair!=null && mCurrentPair.getTabs()[1]!=null) {
-            mTextView2.setVisibility(View.GONE);
-            if (mCurrentPair.getTabs()[1].getType() == Tab.Type.PHOTO) {
-              preDrawPhoto(mImageView2, 2, mCurrentPair.getTabs()[1].getUri());
-
-            }
-        }
-
-    }
-
-    private Tab.Type getTypeById(int id){
-        switch (id){
-            case 0: return Tab.Type.TEXT;
-            case 1: return Tab.Type.PHOTO;
-            default:return Tab.Type.FIGURE;
-        }
-    }
-
     private boolean existCurrentPairFromArguments(){
         return getArguments()!=null && getArguments().getString(CreationActivity.PARAM_CURRENT_PAIR)!=null;
     }
 
-    public  void setListenerFrame(FrameLayout frame) {
+    public  void setListenerFrame(FrameLayout frame, int tab) {
 
+        contentPresenter.markCurrentView(frame,tab);
         frame.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 final CharSequence[] items = {"Un texto", "Una foto", "Una figura"};
                 //Actualizamos estado de la ficha, siempre que se clicke en el frame, pasa a IN PROGRESS
-                if (mCurrentPair==null){
-                    mCurrentPair = new Pair();
-                }
-                mCurrentPair.setState(Pair.State.IN_PROCESS);
+                contentPresenter.putTabIN_PROCESS(mCurrentPair);
 
-                //Determinamos en que ficha estamos basándonos Ficha 1/Ficha 2
-                LinearLayout parent = (LinearLayout) v.getParent();
-                TextView textTab = (TextView) parent.getChildAt(0);
-                mCurrentTab = (textTab.getText().toString().indexOf("1")>0?1:2);
+                //Determinamos en que ficha estamos basándonos en la marca puesta por el presenter
+                mCurrentTab = contentPresenter.getMarkOfCurrentView(v);
+
 
                 //Determinamos donde mostrar el resultado
                 FrameLayout thisFrame = (FrameLayout)mLayout.findViewById(v.getId());
@@ -381,7 +426,7 @@ public class ContentFragment extends Fragment{
                         if (null == mCurrentPair.getTabs()[mCurrentTab - 1]) {
                             mCurrentPair.getTabs()[mCurrentTab - 1] = new Tab();
                         }
-                        mCurrentPair.getTabs()[mCurrentTab - 1].setType(getTypeById(item));
+                        mCurrentPair.getTabs()[mCurrentTab - 1].setType(contentPresenter.getTypeById(item));
                         initChargeTab();
                     }
                 });
@@ -438,18 +483,9 @@ public class ContentFragment extends Fragment{
         showContinueButton();
     }
 
-    public  void showContinueButton(){
-        if (null!=mCurrentPair) {
-            validatePairState();
-            Button b = (Button) getActivity().findViewById(R.id.btnSgte);
-            if (mCurrentPair.getState().equals(Pair.State.COMPLETED) || mCurrentPair.getState().equals(Pair.State.SAVED)) {
-                b.setVisibility(View.VISIBLE);
-            } else {
-                b.setVisibility(View.GONE);
-            }
-        }
 
-    }
+
+
     private void openingCamera(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -524,31 +560,6 @@ public class ContentFragment extends Fragment{
         mCurrentPair.getTabs()[mCurrentTab - 1].setUri(mCurrentPhotoPath);
         showContinueButton();
 
-          /*   .centerCrop().into(new Target() {
-
-         @Override
-         public void onPrepareLoad(Drawable arg0) {
-             // TODO Auto-generated method stub
-             Toast.makeText(getActivity().getApplicationContext(), "Start Loading", Toast.LENGTH_SHORT).show();
-         }
-
-         @Override
-         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
-             // TODO Auto-generated method stub
-
-             ImageView imageView = (ImageView) mLayout.findViewById(mCurrentImgResultShow);
-             imageView.setBackground(new BitmapDrawable(getResources(), bitmap));
-
-             mCurrentPair.getTabs()[mCurrentTab - 1].setUri(mCurrentPhotoPath);
-
-         }
-
-         @Override
-         public void onBitmapFailed(Drawable arg0) {
-             // TODO Auto-generated method stub
-             Toast.makeText(getActivity().getApplicationContext(), "Failed Loading", Toast.LENGTH_SHORT).show();
-         }
-     });*/
     }
 
     public void setPicToBackground(){
@@ -600,16 +611,6 @@ public class ContentFragment extends Fragment{
         return valid;
     }
 
-    public void showAntButton(){
-        if (null!=mCurrentPair) {
-            Button btnAnt = (Button) getActivity().findViewById(R.id.btnAnt);
-            if (mCurrentPair.getNumber() > 1) {
-                btnAnt.setVisibility(View.VISIBLE);
-            } else {
-                btnAnt.setVisibility(View.GONE);
-            }
-        }
-    }
 
     public Pair getmCurrentPair() {
         return mCurrentPair;
