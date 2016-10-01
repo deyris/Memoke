@@ -200,7 +200,7 @@ public class ContentFragment extends Fragment implements ContentView{
     public void onDestroy(){
         super.onDestroy();
         //Salvamos en fichero
-       // TabDatabase.addPair(this.getActivity(), mCurrentPair);
+       // TabDatabase.addPair(this.getActivity(), idCurrentPair);
     }
 
      /* Métodos Override de la view*/

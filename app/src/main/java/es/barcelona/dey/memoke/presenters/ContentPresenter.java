@@ -16,19 +16,13 @@ import es.barcelona.dey.memoke.views.CreationView;
 /**
  * Created by deyris.drake on 26/9/16.
  */
-public class ContentPresenter implements Presenter<ContentView>{
+public class ContentPresenter extends ComunPresenter implements Presenter<ContentView>{
 
     ContentView contentView;
-    final Gson gson = new Gson();
 
 
-    public Pair getCurrentPair(String jsonCurrentPair) {
-        return gson.fromJson(jsonCurrentPair, Pair.class);
-    }
 
-    public String getJsonCurrentPair(Pair currentPair){
-        return gson.toJson(currentPair).toString();
-    }
+
 
     @Override
     public void setView(ContentView view) {

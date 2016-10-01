@@ -20,11 +20,11 @@ import es.barcelona.dey.memoke.views.CreationView;
 /**
  * Created by deyris.drake on 18/9/16.
  */
-public class CreationPresenter implements Presenter<CreationView>{
+public class CreationPresenter extends ComunPresenter implements Presenter<CreationView>{
 
     CreationView creationView;
     CreationInteractor creationInteractor;
-    final Gson gson = new Gson();
+
     int mCurrentPair;
     Board mBoard;
 
