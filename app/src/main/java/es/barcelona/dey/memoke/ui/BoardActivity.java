@@ -2,6 +2,7 @@ package es.barcelona.dey.memoke.ui;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -28,12 +29,15 @@ import es.barcelona.dey.memoke.beans.Game;
 import es.barcelona.dey.memoke.beans.Play;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.beans.TabForGame;
+import es.barcelona.dey.memoke.presenters.BoardPresenter;
+import es.barcelona.dey.memoke.presenters.CreationPresenter;
 import es.barcelona.dey.memoke.services.PlayService;
+import es.barcelona.dey.memoke.views.BoardView;
 
 /**
  * Created by deyris.drake on 13/2/16.
  */
-public class BoardActivity extends AppCompatActivity {
+public class BoardActivity extends AppCompatActivity implements BoardView{
 
 
     Game game = new Game();
@@ -41,26 +45,22 @@ public class BoardActivity extends AppCompatActivity {
     PlayService playService = new PlayService();
     static HashMap<Integer,FrameLayout> currentFrame = new HashMap<Integer,FrameLayout>();
     static  ArrayList clickedPositions;
+    BoardPresenter boardPresenter;
 
-    private void doLock(boolean locked) {
-        if (locked) {
-            int o = getResources().getConfiguration().orientation;
-            if (o == Configuration.ORIENTATION_LANDSCAPE)
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            else if (o == Configuration.ORIENTATION_PORTRAIT)
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-        else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        }
+    @Override
+    public Context getContext(){
+        return this;
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
-        doLock(true);
+
+        boardPresenter = new BoardPresenter();
+        boardPresenter.setView(this);
+
+        boardPresenter.doLock(true,this);
 
         //Recuperamos tablero actual
         Board currentBoard = null;
