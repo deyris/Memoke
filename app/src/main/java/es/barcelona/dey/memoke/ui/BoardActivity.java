@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import es.barcelona.dey.memoke.beans.Play;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.beans.TabForGame;
 import es.barcelona.dey.memoke.presenters.BoardPresenter;
-import es.barcelona.dey.memoke.presenters.CreationPresenter;
 import es.barcelona.dey.memoke.services.PlayService;
 import es.barcelona.dey.memoke.views.BoardView;
 
@@ -40,11 +38,10 @@ import es.barcelona.dey.memoke.views.BoardView;
 public class BoardActivity extends AppCompatActivity implements BoardView{
 
 
-    Game game = new Game();
+    //static Game game = new Game();
     static  TabForGame[] tabsForGame = new TabForGame[]{};
-    PlayService playService = new PlayService();
     static HashMap<Integer,FrameLayout> currentFrame = new HashMap<Integer,FrameLayout>();
-    static  ArrayList clickedPositions;
+    //static  ArrayList clickedPositions;
     BoardPresenter boardPresenter;
 
     @Override
@@ -68,13 +65,15 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
 
 
         if (bundle!=null && null!=bundle.getString(CreationActivity.PARAM_CURRENT_BOARD)) {
-            String jsonCurrentPair = bundle.getString(CreationActivity.PARAM_CURRENT_BOARD);
-            final Gson gson = new Gson();
-            currentBoard = gson.fromJson(jsonCurrentPair,Board.class);
+            String jsonCurrenBoard = bundle.getString(CreationActivity.PARAM_CURRENT_BOARD);
+
+            currentBoard = boardPresenter.getCurrentBoard(jsonCurrenBoard);
 
         }
         if (null!=currentBoard){
-           inicialiceGame(currentBoard);
+           boardPresenter.inicialiceGame(currentBoard);
+           tabsForGame = boardPresenter.getGame().getTabForGames();
+            //clickedPositions = boardPresenter.inicialiceClickedPositions(clickedPositions);
         }
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
@@ -97,35 +96,34 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        finaliceLastPlay();
+                        boardPresenter.finaliceLastPlay();
 
                     }
                 };
 
                 if (tabsForGame[pos].isShowingBack()) {
                     handler.removeCallbacks(runnable);
-                     setAnimationToFrame((FrameLayout) v, position);
-                    removeTabFromPlay(position);
+                    setAnimationToFrame((FrameLayout) v, position);
+                    boardPresenter.removeTabFromPlay(position);
                     return;
                 }
-                clickedPositions.add(pos);
+                boardPresenter.getClickedPositions().add(pos);
 
-                // int lastPlay = lastPlayIsFinished();
                 FrameLayout frameLayout = (FrameLayout) v;
 
                 tabsForGame[position].setPositionInBoard(position);
 
                 currentFrame.put(position, frameLayout);
 
-                if (clickedPositions.size() % 2 != 0 && clickedPositions.size() > 1) { //Si es impar las analizo ya
+                if (boardPresenter.getClickedPositions().size() % 2 != 0 && boardPresenter.getClickedPositions().size() > 1) { //Si es impar las analizo ya
 
-                    finaliceLastPlay();
-                    actualicePlays(pos);
+                    boardPresenter.finaliceLastPlay();
+                    boardPresenter.actualicePlays(pos);
 
                     setAnimationToFrame(frameLayout, position);
 
                 } else {
-                    actualicePlays(pos);
+                    boardPresenter.actualicePlays(pos);
 
                     setAnimationToFrame(frameLayout, position);
                     handler.postDelayed(runnable, 3000); // after 3 sec
@@ -139,57 +137,15 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
 
     }
 
-    private void removeTabFromPlay(int position){
-        Play lastPlay = getLastPlayNotFinished(false);
-        if (position < clickedPositions.size()) {
-            clickedPositions.remove(position);
-        }
-
-        if (null!=lastPlay) {
-
-            if (lastPlay.getMovedTabs()[0].getPositionInBoard() == position) {
-                lastPlay.getMovedTabs()[0]=null;
-                if (lastPlay.isEmpty()){
-                    removeLastPlayFromGame();
-                }
-                return;
-            }
-            if (lastPlay.getMovedTabs()[1].getPositionInBoard() == position) {
-                lastPlay.getMovedTabs()[1] = null;
-                if (lastPlay.isEmpty()){
-                    removeLastPlayFromGame();                }
-                return;
-            }
-
-        }
-
+    @Override
+    public void warnYouWin(){
+        Toast.makeText(getApplicationContext(),
+                "You won! But..what have you learned?", Toast.LENGTH_SHORT).show();
     }
 
-    public Play getLastPlayNotFinished(boolean needCompleted){
-        int totalPlays = (null!=this.game.getPlays())?this.game.getPlays().size():0;
-        Play lastPlay = null;
-        if (totalPlays > 0) {
-            for (int i=totalPlays-1;i>=0;i--){
-                lastPlay = (Play) this.game.getPlays().get(i);
-                if (lastPlay.isFinished()){
-                    return null;
-                }else{
-                    if (needCompleted) {
-                        if (lastPlay.isCompleted() && !lastPlay.isFinished()) {
-                            return lastPlay;
-                        } else {
-                            lastPlay = null;
-                        }
-                    }else{
-                        return  lastPlay;
-                    }
-                }
-            }
 
-        }
 
-        return lastPlay;
-    }
+
 
 
     public void setAnimationToFrame(FrameLayout frame, int position){
@@ -255,41 +211,18 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
 
     }
 
-    public void inicialiceGame(Board currentBoard){
+   /* public void inicialiceGame(Board currentBoard){
         this.game = new Game();
         tabsForGame = playService.getTabsForPlay(currentBoard);
         game.setTabForGames(tabsForGame);
         game.setTitle(currentBoard.getTitle());
         clickedPositions = new ArrayList();
-    }
+    }*/
 
-    public void actualicePlays(int position){
-        TabForGame tab = tabsForGame[position];
-        int totalPlays = (null!=this.game.getPlays())?this.game.getPlays().size():0;
-        Play lastPlay = null;
-        if (totalPlays > 0) {
-            lastPlay = (Play) this.game.getPlays().get(totalPlays - 1);
-        }
-        if (lastPlay==null || lastPlay.isFinished()){
-            //Se abre una nueva jugada
-            Play newPlay = new Play();
-            newPlay.getMovedTabs()[0]=tab;
-            if (lastPlay==null){
-                this.game.setPlays(new ArrayList<Play>());
-            }
-            this.game.getPlays().add(newPlay);
-        }else{
-            //Guardo la ficha movida
-            lastPlay.getMovedTabs()[1]=tab;
 
-        }
-    }
 
-    private void removeLastPlayFromGame(){
-        this.game.getPlays().remove(this.game.getPlays().size()-1);
-    }
 
-    public void finaliceLastPlay(){
+   /* public void finaliceLastPlay(){
         Play currentPlay = getLastPlayNotFinished(true);
         if (null==currentPlay || currentPlay.isFinished() || !currentPlay.isCompleted())    {
             return;
@@ -322,8 +255,9 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
         //Se actualiza finished en Play
         currentPlay.setFinished(true);
 
-    }
+    }*/
 
+    @Override
     public void turnTabForGame(Play currentPlay){
 
         //for(TabForGame tab:currentPlay.getMovedTabs()) {
@@ -336,6 +270,7 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
 
     }
 
+    @Override
     public void disappearsTabForGame(Play currentPlay){
 
         FrameLayout frameLayout0 = currentFrame.get(currentPlay.getMovedTabs()[0].getPositionInBoard());
