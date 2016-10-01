@@ -1,6 +1,7 @@
 package es.barcelona.dey.memoke.ui;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -221,7 +222,9 @@ public class ContentFragment extends Fragment implements ContentView{
     @Override
     public void fillImgsWithCurrent(){
 
-        if (mCurrentPair!=null && mCurrentPair.getTabs()[0]!=null) {
+        fillImageWithTab(1,mTextView1,mImageView1);
+        fillImageWithTab(2,mTextView2,mImageView2);
+        /*if (mCurrentPair!=null && mCurrentPair.getTabs()[0]!=null) {
 
             if (mCurrentPair.getTabs()[0].getType() == Tab.Type.PHOTO) {
                 mTextView1.setVisibility(View.GONE);
@@ -235,7 +238,7 @@ public class ContentFragment extends Fragment implements ContentView{
                 preDrawPhoto(mImageView2, 2, mCurrentPair.getTabs()[1].getUri());
 
             }
-        }
+        }*/
 
     }
 
@@ -361,6 +364,15 @@ public class ContentFragment extends Fragment implements ContentView{
         }
     }
 
+    private void fillImageWithTab(int tab, TextView textview, ImageView imageView){
+        if (mCurrentPair!=null && mCurrentPair.getTabs()[tab - 1]!=null) {
+
+            if (mCurrentPair.getTabs()[tab - 1].getType() == Tab.Type.PHOTO) {
+                textview.setVisibility(View.GONE);
+                preDrawPhoto(imageView,tab,mCurrentPair.getTabs()[tab - 1].getUri());
+            }
+        }
+    }
 
     private void preDrawPhoto(ImageView imageView, int currentTabTemp, String uri){
         final ImageView imageViewTmp = imageView;
@@ -438,6 +450,13 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
+    private void initChargeTab(){
+
+        Dialog dialog = contentPresenter.showDialogFromFrame(this.mCurrentPair,mCurrentTab-1,(CreationActivity) getActivity());
+        dialog.show();
+
+    }
+
     public void receivingFromDialog(int data){
         if (data==PHOTO_FROM_CAMERA){
             openingCamera();
@@ -447,23 +466,7 @@ public class ContentFragment extends Fragment implements ContentView{
         }
     }
 
-    private void initChargeTab(){
-        if (this.mCurrentPair.getTabs()[mCurrentTab -1].getType()==Tab.Type.TEXT) {
 
-            DialogText textDialog = new DialogText((CreationActivity) getActivity());
-            if (null != this.mCurrentPair.getTabs()[mCurrentTab -1].getText()){
-                textDialog.setTextFromFragment(this.mCurrentPair.getTabs()[mCurrentTab - 1].getText());
-                textDialog.setTextSizeFromFragment(this.mCurrentPair.getTabs()[mCurrentTab -1].getSize());
-
-            }
-
-            textDialog.show();
-        }
-        if (this.mCurrentPair.getTabs()[mCurrentTab -1].getType()==Tab.Type.PHOTO) {
-            DialogPhoto cdd = new DialogPhoto((CreationActivity) getActivity());
-            cdd.show();
-        }
-    }
 
     public void receivingFromDialog(EditText data){
 
@@ -471,19 +474,19 @@ public class ContentFragment extends Fragment implements ContentView{
         imageView.setBackground(null);
         imageView.setVisibility(View.GONE);
 
-
+        //Actualizamos textView
         TextView textView = (TextView)mLayout.findViewById(mCurrentTextResultShow);
         textView.setVisibility(View.VISIBLE);
         textView.setText("");
         textView.setText(data.getText());
         textView.setTextSize(data.getTextSize() / 2);
 
+        //Actualizamos currentPair
         mCurrentPair.getTabs()[mCurrentTab - 1].setText(data.getText().toString());
         mCurrentPair.getTabs()[mCurrentTab - 1].setSize((int) data.getTextSize());
+
         showContinueButton();
     }
-
-
 
 
     private void openingCamera(){
@@ -492,13 +495,18 @@ public class ContentFragment extends Fragment implements ContentView{
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = null;
-            try {
+            File photoFile = contentPresenter.createFileFromPhoto();
+
+            // Save a file: path for use with ACTION_VIEW intents
+            mCurrentPhotoPath = "file:" + photoFile.getAbsolutePath();
+
+
+           /* try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
 
-            }
+            }*/
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -516,24 +524,7 @@ public class ContentFragment extends Fragment implements ContentView{
         startActivityForResult(intent, REQUEST_SELECT_PICTURE);
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
 
-
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        return image;
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

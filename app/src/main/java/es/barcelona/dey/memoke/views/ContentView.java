@@ -4,6 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Created by deyris.drake on 26/9/16.
  */
