@@ -61,5 +61,9 @@ public class Pair {
         this.simetric = simetric;
     }
 
+    public boolean isReadyToBePassed(){
+        return this.getState().equals(Pair.State.COMPLETED) || this.getState().equals(Pair.State.SAVED);
+    }
+
 
 }

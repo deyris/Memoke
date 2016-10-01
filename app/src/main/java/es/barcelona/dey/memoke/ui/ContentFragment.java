@@ -224,30 +224,15 @@ public class ContentFragment extends Fragment implements ContentView{
 
         fillImageWithTab(1,mTextView1,mImageView1);
         fillImageWithTab(2,mTextView2,mImageView2);
-        /*if (mCurrentPair!=null && mCurrentPair.getTabs()[0]!=null) {
-
-            if (mCurrentPair.getTabs()[0].getType() == Tab.Type.PHOTO) {
-                mTextView1.setVisibility(View.GONE);
-                preDrawPhoto(mImageView1,1,mCurrentPair.getTabs()[0].getUri());
-            }
-        }
-
-        if (mCurrentPair!=null && mCurrentPair.getTabs()[1]!=null) {
-            mTextView2.setVisibility(View.GONE);
-            if (mCurrentPair.getTabs()[1].getType() == Tab.Type.PHOTO) {
-                preDrawPhoto(mImageView2, 2, mCurrentPair.getTabs()[1].getUri());
-
-            }
-        }*/
 
     }
 
     @Override
     public  void showContinueButton(){
         if (null!=mCurrentPair) {
-            validatePairState();
+            contentPresenter.validatePairStateComplete(mCurrentPair);
             Button b = (Button) getActivity().findViewById(R.id.btnSgte);
-            if (mCurrentPair.getState().equals(Pair.State.COMPLETED) || mCurrentPair.getState().equals(Pair.State.SAVED)) {
+            if (mCurrentPair.isReadyToBePassed()) {
                 b.setVisibility(View.VISIBLE);
             } else {
                 b.setVisibility(View.GONE);
@@ -267,8 +252,6 @@ public class ContentFragment extends Fragment implements ContentView{
             }
         }
     }
-
-
 
     @Override
     public void fillTextInTab(int idText, String val, int size){
@@ -291,10 +274,25 @@ public class ContentFragment extends Fragment implements ContentView{
         mText.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode==REQUEST_IMAGE_CAPTURE){
+            setPicToBackground();
+        }else if (requestCode==REQUEST_SELECT_PICTURE){
+            if (null!=data && null!=data.getData()) {
+                Uri selectedImage = data.getData();
+                mCurrentPhotoPath = selectedImage.toString();
+                setPicToBackground();
+            }
+        }
 
 
+    }
 
-    /*Metodos internos para interaccion entre los objetos del fragment*/
+
+    /*  Métodos internos para interaccion entre los objetos del fragment   */
 
     public void instancePresenter(){
         if (null==contentPresenter){
@@ -466,8 +464,6 @@ public class ContentFragment extends Fragment implements ContentView{
         }
     }
 
-
-
     public void receivingFromDialog(EditText data){
 
         ImageView imageView = (ImageView)mLayout.findViewById(mCurrentImgResultShow);
@@ -501,12 +497,6 @@ public class ContentFragment extends Fragment implements ContentView{
             mCurrentPhotoPath = "file:" + photoFile.getAbsolutePath();
 
 
-           /* try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-
-            }*/
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -524,25 +514,6 @@ public class ContentFragment extends Fragment implements ContentView{
         startActivityForResult(intent, REQUEST_SELECT_PICTURE);
     }
 
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode==REQUEST_IMAGE_CAPTURE){
-            setPicToBackground();
-        }else if (requestCode==REQUEST_SELECT_PICTURE){
-            if (null!=data && null!=data.getData()) {
-                Uri selectedImage = data.getData();
-                mCurrentPhotoPath = selectedImage.toString();
-                setPicToBackground();
-            }
-        }
-
-
-    }
-
     public void setPicToImg(ImageView img, int height, int width){
 
      Picasso.with(getActivity()).load(mCurrentPhotoPath)
@@ -555,7 +526,6 @@ public class ContentFragment extends Fragment implements ContentView{
 
     public void setPicToBackground(){
 
-
         TextView textResult = (TextView)mLayout.findViewById(mCurrentTextResultShow);
         textResult.setText("");
         textResult.setVisibility(View.GONE);
@@ -564,42 +534,6 @@ public class ContentFragment extends Fragment implements ContentView{
 
         preDrawPhoto(imageView, mCurrentTab, mCurrentPhotoPath);
 
-
-    }
-
-    private void validatePairState(){
-        boolean valid = false;
-        if (null!=mCurrentPair && !mCurrentPair.getState().equals(Pair.State.EMPTY)) {
-            if (mCurrentPair.getState() != Pair.State.SAVED &&
-                    (validTab(1) && validTab(2))) {
-                mCurrentPair.setState(Pair.State.COMPLETED);
-            }
-        }
-    }
-
-    private boolean validTab(int tab){
-        boolean valid = false;
-        if (mCurrentPair!=null){
-            if (mCurrentPair.getTabs()[tab -1]!=null){
-                if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.TEXT){
-                    if (mCurrentPair.getTabs()[tab -1].getText()!=null && !mCurrentPair.getTabs()[tab -1].getText().isEmpty()){
-                        valid = true;
-                    }
-                }
-                if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.PHOTO){
-                    if (null!= mCurrentPair.getTabs()[tab -1].getUri() && !mCurrentPair.getTabs()[tab -1].getUri().isEmpty()){
-                        valid = true;
-                    }
-                }
-                if(!valid){
-                    mCurrentPair.getTabs()[tab -1].setState(Tab.State.IN_PROCESS);
-                }
-            }
-
-        }
-
-
-        return valid;
     }
 
 

@@ -54,6 +54,40 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
     }
 
 
+    public boolean validTab(Pair mCurrentPair, int tab){
+        boolean valid = false;
+        if (mCurrentPair!=null){
+            if (mCurrentPair.getTabs()[tab -1]!=null){
+                if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.TEXT){
+                    if (mCurrentPair.getTabs()[tab -1].getText()!=null && !mCurrentPair.getTabs()[tab -1].getText().isEmpty()){
+                        valid = true;
+                    }
+                }
+                if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.PHOTO){
+                    if (null!= mCurrentPair.getTabs()[tab -1].getUri() && !mCurrentPair.getTabs()[tab -1].getUri().isEmpty()){
+                        valid = true;
+                    }
+                }
+                if(!valid){
+                    mCurrentPair.getTabs()[tab -1].setState(Tab.State.IN_PROCESS);
+                }
+            }
+
+        }
+
+
+        return valid;
+    }
+
+    public  void validatePairStateComplete(Pair mCurrentPair){
+        if (null!=mCurrentPair && !mCurrentPair.getState().equals(Pair.State.EMPTY)) {
+            if (mCurrentPair.getState() != Pair.State.SAVED &&
+                    (validTab(mCurrentPair,1) && validTab(mCurrentPair,2))) {
+                mCurrentPair.setState(Pair.State.COMPLETED);
+            }
+        }
+    }
+
     public Tab.Type getTypeById(int id){
         switch (id){
             case 0: return Tab.Type.TEXT;
