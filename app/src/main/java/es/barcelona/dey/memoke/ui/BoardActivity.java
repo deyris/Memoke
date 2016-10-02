@@ -16,20 +16,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Board;
-import es.barcelona.dey.memoke.beans.Game;
-import es.barcelona.dey.memoke.beans.Play;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.beans.TabForGame;
 import es.barcelona.dey.memoke.presenters.BoardPresenter;
-import es.barcelona.dey.memoke.services.PlayService;
 import es.barcelona.dey.memoke.views.BoardView;
 
 /**
@@ -37,11 +29,6 @@ import es.barcelona.dey.memoke.views.BoardView;
  */
 public class BoardActivity extends AppCompatActivity implements BoardView{
 
-
-    //static Game game = new Game();
-    //static  TabForGame[] tabsForGame = new TabForGame[]{};
-    //static HashMap<Integer,FrameLayout> currentFrame = new HashMap<Integer,FrameLayout>();
-    //static  ArrayList clickedPositions;
     BoardPresenter boardPresenter;
 
     @Override
@@ -63,17 +50,16 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
         Board currentBoard = null;
         Bundle bundle = getIntent().getExtras();
 
-
         if (bundle!=null && null!=bundle.getString(CreationActivity.PARAM_CURRENT_BOARD)) {
-            String jsonCurrenBoard = bundle.getString(CreationActivity.PARAM_CURRENT_BOARD);
 
+            String jsonCurrenBoard = bundle.getString(CreationActivity.PARAM_CURRENT_BOARD);
             currentBoard = boardPresenter.getCurrentBoard(jsonCurrenBoard);
 
         }
         if (null!=currentBoard){
+
            boardPresenter.inicialiceGame(currentBoard);
-          // tabsForGame = boardPresenter.getGame().getTabForGames();
-            //clickedPositions = boardPresenter.inicialiceClickedPositions(clickedPositions);
+
         }
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
@@ -93,7 +79,6 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
                boardPresenter.manageClickOnFrame(v,position);
 
             }
-
 
         });
 
@@ -171,27 +156,10 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
     }
 
 
-
     @Override
-    public void turnTabForGame(Play currentPlay, FrameLayout frameLayout, int positionInBoard){
+    public void disappearsTabForGame(FrameLayout frameLayout){
+          frameLayout.setVisibility(View.GONE);
 
-        //for(TabForGame tab:currentPlay.getMovedTabs()) {
-            //FrameLayout frameLayout = boardPresenter.getCurrentFrame().get(currentPlay.getMovedTabs()[play].getPositionInBoard());
-            setAnimationToFrame(frameLayout, positionInBoard);
-        //FrameLayout frameLayout1 = currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard());
-       // setAnimationToFrame(frameLayout1, currentPlay.getMovedTabs()[1].getPositionInBoard());
-       // }
-
-
-    }
-
-    @Override
-    public void disappearsTabForGame(Play currentPlay, FrameLayout frameLayout){
-
-       // FrameLayout frameLayout = currentFrame.get(currentPlay.getMovedTabs()[play].getPositionInBoard());
-        frameLayout.setVisibility(View.GONE);
-       // FrameLayout frameLayout1 = currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard());
-        //frameLayout1.setVisibility(View.GONE);
     }
 
 }

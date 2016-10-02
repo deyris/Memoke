@@ -12,11 +12,10 @@ public interface BoardView {
 
     Context getContext();
 
-    void disappearsTabForGame (Play currentPlay, FrameLayout frameLayout);
+    void disappearsTabForGame (FrameLayout frameLayout);
 
     void warnYouWin();
 
-    void turnTabForGame(Play currentPlay, FrameLayout frameLayout, int positionInBoard);
 
     void setAnimationToFrame(FrameLayout frame, int position);
 }

@@ -80,7 +80,6 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
               creationPresenter.updateOrAddBoard(mBoard);
           }
 
-          //List<Board> testBoard = BoardDatabase.getBoards(getBaseContext());
       }
 
     @Override
@@ -142,10 +141,6 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         btnAnt.setVisibility(View.GONE);
         setListenerBtnAnterior();
 
-
-       // creationPresenter.desapearButtons((Button)findViewById(R.id.btnAnt),(Button) findViewById(R.id.btnSgte));
-
-
         }
 
     @Override
@@ -168,17 +163,6 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
                 return false;
         }
     }
-
-
-
-    private void fillBoard(String title)       {
-        mBoard =  BoardDatabase.getBoard(getBaseContext(), title);
-
-     if (mBoard==null){
-         mBoard = new Board();
-     }
-    }
-
 
     private boolean fragmentAlreadyRestoredFromSavedState(String tag) {
         return (getFragmentManager().findFragmentByTag(tag) != null ? true : false);
@@ -211,7 +195,6 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
                 Bundle bundleSgte = new Bundle();
                 if (creationPresenter.pairNotSavedYet(pair)) {
 
-                    //creationPresenter.updateNumberInPair(pair);
                     pair.setNumber(idCurrentPair);
 
                     //creationPresenter.inicializeBoardIfPairsAreNull(mBoard);

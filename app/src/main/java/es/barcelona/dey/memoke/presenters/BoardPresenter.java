@@ -6,11 +6,8 @@ import android.content.res.Configuration;
 import android.os.Handler;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Game;
 import es.barcelona.dey.memoke.beans.Play;
@@ -64,11 +61,6 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
         this.clickedPositions = new ArrayList();
     }
 
-    public ArrayList inicialiceClickedPositions(ArrayList clickedPositions){
-
-        this.clickedPositions = new ArrayList();
-        return new ArrayList();
-    }
 
     public void finaliceLastPlay(){
         Play currentPlay = getLastPlayNotFinished(true);
@@ -87,8 +79,9 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
             tab1.setOk(true);
             tab2.setOk(true);
             //Desaparecen la fichas
-            boardView.disappearsTabForGame(currentPlay,currentFrame.get(currentPlay.getMovedTabs()[0].getPositionInBoard()));
-            boardView.disappearsTabForGame(currentPlay,currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard()));
+            boardView.disappearsTabForGame(currentFrame.get(currentPlay.getMovedTabs()[0].getPositionInBoard()));
+            boardView.disappearsTabForGame(currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard()));
+
             if (game.getTotalSuccess()==game.getTabForGames().length/2){
                 boardView.warnYouWin();
             }
@@ -97,8 +90,8 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
             //Fail
             game.setTotalFailure(game.getTotalFailure() + 1);
             //Se giran las fichas
-            boardView.turnTabForGame(currentPlay,currentFrame.get(currentPlay.getMovedTabs()[0].getPositionInBoard()),currentPlay.getMovedTabs()[0].getPositionInBoard());
-            boardView.turnTabForGame(currentPlay,currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard()),currentPlay.getMovedTabs()[1].getPositionInBoard());
+            boardView.setAnimationToFrame(currentFrame.get(currentPlay.getMovedTabs()[0].getPositionInBoard()),currentPlay.getMovedTabs()[0].getPositionInBoard());
+            boardView.setAnimationToFrame(currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard()),currentPlay.getMovedTabs()[1].getPositionInBoard());
         }
 
         //Se actualiza finished en Play
@@ -153,8 +146,6 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
 
         }
     }
-
-
 
     public void removeTabFromPlay(int position){
         Play lastPlay = getLastPlayNotFinished(false);
