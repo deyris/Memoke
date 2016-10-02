@@ -3,6 +3,8 @@ package es.barcelona.dey.memoke.presenters;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.os.Handler;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -55,7 +57,7 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
 
     public void inicialiceGame(Board currentBoard){
         Game game = new Game();
-        TabForGame[] tabsForGame = boardInteractor.buildGameFromBoard(currentBoard);
+        tabsForGame = boardInteractor.buildGameFromBoard(currentBoard);
         game.setTabForGames(tabsForGame);
         game.setTitle(currentBoard.getTitle());
         this.game = game;
@@ -85,7 +87,8 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
             tab1.setOk(true);
             tab2.setOk(true);
             //Desaparecen la fichas
-            boardView.disappearsTabForGame(currentPlay);
+            boardView.disappearsTabForGame(currentPlay,currentFrame.get(currentPlay.getMovedTabs()[0].getPositionInBoard()));
+            boardView.disappearsTabForGame(currentPlay,currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard()));
             if (game.getTotalSuccess()==game.getTabForGames().length/2){
                 boardView.warnYouWin();
             }
@@ -94,7 +97,8 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
             //Fail
             game.setTotalFailure(game.getTotalFailure() + 1);
             //Se giran las fichas
-            boardView.turnTabForGame(currentPlay);
+            boardView.turnTabForGame(currentPlay,currentFrame.get(currentPlay.getMovedTabs()[0].getPositionInBoard()),currentPlay.getMovedTabs()[0].getPositionInBoard());
+            boardView.turnTabForGame(currentPlay,currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard()),currentPlay.getMovedTabs()[1].getPositionInBoard());
         }
 
         //Se actualiza finished en Play
@@ -183,7 +187,47 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
     }
 
 
+    public void manageClickOnFrame(View v, int position){
+        final Handler handler = new Handler();
+        final int pos = position;
+        boolean itsTheSame = false;
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                finaliceLastPlay();
 
+            }
+        };
+
+        if (tabsForGame[pos].isShowingBack()) {
+            handler.removeCallbacks(runnable);
+            boardView.setAnimationToFrame((FrameLayout) v, position);
+            removeTabFromPlay(position);
+            return;
+        }
+        getClickedPositions().add(pos);
+
+        FrameLayout frameLayout = (FrameLayout) v;
+
+        tabsForGame[position].setPositionInBoard(position);
+
+        currentFrame.put(position, frameLayout);
+        boolean isImparAndNotOne = this.clickedPositions.size() % 2 != 0 && this.clickedPositions.size() > 1;
+        if (isImparAndNotOne) { //Si es impar las analizo ya
+
+            finaliceLastPlay();
+            actualicePlays(pos);
+
+            boardView.setAnimationToFrame(frameLayout, position);
+
+        } else {
+            actualicePlays(pos);
+
+            boardView.setAnimationToFrame(frameLayout, position);
+            handler.postDelayed(runnable, 3000); // after 3 sec
+
+        }
+    }
 
     public Game getGame() {
         return game;
@@ -199,5 +243,21 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
 
     public void setClickedPositions(ArrayList clickedPositions) {
         this.clickedPositions = clickedPositions;
+    }
+
+    public TabForGame[] getTabsForGame() {
+        return tabsForGame;
+    }
+
+    public void setTabsForGame(TabForGame[] tabsForGame) {
+        this.tabsForGame = tabsForGame;
+    }
+
+    public HashMap<Integer, FrameLayout> getCurrentFrame() {
+        return currentFrame;
+    }
+
+    public void setCurrentFrame(HashMap<Integer, FrameLayout> currentFrame) {
+        this.currentFrame = currentFrame;
     }
 }

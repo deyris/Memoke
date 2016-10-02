@@ -39,8 +39,8 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
 
 
     //static Game game = new Game();
-    static  TabForGame[] tabsForGame = new TabForGame[]{};
-    static HashMap<Integer,FrameLayout> currentFrame = new HashMap<Integer,FrameLayout>();
+    //static  TabForGame[] tabsForGame = new TabForGame[]{};
+    //static HashMap<Integer,FrameLayout> currentFrame = new HashMap<Integer,FrameLayout>();
     //static  ArrayList clickedPositions;
     BoardPresenter boardPresenter;
 
@@ -72,14 +72,14 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
         }
         if (null!=currentBoard){
            boardPresenter.inicialiceGame(currentBoard);
-           tabsForGame = boardPresenter.getGame().getTabForGames();
+          // tabsForGame = boardPresenter.getGame().getTabForGames();
             //clickedPositions = boardPresenter.inicialiceClickedPositions(clickedPositions);
         }
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
 
         TabAdapter adapter = new TabAdapter(this,
-                tabsForGame);
+                boardPresenter.getTabsForGame());
 
         gridview.setAdapter(adapter);
 
@@ -90,45 +90,7 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
-                final Handler handler = new Handler();
-                final int pos = position;
-                boolean itsTheSame = false;
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        boardPresenter.finaliceLastPlay();
-
-                    }
-                };
-
-                if (tabsForGame[pos].isShowingBack()) {
-                    handler.removeCallbacks(runnable);
-                    setAnimationToFrame((FrameLayout) v, position);
-                    boardPresenter.removeTabFromPlay(position);
-                    return;
-                }
-                boardPresenter.getClickedPositions().add(pos);
-
-                FrameLayout frameLayout = (FrameLayout) v;
-
-                tabsForGame[position].setPositionInBoard(position);
-
-                currentFrame.put(position, frameLayout);
-
-                if (boardPresenter.getClickedPositions().size() % 2 != 0 && boardPresenter.getClickedPositions().size() > 1) { //Si es impar las analizo ya
-
-                    boardPresenter.finaliceLastPlay();
-                    boardPresenter.actualicePlays(pos);
-
-                    setAnimationToFrame(frameLayout, position);
-
-                } else {
-                    boardPresenter.actualicePlays(pos);
-
-                    setAnimationToFrame(frameLayout, position);
-                    handler.postDelayed(runnable, 3000); // after 3 sec
-
-                }
+               boardPresenter.manageClickOnFrame(v,position);
 
             }
 
@@ -143,11 +105,7 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
                 "You won! But..what have you learned?", Toast.LENGTH_SHORT).show();
     }
 
-
-
-
-
-
+    @Override
     public void setAnimationToFrame(FrameLayout frame, int position){
 
 
@@ -178,20 +136,21 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
         rightIn.setTarget(cardFront);
         showBackAnim.playTogether(leftOut, rightIn);
 
-        if (tabsForGame[position].isShowingBack()) {
+        TabForGame tab = boardPresenter.getTabsForGame()[position];
+        if (tab.isShowingBack()) {
             TextView textView = (TextView) cardFront.getChildAt(0);
             ImageView imageView = (ImageView)cardFront.getChildAt(1);
 
-            if (tabsForGame[position].getType().equals(Tab.Type.TEXT)){
+            if (tab.getType().equals(Tab.Type.TEXT)){
                 imageView.setVisibility(View.GONE);
                 textView.setVisibility(View.VISIBLE);
-                textView.setText(tabsForGame[position].getText());
-                textView.setTextSize(tabsForGame[position].getSize()/2);
+                textView.setText(tab.getText());
+                textView.setTextSize(tab.getSize()/2);
             }
-            if (tabsForGame[position].getType().equals(Tab.Type.PHOTO)){
+            if (tab.getType().equals(Tab.Type.PHOTO)){
                 textView.setVisibility(View.GONE);
                 imageView.setVisibility(View.VISIBLE);
-                Picasso.with(this).load(tabsForGame[position].getUri())
+                Picasso.with(this).load(tab.getUri())
                         .resize(180, 180)
                         .centerCrop()
                         .into(imageView);
@@ -200,83 +159,39 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
             
             Toast.makeText(getApplicationContext(),
                     new Integer(position).toString(), Toast.LENGTH_SHORT).show();
-            tabsForGame[position].setShowingBack(false);
+            tab.setShowingBack(false);
 
         } else {
             cardFront.setVisibility(View.VISIBLE);
             showBackAnim.start();
-            tabsForGame[position].setShowingBack(true);
+            tab.setShowingBack(true);
         }
 
 
     }
 
-   /* public void inicialiceGame(Board currentBoard){
-        this.game = new Game();
-        tabsForGame = playService.getTabsForPlay(currentBoard);
-        game.setTabForGames(tabsForGame);
-        game.setTitle(currentBoard.getTitle());
-        clickedPositions = new ArrayList();
-    }*/
 
-
-
-
-   /* public void finaliceLastPlay(){
-        Play currentPlay = getLastPlayNotFinished(true);
-        if (null==currentPlay || currentPlay.isFinished() || !currentPlay.isCompleted())    {
-            return;
-        }
-
-        //Analizamos acierto o fail
-        TabForGame tab1 = currentPlay.getMovedTabs()[0];
-        TabForGame tab2 = currentPlay.getMovedTabs()[1];
-
-        if (tab1.getNumberOfPair()==tab2.getNumberOfPair()){
-            //Success
-            this.game.setTotalSuccess(this.game.getTotalSuccess() + 1);
-            //Se actualiza ok de TabForGame
-            tab1.setOk(true);
-            tab2.setOk(true);
-            //Desaparecen la fichas
-            disappearsTabForGame(currentPlay);
-            if (this.game.getTotalSuccess()==this.game.getTabForGames().length/2){
-                Toast.makeText(getApplicationContext(),
-                        "You won! But..what have you learned?", Toast.LENGTH_SHORT).show();
-            }
-
-        }else{
-            //Fail
-            this.game.setTotalFailure(this.game.getTotalFailure() + 1);
-            //Se giran las fichas
-            turnTabForGame(currentPlay);
-        }
-
-        //Se actualiza finished en Play
-        currentPlay.setFinished(true);
-
-    }*/
 
     @Override
-    public void turnTabForGame(Play currentPlay){
+    public void turnTabForGame(Play currentPlay, FrameLayout frameLayout, int positionInBoard){
 
         //for(TabForGame tab:currentPlay.getMovedTabs()) {
-            FrameLayout frameLayout0 = currentFrame.get(currentPlay.getMovedTabs()[0].getPositionInBoard());
-            setAnimationToFrame(frameLayout0, currentPlay.getMovedTabs()[0].getPositionInBoard());
-        FrameLayout frameLayout1 = currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard());
-        setAnimationToFrame(frameLayout1, currentPlay.getMovedTabs()[1].getPositionInBoard());
+            //FrameLayout frameLayout = boardPresenter.getCurrentFrame().get(currentPlay.getMovedTabs()[play].getPositionInBoard());
+            setAnimationToFrame(frameLayout, positionInBoard);
+        //FrameLayout frameLayout1 = currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard());
+       // setAnimationToFrame(frameLayout1, currentPlay.getMovedTabs()[1].getPositionInBoard());
        // }
 
 
     }
 
     @Override
-    public void disappearsTabForGame(Play currentPlay){
+    public void disappearsTabForGame(Play currentPlay, FrameLayout frameLayout){
 
-        FrameLayout frameLayout0 = currentFrame.get(currentPlay.getMovedTabs()[0].getPositionInBoard());
-        frameLayout0.setVisibility(View.GONE);
-        FrameLayout frameLayout1 = currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard());
-        frameLayout1.setVisibility(View.GONE);
+       // FrameLayout frameLayout = currentFrame.get(currentPlay.getMovedTabs()[play].getPositionInBoard());
+        frameLayout.setVisibility(View.GONE);
+       // FrameLayout frameLayout1 = currentFrame.get(currentPlay.getMovedTabs()[1].getPositionInBoard());
+        //frameLayout1.setVisibility(View.GONE);
     }
 
 }
