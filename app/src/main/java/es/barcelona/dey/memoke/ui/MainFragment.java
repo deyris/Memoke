@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.google.gson.Gson;
-
-import java.util.List;
-
 import es.barcelona.dey.memoke.R;
-import es.barcelona.dey.memoke.beans.Board;
-import es.barcelona.dey.memoke.database.BoardDatabase;
 import es.barcelona.dey.memoke.presenters.MainPresenter;
-import es.barcelona.dey.memoke.services.BoardService;
 import es.barcelona.dey.memoke.views.MainView;
 
 /**
@@ -61,7 +53,7 @@ public class MainFragment extends Fragment  implements MainView {
                                           public void onClick(View v) {
 
                                               //Verificar si existe ya el tablero y lanzar un popup
-                                              mainPresenter.verifyIfExistBoardAndLauncPopup(mTxtTitle.getText().toString().trim());
+                                              mainPresenter.verifyIfExistBoardAndLaunchPopup(mTxtTitle.getText().toString().trim());
 
 
                                           }
@@ -71,7 +63,7 @@ public class MainFragment extends Fragment  implements MainView {
         );
 
         Button mBtnLoad = (Button) mRelativeLayout.findViewById(R.id.btnLoad);
-        if (mainPresenter.isButtonLoadVisible()) {
+        if (mainPresenter.isButtonMoreBoardsVisible()) {
             mBtnLoad.setVisibility(View.VISIBLE);
         } else {
             mBtnLoad.setVisibility(View.GONE);
@@ -112,19 +104,12 @@ public class MainFragment extends Fragment  implements MainView {
 
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
-                //Borramos el tablero
-                mainPresenter.deleteBoard(mTxtTitle.getText().toString());
-                // List<Board> testBoard = BoardDatabase.getBoards(MainFragment.this.getActivity());
-                openToCreateBoard(true);
-                dialog.dismiss();
+                mainPresenter.clickPositiveButtonOnDialog(dialog,mTxtTitle.getText().toString());
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
-                openToCreateBoard(false);
-                dialog.dismiss();
+                mainPresenter.clickNegativeButtonOnDialog(dialog);
             }
         });
         AlertDialog dialog = builder.create();

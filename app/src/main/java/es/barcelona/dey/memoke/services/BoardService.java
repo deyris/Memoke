@@ -16,7 +16,7 @@ import es.barcelona.dey.memoke.database.BoardDatabase;
 public class BoardService {
 
 
-    private Context context;
+    public Context context;
 
     public BoardService(Context context) {
         this.context = context;
@@ -43,7 +43,7 @@ public class BoardService {
         return testBoard.size()>0;
     }
 
-    public boolean existThisBoard(String title){
+    public boolean existsThisBoard(String title){
         List<Board> testBoard = BoardDatabase.getBoards(context);
 
         for (Board board: testBoard){

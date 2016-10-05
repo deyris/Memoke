@@ -25,8 +25,8 @@ public class MainInteractor {
         return boardService.existsBoards();
     }
 
-    public boolean existThisBoard(String title){
-        return boardService.existThisBoard(title);
+    public boolean existsThisBoard(String title){
+        return boardService.existsThisBoard(title);
     }
 
     public String restoreBoard(String title){
