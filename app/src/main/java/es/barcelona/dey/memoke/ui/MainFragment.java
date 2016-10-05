@@ -51,10 +51,8 @@ public class MainFragment extends Fragment  implements MainView {
         mBtnCreate.setOnClickListener(new View.OnClickListener() {
                                           @Override
                                           public void onClick(View v) {
-
-                                              //Verificar si existe ya el tablero y lanzar un popup
-                                              mainPresenter.verifyIfExistBoardAndLaunchPopup(mTxtTitle.getText().toString().trim());
-
+                                         //Verificar si existe ya el tablero y lanzar un popup
+                                        mainPresenter.clickOnCreateButton(mTxtTitle.getText().toString().trim());
 
                                           }
 
@@ -63,11 +61,7 @@ public class MainFragment extends Fragment  implements MainView {
         );
 
         Button mBtnLoad = (Button) mRelativeLayout.findViewById(R.id.btnLoad);
-        if (mainPresenter.isButtonMoreBoardsVisible()) {
-            mBtnLoad.setVisibility(View.VISIBLE);
-        } else {
-            mBtnLoad.setVisibility(View.GONE);
-        }
+        mainPresenter.visibiltyForLoadButton(mBtnLoad);
 
         return mRelativeLayout;
 
@@ -76,15 +70,22 @@ public class MainFragment extends Fragment  implements MainView {
 
 
     @Override
-    public void openToCreateBoard(boolean createFromZero) {
+    public void openToCreateBoardFromOther() {
         Intent i = new Intent(getActivity(), CreationActivity.class);
         i.putExtra(PARAM_TITLE, mTxtTitle.getText().toString().trim());
-        if (!createFromZero) {
-            //Restablecer el board
-            String jsonSelectedBoard = mainPresenter.getBoardForRestore(mTxtTitle.getText().toString().trim());
-            i.putExtra(PARAM_SELECTED_BOARD, jsonSelectedBoard);
+         //Restablecer el board
+        String jsonSelectedBoard = mainPresenter.getBoardForRestore(mTxtTitle.getText().toString().trim());
+        i.putExtra(PARAM_SELECTED_BOARD, jsonSelectedBoard);
 
-        }
+
+        startActivity(i);
+    }
+
+    @Override
+    public void openToCreateBoardFromZero() {
+        Intent i = new Intent(getActivity(), CreationActivity.class);
+        i.putExtra(PARAM_TITLE, mTxtTitle.getText().toString().trim());
+
         startActivity(i);
     }
 

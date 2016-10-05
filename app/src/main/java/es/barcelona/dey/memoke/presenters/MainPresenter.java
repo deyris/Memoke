@@ -2,6 +2,8 @@ package es.barcelona.dey.memoke.presenters;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.view.View;
+import android.widget.Button;
 
 import es.barcelona.dey.memoke.interactors.MainInteractor;
 import es.barcelona.dey.memoke.views.MainView;
@@ -36,12 +38,12 @@ public class MainPresenter implements Presenter<MainView>{
         //Borramos el tablero
         deleteBoard(titleBoard);
         // List<Board> testBoard = BoardDatabase.getBoards(MainFragment.this.getActivity());
-        mainView.openToCreateBoard(true);
+        mainView.openToCreateBoardFromZero();
         dialog.dismiss();
     }
 
     public void clickNegativeButtonOnDialog(DialogInterface dialog){
-        mainView.openToCreateBoard(false);
+        mainView.openToCreateBoardFromOther();
         dialog.dismiss();
     }
 
@@ -61,14 +63,22 @@ public class MainPresenter implements Presenter<MainView>{
         return mainInteractor.existsMoreBoards();
     }
 
-    public void verifyIfExistBoardAndLaunchPopup(String title){
+    public void clickOnCreateButton(String title){
         if (mainInteractor.existsThisBoard(title)){
             mainView.launchAlertExistsThisBoard();
 
         }else{
-            mainView.openToCreateBoard(true);
+            mainView.openToCreateBoardFromZero();
         }
 
+    }
+
+    public void visibiltyForLoadButton(Button mBtnLoad){
+        if (isButtonMoreBoardsVisible()) {
+            mBtnLoad.setVisibility(View.VISIBLE);
+        } else {
+            mBtnLoad.setVisibility(View.GONE);
+        }
     }
 
     public String getBoardForRestore(String title){
