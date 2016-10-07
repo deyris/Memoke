@@ -1,5 +1,7 @@
 package es.barcelona.dey.memoke.presenters;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 
 import java.util.HashMap;
@@ -144,6 +146,44 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         return savedInstanceState;
     }
 
+    public void createCreationActivity(Bundle savedInstanceState, Bundle bundleFromMain, FragmentManager fragmentManager, FragmentTransaction fragmentTransaction){
+        //Verificamos si venimos o no de un fichero ya existente
+        // Bundle bundleFromMain = getIntent().getExtras();
+        // String title = "";
+
+        updateIdCurrentPairIfExistInContext(savedInstanceState);
+        updateBoardIfExistIncontent(savedInstanceState);
+        savedInstanceState = prepareForContentFragmentFirstLoad(bundleFromMain,savedInstanceState);
+
+        prepareForContentFragmentForRotate(savedInstanceState, fragmentManager,fragmentTransaction);
+
+
+        //Inicializamos botones
+
+        //Boton siguiente
+        creationView.inicializeButtonNext();
+
+        //Boton anterior
+        creationView.inicializeButtonPast();
+    }
+    public void prepareForContentFragmentForRotate(Bundle savedInstanceState, FragmentManager fragmentManager, FragmentTransaction fragmentTransaction){
+        Bundle bundle = new Bundle();
+        bundle.putInt(PARAM_CURRENT_PAIR, getIdCurrentPair());
+
+        CreationFragment mCreationFragment = new CreationFragment();
+        mCreationFragment.setArguments(bundle);
+
+        fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.header_frame, mCreationFragment, CreationFragment.TAG);
+        fragmentTransaction.commit();
+
+        if (!fragmentAlreadyRestoredFromSavedState(ContentFragment.TAG)) {
+            fragmentManager.beginTransaction().add(R.id.content_frame,
+                    ContentFragment.newInstance(savedInstanceState),
+                    ContentFragment.TAG).addToBackStack(ContentFragment.TAG).commit();
+        }
+
+    }
 
     public void updateIdCurrentPairIfExistInContext(Bundle savedInstanceState){
         if(null!= savedInstanceState){

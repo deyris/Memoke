@@ -16,4 +16,8 @@ public interface CreationView {
     Bundle actualizeBundle(Bundle bundle, String nameData, String data);
 
     FragmentManager getFragmentManager();
+
+    public void inicializeButtonNext();
+
+    public void inicializeButtonPast();
 }

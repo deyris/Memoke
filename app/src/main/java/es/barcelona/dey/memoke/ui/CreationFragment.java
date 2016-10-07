@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import es.barcelona.dey.memoke.R;
+import es.barcelona.dey.memoke.presenters.CreationPresenter;
 
 /**
  * Created by deyris.drake on 25/1/16.
@@ -39,7 +40,7 @@ public class CreationFragment extends Fragment {
             Resources res = getResources();
             mTxtTitle.setText(String.format(res.getString(R.string.creation_title), bundle.getString(PARAM_TITLE)));
             Bundle bundle1 = getArguments();
-            mTxtNumber.setText(String.format(res.getString(R.string.creation_number), bundle1.getInt("CURRENT_PAIR")));
+            mTxtNumber.setText(String.format(res.getString(R.string.creation_number), bundle1.getInt(CreationPresenter.PARAM_CURRENT_PAIR)));
         }
 
 

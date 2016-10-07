@@ -91,55 +91,21 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             FragmentManager fragmentManager = getFragmentManager();
 
-            //Verificamos si venimos o no de un fichero ya existente
-           // Bundle bundleFromMain = getIntent().getExtras();
-           // String title = "";
+            creationPresenter.createCreationActivity(savedInstanceState,getIntent().getExtras(),fragmentManager,fragmentTransaction);
 
-            creationPresenter.updateIdCurrentPairIfExistInContext(savedInstanceState);
-            creationPresenter.updateBoardIfExistIncontent(savedInstanceState);
-            savedInstanceState = creationPresenter.prepareForContentFragmentFirstLoad(getIntent().getExtras(),savedInstanceState);
-           /* boolean existeContentFragment = fragmentAlreadyRestoredFromSavedState(ContentFragment.TAG);
-            if(!existeContentFragment) { //Primera vez que se carga el fragment
-                Pair currentPair;
-                currentPair = creationPresenter.generateNextPair(bundleFromMain);
+        }
 
-                //Actualizamos bundle
-                savedInstanceState = this.actualizeBundle(savedInstanceState,PARAM_CURRENT_PAIR,creationPresenter.getJsonCurrentPair(currentPair));
-
-                //Actualizamos mBoard
-                creationPresenter.getBoardWithTitleFromMain(bundleFromMain);
-
-            }*/
-            //Si giro el móvil, vengo a esta línea, no es primera vez que se carga el fragment
-            Bundle bundle = new Bundle();
-            bundle.putInt("CURRENT_PAIR", creationPresenter.getIdCurrentPair());
-
-            mCreationFragment = new CreationFragment();
-            mCreationFragment.setArguments(bundle);
-
-            fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.header_frame, mCreationFragment, CreationFragment.TAG);
-            fragmentTransaction.commit();
-
-            if (!creationPresenter.fragmentAlreadyRestoredFromSavedState(ContentFragment.TAG)) {
-                fragmentManager.beginTransaction().add(R.id.content_frame,
-                        ContentFragment.newInstance(savedInstanceState),
-                        ContentFragment.TAG).addToBackStack(ContentFragment.TAG).commit();
-            }
-
-            //Inicializamos botones
-
-         //Boton siguiente
+    public void inicializeButtonNext(){
         Button btnSgte = (Button) findViewById(R.id.btnSgte);
         btnSgte.setVisibility(View.GONE);
         setListenerBtnSgte();
+    }
 
-        //Boton anterior
+    public void inicializeButtonPast(){
         Button btnAnt = (Button)findViewById(R.id.btnAnt);
         btnAnt.setVisibility(View.GONE);
         setListenerBtnAnterior();
-
-        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
