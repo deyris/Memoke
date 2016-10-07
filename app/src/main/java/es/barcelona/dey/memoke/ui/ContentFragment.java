@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -26,14 +25,12 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.presenters.ContentPresenter;
+import es.barcelona.dey.memoke.presenters.CreationPresenter;
 import es.barcelona.dey.memoke.views.ContentView;
 
 /**
@@ -189,7 +186,7 @@ public class ContentFragment extends Fragment implements ContentView{
         if (null!=mCurrentPair && mCurrentPair.getState()!=Pair.State.EMPTY) {
             instancePresenter();
             String jsonCurrentPair = contentPresenter.getJsonCurrentPair(mCurrentPair);
-            outState.putString(CreationActivity.PARAM_CURRENT_PAIR, jsonCurrentPair);
+            outState.putString(CreationPresenter.PARAM_CURRENT_PAIR, jsonCurrentPair);
 
         }
 
@@ -310,7 +307,7 @@ public class ContentFragment extends Fragment implements ContentView{
 
             }
             if (savedInstanceState != null) {
-                jsonCurrentPair = savedInstanceState.getString(CreationActivity.PARAM_CURRENT_PAIR);
+                jsonCurrentPair = savedInstanceState.getString(CreationPresenter.PARAM_CURRENT_PAIR);
             }
 
         }
@@ -334,12 +331,12 @@ public class ContentFragment extends Fragment implements ContentView{
     }
 
     public void fillNumberInCurrentPair(){
-        if (getArguments()!=null && getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER)!=0) {
-            int currentPair = getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER);
+        if (getArguments()!=null && getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER)!=0) {
+            int currentPair = getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER);
             if (null==mCurrentPair || mCurrentPair.getNumber() < currentPair){
                 mCurrentPair = new Pair();
             }
-            mCurrentPair.setNumber(getArguments().getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER));
+            mCurrentPair.setNumber(getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER));
         }
     }
 
@@ -402,7 +399,7 @@ public class ContentFragment extends Fragment implements ContentView{
     }
 
     private boolean existCurrentPairFromArguments(){
-        return getArguments()!=null && getArguments().getString(CreationActivity.PARAM_CURRENT_PAIR)!=null;
+        return getArguments()!=null && getArguments().getString(CreationPresenter.PARAM_CURRENT_PAIR)!=null;
     }
 
     public  void setListenerFrame(FrameLayout frame, int tab) {

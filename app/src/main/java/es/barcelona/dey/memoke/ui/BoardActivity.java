@@ -3,10 +3,7 @@ package es.barcelona.dey.memoke.ui;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,6 +19,7 @@ import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.beans.TabForGame;
 import es.barcelona.dey.memoke.presenters.BoardPresenter;
+import es.barcelona.dey.memoke.presenters.CreationPresenter;
 import es.barcelona.dey.memoke.views.BoardView;
 
 /**
@@ -50,9 +48,9 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
         Board currentBoard = null;
         Bundle bundle = getIntent().getExtras();
 
-        if (bundle!=null && null!=bundle.getString(CreationActivity.PARAM_CURRENT_BOARD)) {
+        if (bundle!=null && null!=bundle.getString(CreationPresenter.PARAM_CURRENT_BOARD)) {
 
-            String jsonCurrenBoard = bundle.getString(CreationActivity.PARAM_CURRENT_BOARD);
+            String jsonCurrenBoard = bundle.getString(CreationPresenter.PARAM_CURRENT_BOARD);
             currentBoard = boardPresenter.getCurrentBoard(jsonCurrenBoard);
 
         }

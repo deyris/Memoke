@@ -4,11 +4,13 @@ import android.os.Bundle;
 
 import java.util.HashMap;
 
+import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.database.BoardDatabase;
 import es.barcelona.dey.memoke.interactors.CreationInteractor;
-import es.barcelona.dey.memoke.ui.CreationActivity;
+import es.barcelona.dey.memoke.ui.ContentFragment;
+import es.barcelona.dey.memoke.ui.CreationFragment;
 import es.barcelona.dey.memoke.ui.MainFragment;
 import es.barcelona.dey.memoke.views.CreationView;
 
@@ -16,6 +18,10 @@ import es.barcelona.dey.memoke.views.CreationView;
  * Created by deyris.drake on 18/9/16.
  */
 public class CreationPresenter extends ComunPresenter implements Presenter<CreationView>{
+
+    public static String PARAM_CURRENT_PAIR = "PARAM_CURRENT_PAIR";
+    public static String PARAM_CURRENT_PAIR_NUMBER = "PARAM_CURRENT_PAIR_NUMBER";
+    public static String PARAM_CURRENT_BOARD ="PARAM_CURRENT_BOARD";
 
     CreationView creationView;
     CreationInteractor creationInteractor;
@@ -103,14 +109,50 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         return currentPair;
     }
 
+    public boolean fragmentAlreadyRestoredFromSavedState(String tag) {
+        return (creationView.getFragmentManager().findFragmentByTag(tag) != null ? true : false);
+    }
+
+    public Bundle prepareForContentFragmentFirstLoad(Bundle bundleFromMainActivity, Bundle savedInstanceState){
+        boolean existeContentFragment = fragmentAlreadyRestoredFromSavedState(ContentFragment.TAG);
+        if(!existeContentFragment) { //Primera vez que se carga el fragment
+            Pair currentPair;
+            currentPair = generateNextPair(bundleFromMainActivity);
+
+            //Actualizamos bundle
+            savedInstanceState = creationView.actualizeBundle(savedInstanceState,PARAM_CURRENT_PAIR,getJsonCurrentPair(currentPair));
+
+            //Actualizamos mBoard
+            getBoardWithTitleFromMain(bundleFromMainActivity);
+
+        }
+
+        //Si giro el móvil, vengo a esta línea, no es primera vez que se carga el fragment
+       /* Bundle bundle = new Bundle();
+        bundle.putInt("CURRENT_PAIR", getIdCurrentPair());
+
+        CreationFragment = mCreationFragment = new CreationFragment();
+        mCreationFragment.setArguments(bundle);
+
+        fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.header_frame, mCreationFragment, CreationFragment.TAG);
+        fragmentTransaction.commit();*/
+
+
+
+
+        return savedInstanceState;
+    }
+
+
     public void updateIdCurrentPairIfExistInContext(Bundle savedInstanceState){
         if(null!= savedInstanceState){
-            this.setIdCurrentPair(savedInstanceState.getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER));
+            this.setIdCurrentPair(savedInstanceState.getInt(PARAM_CURRENT_PAIR_NUMBER));
         }
     }
     public void updateBoardIfExistIncontent(Bundle savedInstanceState){
         if(null!= savedInstanceState){
-            this.setmBoard(this.getCurrentBoard(savedInstanceState.getString(CreationActivity.PARAM_CURRENT_BOARD)));
+            this.setmBoard(this.getCurrentBoard(savedInstanceState.getString(PARAM_CURRENT_BOARD)));
         }
     }
 
