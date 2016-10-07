@@ -1,19 +1,14 @@
 package es.barcelona.dey.memoke.presenters;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-
-import com.google.gson.Gson;
 
 import java.util.HashMap;
 
-import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.database.BoardDatabase;
 import es.barcelona.dey.memoke.interactors.CreationInteractor;
-import es.barcelona.dey.memoke.interactors.MainInteractor;
+import es.barcelona.dey.memoke.ui.CreationActivity;
 import es.barcelona.dey.memoke.ui.MainFragment;
 import es.barcelona.dey.memoke.views.CreationView;
 
@@ -25,7 +20,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
     CreationView creationView;
     CreationInteractor creationInteractor;
 
-    int mCurrentPair;
+    int idCurrentPair;
     Board mBoard;
 
     @Override
@@ -45,16 +40,17 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         BoardDatabase.updateOrAddBoard(creationView.getContext(),board);
     }
 
-    public void savePairInBoard(Board board, Pair pair){
-        creationInteractor.savePairInBoard(board, pair);
+    public void savePairInBoard(Pair pair){
+        creationInteractor.savePairInBoard(this.mBoard, pair);
     }
 
-    public int getmCurrentPair() {
-        return mCurrentPair;
+    public int getIdCurrentPair() {
+
+        return idCurrentPair;
     }
 
-    public void setmCurrentPair(int mCurrentPair) {
-        this.mCurrentPair = mCurrentPair;
+    public void setIdCurrentPair(int idCurrentPair) {
+        this.idCurrentPair = idCurrentPair;
     }
 
     private Pair loadPairFromExistingBoard(String jsonBoard){
@@ -62,26 +58,36 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         //Buscamos currentPair
         Pair currentPair = new Pair();
         if (null!=mBoard.getPairs()) {
-            this.mCurrentPair = (null != mBoard.getPairs()) ? mBoard.getPairs().size() : 1;
+            this.idCurrentPair = (null != mBoard.getPairs()) ? mBoard.getPairs().size() : 1;
             //Actualizamos currentPair
-            currentPair = mBoard.getPairs().get(this.mCurrentPair);
+            currentPair = mBoard.getPairs().get(this.idCurrentPair);
             this.mBoard = mBoard;
         }else{
             //Es un tablero vacío, que existe pero no tiene ninguna pareja aún
-            this.mCurrentPair = 1;
+            this.idCurrentPair = 1;
 
         }
 
         return currentPair;
     }
 
+
+
     private Pair generateNewPair(){
         //Creamos tablero
         mBoard = new Board();
-        mCurrentPair = 1;
+        idCurrentPair = 1;
         Pair newPair = new Pair();
 
         return newPair;
+    }
+
+    public void incrementIdCurrentPair(){
+        this.idCurrentPair++;
+    }
+
+    public void decrementIdCurrentPair(){
+        this.idCurrentPair--;
     }
 
     public Pair generateNextPair(Bundle bundleFromMain){
@@ -89,13 +95,23 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         if (bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD) != null) {  //Hay un board que ya existe que viene del view anterior
 
             currentPair =  loadPairFromExistingBoard(bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD));
-
         } else {
             //Creamos tablero
             currentPair = generateNewPair();
 
         }
         return currentPair;
+    }
+
+    public void updateIdCurrentPairIfExistInContext(Bundle savedInstanceState){
+        if(null!= savedInstanceState){
+            this.setIdCurrentPair(savedInstanceState.getInt(CreationActivity.PARAM_CURRENT_PAIR_NUMBER));
+        }
+    }
+    public void updateBoardIfExistIncontent(Bundle savedInstanceState){
+        if(null!= savedInstanceState){
+            this.setmBoard(this.getCurrentBoard(savedInstanceState.getString(CreationActivity.PARAM_CURRENT_BOARD)));
+        }
     }
 
     private void updateTitleFromBundle(Bundle bundleFromMain){
@@ -126,7 +142,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         return pair.getState().equals(Pair.State.COMPLETED) || pair.getState().equals(Pair.State.IN_PROCESS);
     }
 
-    public String getNextPairOnBoard(int mCurrentPair, Board mBoard){
+    public String getNextPairOnBoard(int mCurrentPair){
         Pair pairSgte = new Pair();
         String jsonPairAnt = null;
         if (mBoard.getPairs().size() >= mCurrentPair) {
@@ -138,7 +154,13 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     }
 
+    public void inicializeBoardIfPairsAreNull(){
+        if (null == mBoard.getPairs()) {
+            mBoard.setPairs(new HashMap<Integer, Pair>());
+        }
+    }
 
-
-
+    public Board getmBoard() {
+        return mBoard;
+    }
 }

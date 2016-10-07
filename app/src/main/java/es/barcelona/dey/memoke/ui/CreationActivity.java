@@ -18,7 +18,6 @@ import java.util.HashMap;
 import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Pair;
-import es.barcelona.dey.memoke.database.BoardDatabase;
 import es.barcelona.dey.memoke.presenters.CreationPresenter;
 import es.barcelona.dey.memoke.views.CreationView;
 
@@ -29,8 +28,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
     private CreationFragment mCreationFragment;
     private   ContentFragment mContentFragment;
-    public static int idCurrentPair = 1;
-    public static Board mBoard;
+//    public static Board mBoard;
 
     CreationPresenter creationPresenter;
 
@@ -75,9 +73,12 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
     public void onSaveInstanceState(Bundle outState) {
           super.onSaveInstanceState(outState);
 
-          if (null != mBoard)   {
+          if (null != creationPresenter.getmBoard())   {
               //Salvamos lo que hay en mBoard
-              creationPresenter.updateOrAddBoard(mBoard);
+              creationPresenter.updateOrAddBoard(creationPresenter.getmBoard());
+              //Guardamos el id VISUALIZADO en el momento de irnos
+              outState.putInt(PARAM_CURRENT_PAIR_NUMBER,creationPresenter.getIdCurrentPair());
+              outState.putString(PARAM_CURRENT_BOARD, creationPresenter.getJsonCurrentBoard(creationPresenter.getmBoard()));
           }
 
       }
@@ -98,6 +99,8 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
             Bundle bundleFromMain = getIntent().getExtras();
             String title = "";
 
+            creationPresenter.updateIdCurrentPairIfExistInContext(savedInstanceState);
+            creationPresenter.updateBoardIfExistIncontent(savedInstanceState);
             boolean existeContentFragment = fragmentAlreadyRestoredFromSavedState(ContentFragment.TAG);
             if(!existeContentFragment) { //Primera vez que se carga el fragment
                 Pair currentPair;
@@ -107,14 +110,15 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
                 savedInstanceState = this.actualizeBundle(savedInstanceState,PARAM_CURRENT_PAIR,creationPresenter.getJsonCurrentPair(currentPair));
 
                 //Actualizamos idCurrentPair
-                idCurrentPair = creationPresenter.getmCurrentPair();
+               // idCurrentPair = creationPresenter.getIdCurrentPair();
 
                 //Actualizamos mBoard
-                mBoard = creationPresenter.getBoardWithTitleFromMain(bundleFromMain);
+                creationPresenter.getBoardWithTitleFromMain(bundleFromMain);
 
             }
+            //Si giro el móvil, vengo a esta línea, no es primera vez que se carga el fragment
             Bundle bundle = new Bundle();
-            bundle.putInt("CURRENT_PAIR", idCurrentPair);
+            bundle.putInt("CURRENT_PAIR", creationPresenter.getIdCurrentPair());
 
             mCreationFragment = new CreationFragment();
             mCreationFragment.setArguments(bundle);
@@ -156,7 +160,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         switch (item.getItemId()) {
             case R.id.showBoardTab:
                 Intent i = new Intent(this, BoardActivity.class);
-                i.putExtra(PARAM_CURRENT_BOARD,creationPresenter.getJsonCurrentBoard(mBoard));
+                i.putExtra(PARAM_CURRENT_BOARD,creationPresenter.getJsonCurrentBoard(creationPresenter.getmBoard()));
                 startActivity(i);
                 return true;
             default:
@@ -195,15 +199,13 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
                 Bundle bundleSgte = new Bundle();
                 if (creationPresenter.pairNotSavedYet(pair)) {
 
-                    pair.setNumber(idCurrentPair);
+                    pair.setNumber(creationPresenter.getIdCurrentPair());
 
-                    //creationPresenter.inicializeBoardIfPairsAreNull(mBoard);
-                    if (null == mBoard.getPairs()) {
-                        mBoard.setPairs(new HashMap<Integer, Pair>());
-                    }
+                    creationPresenter.inicializeBoardIfPairsAreNull();
+
 
                     //Verificamos si ya pair existe para agregarlo o modificarlo
-                    creationPresenter.savePairInBoard(mBoard,pair);
+                    creationPresenter.savePairInBoard(pair);
 
                     //Vaciamos fragment y nos vamos al sgte
                     putFragmentEmptyAndGoNext(bundleSgte);
@@ -217,7 +219,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
                     putFragmentEmptyAndGoNext(bundleSgte);
 
                     //Rescatamos la pareja
-                    String jsonNextPair = creationPresenter.getNextPairOnBoard(idCurrentPair,mBoard);
+                    String jsonNextPair = creationPresenter.getNextPairOnBoard(creationPresenter.getIdCurrentPair());
 
                     //Rellenamos Bundle con la pareja siguiente
                     bundleSgte.putSerializable(PARAM_CURRENT_PAIR, jsonNextPair);
@@ -236,8 +238,8 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         FragmentTransaction ft = fragmentManager.beginTransaction();
 
         //Incrementamos la pareja y pasamos el bundle
-        idCurrentPair++;
-        bundleSgte.putInt(PARAM_CURRENT_PAIR_NUMBER, idCurrentPair);
+        creationPresenter.incrementIdCurrentPair();
+        bundleSgte.putInt(PARAM_CURRENT_PAIR_NUMBER, creationPresenter.getIdCurrentPair());
 
         ft.setCustomAnimations(R.animator.slide_in_up, R.animator.slide_out_up).replace(R.id.content_frame,
                 ContentFragment.newInstance(bundleSgte),
@@ -247,8 +249,8 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
     }
 
     public void putFragmentOnPast(){
-        idCurrentPair--;
-        Pair pairAnt = mBoard.getPairs().get(idCurrentPair);
+        creationPresenter.decrementIdCurrentPair();
+        Pair pairAnt = creationPresenter.getmBoard().getPairs().get(creationPresenter.getIdCurrentPair());
 
         //Actualizamos fragment
         Bundle bundleAnt = new Bundle();
@@ -269,7 +271,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         Bundle bundleFromMain = getIntent().getExtras();
 
         if (null != cf) {
-            cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), idCurrentPair));
+            cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), creationPresenter.getIdCurrentPair()));
 
         }
     }
@@ -285,7 +287,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
                 ContentFragment f = (ContentFragment)getFragmentManager().findFragmentByTag(ContentFragment.TAG);
                 Pair pairForSave = f.getmCurrentPair();
                 if (pairForSave.getState().equals(Pair.State.COMPLETED)) {
-                    creationPresenter.savePairInBoard(mBoard,pairForSave);
+                    creationPresenter.savePairInBoard(pairForSave);
                 }
 
                 putFragmentOnPast();
@@ -296,7 +298,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
                 CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
 
                 if (null != cf) {
-                    cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), idCurrentPair));
+                    cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), creationPresenter.getIdCurrentPair()));
 
                 }
 
