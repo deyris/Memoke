@@ -152,7 +152,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         // String title = "";
 
         updateIdCurrentPairIfExistInContext(savedInstanceState);
-        updateBoardIfExistIncontent(savedInstanceState);
+        updateBoardIfExistInContent(savedInstanceState);
         savedInstanceState = prepareForContentFragmentFirstLoad(bundleFromMain,savedInstanceState);
 
         prepareForContentFragmentForRotate(savedInstanceState, fragmentManager,fragmentTransaction);
@@ -190,7 +190,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
             this.setIdCurrentPair(savedInstanceState.getInt(PARAM_CURRENT_PAIR_NUMBER));
         }
     }
-    public void updateBoardIfExistIncontent(Bundle savedInstanceState){
+    public void updateBoardIfExistInContent(Bundle savedInstanceState){
         if(null!= savedInstanceState){
             this.setmBoard(this.getCurrentBoard(savedInstanceState.getString(PARAM_CURRENT_BOARD)));
         }
@@ -221,7 +221,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
 
     public boolean pairNotSavedYet(Pair pair){
-        return pair.getState().equals(Pair.State.COMPLETED) || pair.getState().equals(Pair.State.IN_PROCESS);
+        return null!=pair && (pair.getState().equals(Pair.State.COMPLETED) || pair.getState().equals(Pair.State.IN_PROCESS));
     }
 
     public String getNextPairOnBoard(int mCurrentPair){

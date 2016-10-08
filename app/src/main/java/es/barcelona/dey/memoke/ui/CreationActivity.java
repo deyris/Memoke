@@ -15,6 +15,7 @@ import android.widget.EditText;
 
 import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Pair;
+import es.barcelona.dey.memoke.presenters.ContentPresenter;
 import es.barcelona.dey.memoke.presenters.CreationPresenter;
 import es.barcelona.dey.memoke.views.CreationView;
 
@@ -24,7 +25,7 @@ import es.barcelona.dey.memoke.views.CreationView;
 public class CreationActivity extends AppCompatActivity implements CreationView, ContentFragment.OnDataPass, ContentFragment.FragmentIterationListener{
 
     private CreationFragment mCreationFragment;
-    private   ContentFragment mContentFragment;
+ //   private   ContentFragment mContentFragment;
 //    public static Board mBoard;
 
     CreationPresenter creationPresenter;
@@ -53,7 +54,9 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
     }
 
     public void onFragmentIteration(Bundle arguments){
-        if (mContentFragment!=null && arguments!=null && arguments.get(CreationPresenter.PARAM_CURRENT_PAIR)!=null){
+        ContentFragment f = (ContentFragment)getFragmentManager().findFragmentByTag(ContentFragment.TAG);
+
+        if (f!=null && arguments!=null && arguments.get(CreationPresenter.PARAM_CURRENT_PAIR)!=null){
             contentBundle = arguments;
         }
 
@@ -86,6 +89,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
             creationPresenter = new CreationPresenter();
             creationPresenter.setView(this);
+
 
             // Get a reference to the FragmentManager
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -151,19 +155,24 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
             public void onClick(View v) {
 
                 ContentFragment f = (ContentFragment) getFragmentManager().findFragmentByTag(ContentFragment.TAG);
-                Pair pair = f.getmCurrentPair();
+
+                //Pair pair = new Pair();
+                creationPresenter.inicializeBoardIfPairsAreNull();
+
+              //  Pair pair = creationPresenter.getmBoard().getPairs().get(creationPresenter.getIdCurrentPair());
+
+                Pair pair = f.getContentPresenter().getmCurrentPair();
 
                 Bundle bundleSgte = new Bundle();
                 if (creationPresenter.pairNotSavedYet(pair)) {
 
                     pair.setNumber(creationPresenter.getIdCurrentPair());
 
-                    creationPresenter.inicializeBoardIfPairsAreNull();
 
 
                     //Verificamos si ya pair existe para agregarlo o modificarlo
                     creationPresenter.savePairInBoard(pair);
-
+                    creationPresenter.setIdCurrentPair(pair.getNumber());////////////////////////////
                     //Vaciamos fragment y nos vamos al sgte
                     putFragmentEmptyAndGoNext(bundleSgte);
 
@@ -242,7 +251,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
             public void onClick(View v) {
                 //En caso de que se haya completado el estado de la pareja, guardamos
                 ContentFragment f = (ContentFragment)getFragmentManager().findFragmentByTag(ContentFragment.TAG);
-                Pair pairForSave = f.getmCurrentPair();
+                Pair pairForSave = f.getContentPresenter().getmCurrentPair();
                 if (pairForSave.getState().equals(Pair.State.COMPLETED)) {
                     creationPresenter.savePairInBoard(pairForSave);
                 }

@@ -54,7 +54,6 @@ public class ContentFragment extends Fragment implements ContentView{
     static String mCurrentPhotoPath;
 
 
-    static private Pair mCurrentPair = new Pair();
     static int mCurrentTab;
     static int mCurrentTextResultShow;
     static int mCurrentImgResultShow;
@@ -165,7 +164,7 @@ public class ContentFragment extends Fragment implements ContentView{
         String jsonCurrentPair = getCurrentPairFromContext(savedInstanceState);
 
         if(null!=jsonCurrentPair) {
-            mCurrentPair = contentPresenter.getCurrentPair(jsonCurrentPair);
+            contentPresenter.setmCurrentPair(contentPresenter.getCurrentPair(jsonCurrentPair));
             contentPresenter.fillPairOnView(jsonCurrentPair);
 
         }
@@ -181,11 +180,11 @@ public class ContentFragment extends Fragment implements ContentView{
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
+        instancePresenter();
         //Serializamos nuestro currentPair
-        if (null!=mCurrentPair && mCurrentPair.getState()!=Pair.State.EMPTY) {
-            instancePresenter();
-            String jsonCurrentPair = contentPresenter.getJsonCurrentPair(mCurrentPair);
+        if (null!= contentPresenter.getmCurrentPair() && contentPresenter.getmCurrentPair().getState()!=Pair.State.EMPTY) {
+
+            String jsonCurrentPair = contentPresenter.getJsonCurrentPair(contentPresenter.getmCurrentPair());
             outState.putString(CreationPresenter.PARAM_CURRENT_PAIR, jsonCurrentPair);
 
         }
@@ -226,10 +225,10 @@ public class ContentFragment extends Fragment implements ContentView{
 
     @Override
     public  void showContinueButton(){
-        if (null!=mCurrentPair) {
-            contentPresenter.validatePairStateComplete(mCurrentPair);
+        if (null!= contentPresenter.getmCurrentPair()) {
+            contentPresenter.validatePairStateComplete(contentPresenter.getmCurrentPair());
             Button b = (Button) getActivity().findViewById(R.id.btnSgte);
-            if (mCurrentPair.isReadyToBePassed()) {
+            if (contentPresenter.getmCurrentPair().isReadyToBePassed()) {
                 b.setVisibility(View.VISIBLE);
             } else {
                 b.setVisibility(View.GONE);
@@ -240,9 +239,9 @@ public class ContentFragment extends Fragment implements ContentView{
 
     @Override
     public void showAntButton(){
-        if (null!=mCurrentPair) {
+        if (null!= contentPresenter.getmCurrentPair()) {
             Button btnAnt = (Button) getActivity().findViewById(R.id.btnAnt);
-            if (mCurrentPair.getNumber() > 1) {
+            if (contentPresenter.getmCurrentPair().getNumber() > 1) {
                 btnAnt.setVisibility(View.VISIBLE);
             } else {
                 btnAnt.setVisibility(View.GONE);
@@ -333,24 +332,25 @@ public class ContentFragment extends Fragment implements ContentView{
     public void fillNumberInCurrentPair(){
         if (getArguments()!=null && getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER)!=0) {
             int currentPair = getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER);
-            if (null==mCurrentPair || mCurrentPair.getNumber() < currentPair){
-                mCurrentPair = new Pair();
+            if (null== contentPresenter.getmCurrentPair() || contentPresenter.getmCurrentPair().getNumber() < currentPair){
+                contentPresenter.setmCurrentPair(new Pair());
             }
-            mCurrentPair.setNumber(getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER));
+            contentPresenter.getmCurrentPair().setNumber(getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER));
         }
+
     }
 
     private void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1){
         final  ImageView imgToHide = imgToHide1;
         final TextView mText = (TextView) mLayout.findViewById(idText);
-        if (mCurrentPair!=null && mCurrentPair.getTabs()[tab - 1] != null) {
+        if (contentPresenter.getmCurrentPair()!=null && contentPresenter.getmCurrentPair().getTabs()[tab - 1] != null) {
 
-            if (mCurrentPair.getTabs()[tab -1].getType()==Tab.Type.TEXT) {
+            if (contentPresenter.getmCurrentPair().getTabs()[tab -1].getType()==Tab.Type.TEXT) {
                 //Ocultar foto de ese frame
                 contentPresenter.hideImageInTab(idText,imgToHide.getId());
 
-                if (contentPresenter.existTextToShowInView(mCurrentPair,tab)) {
-                    contentPresenter.fillTextInTab(mCurrentPair,tab, idText);
+                if (contentPresenter.existTextToShowInView(contentPresenter.getmCurrentPair(),tab)) {
+                    contentPresenter.fillTextInTab(contentPresenter.getmCurrentPair(),tab, idText);
 
                 }
 
@@ -360,11 +360,11 @@ public class ContentFragment extends Fragment implements ContentView{
     }
 
     private void fillImageWithTab(int tab, TextView textview, ImageView imageView){
-        if (mCurrentPair!=null && mCurrentPair.getTabs()[tab - 1]!=null) {
+        if (contentPresenter.getmCurrentPair()!=null && contentPresenter.getmCurrentPair().getTabs()[tab - 1]!=null) {
 
-            if (mCurrentPair.getTabs()[tab - 1].getType() == Tab.Type.PHOTO) {
+            if (contentPresenter.getmCurrentPair().getTabs()[tab - 1].getType() == Tab.Type.PHOTO) {
                 textview.setVisibility(View.GONE);
-                preDrawPhoto(imageView,tab,mCurrentPair.getTabs()[tab - 1].getUri());
+                preDrawPhoto(imageView,tab, contentPresenter.getmCurrentPair().getTabs()[tab - 1].getUri());
             }
         }
     }
@@ -411,7 +411,7 @@ public class ContentFragment extends Fragment implements ContentView{
             public void onClick(View v) {
                 final CharSequence[] items = {"Un texto", "Una foto", "Una figura"};
                 //Actualizamos estado de la ficha, siempre que se clicke en el frame, pasa a IN PROGRESS
-                contentPresenter.putTabIN_PROCESS(mCurrentPair);
+                contentPresenter.putTabIN_PROCESS(contentPresenter.getmCurrentPair());
 
                 //Determinamos en que ficha estamos basándonos en la marca puesta por el presenter
                 mCurrentTab = contentPresenter.getMarkOfCurrentView(v);
@@ -430,10 +430,10 @@ public class ContentFragment extends Fragment implements ContentView{
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         // Do something with the selection
-                        if (null == mCurrentPair.getTabs()[mCurrentTab - 1]) {
-                            mCurrentPair.getTabs()[mCurrentTab - 1] = new Tab();
+                        if (null == contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1]) {
+                            contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1] = new Tab();
                         }
-                        mCurrentPair.getTabs()[mCurrentTab - 1].setType(contentPresenter.getTypeById(item));
+                        contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1].setType(contentPresenter.getTypeById(item));
                         initChargeTab();
                     }
                 });
@@ -447,7 +447,7 @@ public class ContentFragment extends Fragment implements ContentView{
 
     private void initChargeTab(){
 
-        Dialog dialog = contentPresenter.showDialogFromFrame(this.mCurrentPair,mCurrentTab-1,(CreationActivity) getActivity());
+        Dialog dialog = contentPresenter.showDialogFromFrame(contentPresenter.getmCurrentPair(),mCurrentTab-1,(CreationActivity) getActivity());
         dialog.show();
 
     }
@@ -475,8 +475,8 @@ public class ContentFragment extends Fragment implements ContentView{
         textView.setTextSize(data.getTextSize() / 2);
 
         //Actualizamos currentPair
-        mCurrentPair.getTabs()[mCurrentTab - 1].setText(data.getText().toString());
-        mCurrentPair.getTabs()[mCurrentTab - 1].setSize((int) data.getTextSize());
+        contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1].setText(data.getText().toString());
+        contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1].setSize((int) data.getTextSize());
 
         showContinueButton();
     }
@@ -516,7 +516,7 @@ public class ContentFragment extends Fragment implements ContentView{
      Picasso.with(getActivity()).load(mCurrentPhotoPath)
                 .resize(height, width)
              .centerCrop().into(img);
-        mCurrentPair.getTabs()[mCurrentTab - 1].setUri(mCurrentPhotoPath);
+        contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1].setUri(mCurrentPhotoPath);
         showContinueButton();
 
     }
@@ -533,13 +533,7 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-
-    public Pair getmCurrentPair() {
-        return mCurrentPair;
+    public ContentPresenter getContentPresenter() {
+        return contentPresenter;
     }
-
-    public void setmCurrentPair(Pair mCurrentPair) {
-        this.mCurrentPair = mCurrentPair;
-    }
-
 }

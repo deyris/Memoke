@@ -26,8 +26,10 @@ import es.barcelona.dey.memoke.views.ContentView;
  */
 public class ContentPresenter extends ComunPresenter implements Presenter<ContentView>{
 
+    Pair mCurrentPair = new Pair();
     ContentView contentView;
     ContentInteractor contentInteractor;
+
 
     @Override
     public void setView(ContentView view) {
@@ -162,5 +164,14 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
 
         return photoFile;
+    }
+
+
+    public Pair getmCurrentPair() {
+        return mCurrentPair;
+    }
+
+    public void setmCurrentPair(Pair mCurrentPair) {
+        this.mCurrentPair = mCurrentPair;
     }
 }
