@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import es.barcelona.dey.memoke.ui.ContentFragment;
+import es.barcelona.dey.memoke.ui.CreationFragment;
 
 /**
  * Created by deyris.drake on 18/9/16.
@@ -25,7 +26,7 @@ public interface CreationView {
 
     void hidePastButton();
 
-    void actualicePairNumber();
+    void actualicePairNumberInContentFragment(CreationFragment creationFragment);
 
      void setListenerBtnSgte();
 

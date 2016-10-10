@@ -80,8 +80,6 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         return currentPair;
     }
 
-
-
     private Pair generateNewPair(){
         //Creamos tablero
         mBoard = new Board();
@@ -130,13 +128,14 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
         }
 
-
-
-
         return savedInstanceState;
     }
 
-    public void createCreationActivity(Bundle savedInstanceState, Bundle bundleFromMain, FragmentManager fragmentManager, FragmentTransaction fragmentTransaction){
+    public void createCreationActivity(Bundle savedInstanceState, Bundle bundleFromMain){
+
+        // Get a reference to the FragmentManager
+        FragmentTransaction fragmentTransaction = creationView.getFragmentManager().beginTransaction();
+        FragmentManager fragmentManager = creationView.getFragmentManager();
         //Verificamos si venimos o no de un fichero ya existente
 
         updateIdCurrentPairIfExistInContext(savedInstanceState);
@@ -199,9 +198,6 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         updateTitleFromBundle(bundleFromMain);
         return mBoard;
     }
-    public Board getBoardWithTitleFromMain() {
-        return mBoard;
-    }
 
     public void setmBoard(Board mBoard) {
         this.mBoard = mBoard;
@@ -237,8 +233,6 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
             pair.setNumber(getIdCurrentPair());
 
-
-
             //Verificamos si ya pair existe para agregarlo o modificarlo
             savePairInBoard(pair);
             setIdCurrentPair(pair.getNumber());////////////////////////////
@@ -260,7 +254,16 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
         }
         //Actualizamos creationFragment con el numero de la pareja
-        creationView.actualicePairNumber();
+        actualicePairNumber();
+    }
+
+    public void actualicePairNumber(){
+        CreationFragment cf = (CreationFragment) creationView.getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+        //  Bundle bundleFromMain = getIntent().getExtras();
+
+        if (null != cf) {
+           creationView.actualicePairNumberInContentFragment(cf);
+        }
     }
 
     public void putFragmentEmptyAndGoNext(Bundle bundleSgte){
@@ -290,14 +293,8 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
         creationView.setListenerBtnSgte();
 
-        //Actualizamos creationFragment con el numero de la pareja
-        /*CreationFragment cf = (CreationFragment) creationView.getFragmentManager().findFragmentByTag(CreationFragment.TAG);
 
-        if (null != cf) {
-            cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), getIdCurrentPair()));
-
-        }*/
-        creationView.actualicePairNumber();
+        actualicePairNumber();
 
     }
 

@@ -82,13 +82,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
             creationPresenter = new CreationPresenter();
             creationPresenter.setView(this);
 
-
-            // Get a reference to the FragmentManager
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            FragmentManager fragmentManager = getFragmentManager();
-
-            creationPresenter.createCreationActivity(savedInstanceState,getIntent().getExtras(),fragmentManager,fragmentTransaction);
-
+            creationPresenter.createCreationActivity(savedInstanceState,getIntent().getExtras());
         }
 
     public void inicializeButtonNext(){
@@ -160,20 +154,13 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
                creationPresenter.clickOnNextButton();
 
-
             }
         });
     }
 
-    public void actualicePairNumber(){
-        //Actualizamos creationFragment con el numero de la pareja
-        CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
-      //  Bundle bundleFromMain = getIntent().getExtras();
-
-        if (null != cf) {
-            cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), creationPresenter.getIdCurrentPair()));
-
-        }
+    public void actualicePairNumberInContentFragment(CreationFragment cf){
+        String text = String.format(getResources().getString(R.string.creation_number), creationPresenter.getIdCurrentPair());
+        cf.mTxtNumber.setText(text);
     }
 
 
