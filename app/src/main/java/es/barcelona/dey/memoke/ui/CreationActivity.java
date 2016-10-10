@@ -1,21 +1,16 @@
 package es.barcelona.dey.memoke.ui;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
 import es.barcelona.dey.memoke.R;
-import es.barcelona.dey.memoke.beans.Pair;
-import es.barcelona.dey.memoke.presenters.ContentPresenter;
 import es.barcelona.dey.memoke.presenters.CreationPresenter;
 import es.barcelona.dey.memoke.views.CreationView;
 
@@ -24,13 +19,7 @@ import es.barcelona.dey.memoke.views.CreationView;
  */
 public class CreationActivity extends AppCompatActivity implements CreationView, ContentFragment.OnDataPass, ContentFragment.FragmentIterationListener{
 
-    private CreationFragment mCreationFragment;
- //   private   ContentFragment mContentFragment;
-//    public static Board mBoard;
-
     CreationPresenter creationPresenter;
-
-    Bundle contentBundle;
 
     @Override
     public Context getContext(){
@@ -61,13 +50,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
     public void onSaveInstanceState(Bundle outState) {
           super.onSaveInstanceState(outState);
 
-          if (null != creationPresenter.getmBoard())   {
-              //Salvamos lo que hay en mBoard
-              creationPresenter.updateOrAddBoard(creationPresenter.getmBoard());
-              //Guardamos el id VISUALIZADO en el momento de irnos
-              outState.putInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER,creationPresenter.getIdCurrentPair());
-              outState.putString(CreationPresenter.PARAM_CURRENT_BOARD, creationPresenter.getJsonCurrentBoard(creationPresenter.getmBoard()));
-          }
+         creationPresenter.savingInstanceState(outState);
 
       }
     private boolean fragmentAlreadyRestoredFromSavedState(String tag) {

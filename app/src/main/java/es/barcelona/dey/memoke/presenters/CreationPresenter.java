@@ -298,6 +298,16 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     }
 
+    public void savingInstanceState(Bundle outState){
+        if (null != this.getmBoard())   {
+            //Salvamos lo que hay en mBoard
+            updateOrAddBoard(getmBoard());
+            //Guardamos el id VISUALIZADO en el momento de irnos
+            outState.putInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER,getIdCurrentPair());
+            outState.putString(CreationPresenter.PARAM_CURRENT_BOARD, getJsonCurrentBoard(getmBoard()));
+        }
+    }
+
     public void putFragmentOnPast(){
         decrementIdCurrentPair();
         Pair pairAnt = getmBoard().getPairs().get(getIdCurrentPair());
