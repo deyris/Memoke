@@ -3,6 +3,8 @@ package es.barcelona.dey.memoke.presenters;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.HashMap;
 
@@ -234,6 +236,86 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
         return jsonPairAnt;
 
+    }
+
+    public void clickOnNextButton(){
+        ContentFragment f = (ContentFragment) creationView.getFragmentManager().findFragmentByTag(ContentFragment.TAG);
+
+        inicializeBoardIfPairsAreNull();
+
+
+        Pair pair = f.getContentPresenter().getmCurrentPair();
+
+        Bundle bundleSgte = new Bundle();
+        if (pairNotSavedYet(pair)) {
+
+            pair.setNumber(getIdCurrentPair());
+
+
+
+            //Verificamos si ya pair existe para agregarlo o modificarlo
+            savePairInBoard(pair);
+            setIdCurrentPair(pair.getNumber());////////////////////////////
+            //Vaciamos fragment y nos vamos al sgte
+            creationView.putFragmentEmptyAndGoNext(bundleSgte);
+
+            //Ponemos el boton Siguiente invisible de nuevo
+            creationView.hideNextButton();
+
+        } else {
+
+            creationView.putFragmentEmptyAndGoNext(bundleSgte);
+
+            //Rescatamos la pareja
+            String jsonNextPair = getNextPairOnBoard(getIdCurrentPair());
+
+            //Rellenamos Bundle con la pareja siguiente
+            bundleSgte.putSerializable(CreationPresenter.PARAM_CURRENT_PAIR, jsonNextPair);
+
+        }
+        //Actualizamos creationFragment con el numero de la pareja
+        creationView.actualicePairNumber();
+    }
+
+
+    public void clickOnPastButton(){
+        //En caso de que se haya completado el estado de la pareja, guardamos
+        ContentFragment f = (ContentFragment)creationView.getFragmentManager().findFragmentByTag(ContentFragment.TAG);
+        Pair pairForSave = f.getContentPresenter().getmCurrentPair();
+        if (pairForSave.getState().equals(Pair.State.COMPLETED)) {
+            savePairInBoard(pairForSave);
+        }
+
+        putFragmentOnPast();
+
+        creationView.setListenerBtnSgte();
+
+        //Actualizamos creationFragment con el numero de la pareja
+        /*CreationFragment cf = (CreationFragment) creationView.getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+
+        if (null != cf) {
+            cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), getIdCurrentPair()));
+
+        }*/
+        creationView.actualicePairNumber();
+
+    }
+
+    public void putFragmentOnPast(){
+        decrementIdCurrentPair();
+        Pair pairAnt = getmBoard().getPairs().get(getIdCurrentPair());
+
+        //Actualizamos fragment
+        Bundle bundleAnt = new Bundle();
+        String jsonPairAnt = getJsonCurrentPair(pairAnt);
+
+        bundleAnt.putSerializable(CreationPresenter.PARAM_CURRENT_PAIR,jsonPairAnt);
+        FragmentManager fragmentManager = creationView.getFragmentManager();
+        FragmentTransaction ft =fragmentManager.beginTransaction();
+
+        ft.setCustomAnimations(R.animator.slide_out_up_ant, R.animator.slide_in_up_ant).replace(R.id.content_frame,
+                ContentFragment.newInstance(bundleAnt),
+                ContentFragment.TAG).addToBackStack(null).commit();
     }
 
     public void inicializeBoardIfPairsAreNull(){

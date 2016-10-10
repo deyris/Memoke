@@ -17,7 +17,18 @@ public interface CreationView {
 
     FragmentManager getFragmentManager();
 
-    public void inicializeButtonNext();
+    void inicializeButtonNext();
 
-    public void inicializeButtonPast();
+    void inicializeButtonPast();
+
+    void hideNextButton();
+
+    void hidePastButton();
+
+    void putFragmentEmptyAndGoNext(Bundle bundle);
+
+    void actualicePairNumber();
+
+     void setListenerBtnSgte();
+
 }

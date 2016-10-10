@@ -29,5 +29,4 @@ public interface ContentView {
 
     void hideImageInTab(int idText, int idImg);
 
-
 }

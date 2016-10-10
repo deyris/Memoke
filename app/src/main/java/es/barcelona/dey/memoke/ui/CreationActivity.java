@@ -50,7 +50,6 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
     @Override
     public void onDestroy(){
         super.onDestroy();
-        Log.d("DEY", "Estoy en CreationActivity.onDestroy");
     }
 
     public void onFragmentIteration(Bundle arguments){
@@ -146,7 +145,19 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         f .receivingFromDialog(data);
 
     }
+    @Override
+    public void hideNextButton(){
+        Button button = (Button) findViewById(R.id.btnSgte);
+        button.setVisibility(View.GONE);
+    }
 
+    @Override
+    public void hidePastButton(){
+        Button button = (Button) findViewById(R.id.btnAnt);
+        button.setVisibility(View.GONE);
+    }
+
+    @Override
     public void setListenerBtnSgte(){
         Button btnSgte = (Button)findViewById(R.id.btnSgte);
         btnSgte.setOnClickListener(new View.OnClickListener() {
@@ -154,45 +165,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
             @Override
             public void onClick(View v) {
 
-                ContentFragment f = (ContentFragment) getFragmentManager().findFragmentByTag(ContentFragment.TAG);
-
-                //Pair pair = new Pair();
-                creationPresenter.inicializeBoardIfPairsAreNull();
-
-              //  Pair pair = creationPresenter.getmBoard().getPairs().get(creationPresenter.getIdCurrentPair());
-
-                Pair pair = f.getContentPresenter().getmCurrentPair();
-
-                Bundle bundleSgte = new Bundle();
-                if (creationPresenter.pairNotSavedYet(pair)) {
-
-                    pair.setNumber(creationPresenter.getIdCurrentPair());
-
-
-
-                    //Verificamos si ya pair existe para agregarlo o modificarlo
-                    creationPresenter.savePairInBoard(pair);
-                    creationPresenter.setIdCurrentPair(pair.getNumber());////////////////////////////
-                    //Vaciamos fragment y nos vamos al sgte
-                    putFragmentEmptyAndGoNext(bundleSgte);
-
-                    //Ponemos el boton Siguiente invisible de nuevo
-                    Button button = (Button) findViewById(v.getId());
-                    button.setVisibility(View.GONE);
-
-                } else {
-
-                    putFragmentEmptyAndGoNext(bundleSgte);
-
-                    //Rescatamos la pareja
-                    String jsonNextPair = creationPresenter.getNextPairOnBoard(creationPresenter.getIdCurrentPair());
-
-                    //Rellenamos Bundle con la pareja siguiente
-                    bundleSgte.putSerializable(CreationPresenter.PARAM_CURRENT_PAIR, jsonNextPair);
-
-                }
-                //Actualizamos creationFragment con el numero de la pareja
-                actualicePairNumber();
+               creationPresenter.clickOnNextButton();
 
 
             }
@@ -214,22 +187,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
     }
 
-    public void putFragmentOnPast(){
-        creationPresenter.decrementIdCurrentPair();
-        Pair pairAnt = creationPresenter.getmBoard().getPairs().get(creationPresenter.getIdCurrentPair());
 
-        //Actualizamos fragment
-        Bundle bundleAnt = new Bundle();
-        String jsonPairAnt = creationPresenter.getJsonCurrentPair(pairAnt);
-
-        bundleAnt.putSerializable(CreationPresenter.PARAM_CURRENT_PAIR,jsonPairAnt);
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction ft =fragmentManager.beginTransaction();
-
-        ft.setCustomAnimations(R.animator.slide_out_up_ant, R.animator.slide_in_up_ant).replace(R.id.content_frame,
-                ContentFragment.newInstance(bundleAnt),
-                ContentFragment.TAG).addToBackStack(null).commit();
-    }
 
     public void actualicePairNumber(){
         //Actualizamos creationFragment con el numero de la pareja
@@ -242,6 +200,8 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         }
     }
 
+
+
     public void setListenerBtnAnterior(){
         Button btnAnt = (Button)findViewById(R.id.btnAnt);
 
@@ -249,25 +209,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
             @Override
             public void onClick(View v) {
-                //En caso de que se haya completado el estado de la pareja, guardamos
-                ContentFragment f = (ContentFragment)getFragmentManager().findFragmentByTag(ContentFragment.TAG);
-                Pair pairForSave = f.getContentPresenter().getmCurrentPair();
-                if (pairForSave.getState().equals(Pair.State.COMPLETED)) {
-                    creationPresenter.savePairInBoard(pairForSave);
-                }
-
-                putFragmentOnPast();
-
-                setListenerBtnSgte();
-
-                //Actualizamos creationFragment con el numero de la pareja
-                CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
-
-                if (null != cf) {
-                    cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), creationPresenter.getIdCurrentPair()));
-
-                }
-
+                creationPresenter.clickOnPastButton();
             }
         });
     }

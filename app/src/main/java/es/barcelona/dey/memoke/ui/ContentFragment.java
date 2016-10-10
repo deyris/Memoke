@@ -270,6 +270,8 @@ public class ContentFragment extends Fragment implements ContentView{
         mText.setVisibility(View.VISIBLE);
     }
 
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
