@@ -46,16 +46,13 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
     }
 
-      @Override
+    @Override
     public void onSaveInstanceState(Bundle outState) {
           super.onSaveInstanceState(outState);
 
          creationPresenter.savingInstanceState(outState);
 
       }
-    private boolean fragmentAlreadyRestoredFromSavedState(String tag) {
-        return (getFragmentManager().findFragmentByTag(tag) != null ? true : false);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +64,13 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
             creationPresenter.createCreationActivity(savedInstanceState,getIntent().getExtras());
         }
-
+    @Override
     public void inicializeButtonNext(){
         Button btnSgte = (Button) findViewById(R.id.btnSgte);
         btnSgte.setVisibility(View.GONE);
         setListenerBtnSgte();
     }
-
+    @Override
     public void inicializeButtonPast(){
         Button btnAnt = (Button)findViewById(R.id.btnAnt);
         btnAnt.setVisibility(View.GONE);
@@ -121,11 +118,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         button.setVisibility(View.GONE);
     }
 
-    @Override
-    public void hidePastButton(){
-        Button button = (Button) findViewById(R.id.btnAnt);
-        button.setVisibility(View.GONE);
-    }
+
 
     @Override
     public void setListenerBtnSgte(){
@@ -141,12 +134,11 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         });
     }
 
+    @Override
     public void actualicePairNumberInContentFragment(CreationFragment cf){
         String text = String.format(getResources().getString(R.string.creation_number), creationPresenter.getIdCurrentPair());
         cf.mTxtNumber.setText(text);
     }
-
-
 
     public void setListenerBtnAnterior(){
         Button btnAnt = (Button)findViewById(R.id.btnAnt);
