@@ -3,8 +3,7 @@ package es.barcelona.dey.memoke.presenters;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+
 
 import java.util.HashMap;
 
@@ -131,17 +130,6 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
         }
 
-        //Si giro el móvil, vengo a esta línea, no es primera vez que se carga el fragment
-       /* Bundle bundle = new Bundle();
-        bundle.putInt("CURRENT_PAIR", getIdCurrentPair());
-
-        CreationFragment = mCreationFragment = new CreationFragment();
-        mCreationFragment.setArguments(bundle);
-
-        fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.header_frame, mCreationFragment, CreationFragment.TAG);
-        fragmentTransaction.commit();*/
-
 
 
 
@@ -150,8 +138,6 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     public void createCreationActivity(Bundle savedInstanceState, Bundle bundleFromMain, FragmentManager fragmentManager, FragmentTransaction fragmentTransaction){
         //Verificamos si venimos o no de un fichero ya existente
-        // Bundle bundleFromMain = getIntent().getExtras();
-        // String title = "";
 
         updateIdCurrentPairIfExistInContext(savedInstanceState);
         updateBoardIfExistInContent(savedInstanceState);

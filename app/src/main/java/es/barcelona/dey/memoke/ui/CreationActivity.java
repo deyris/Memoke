@@ -52,16 +52,9 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         super.onDestroy();
     }
 
+    @Override
     public void onFragmentIteration(Bundle arguments){
-        ContentFragment f = (ContentFragment)getFragmentManager().findFragmentByTag(ContentFragment.TAG);
-
-        if (f!=null && arguments!=null && arguments.get(CreationPresenter.PARAM_CURRENT_PAIR)!=null){
-            contentBundle = arguments;
-        }
-
-        if (arguments!=null && arguments.get("TEXT")!=null){
-            contentBundle = arguments;
-        }
+        
     }
 
       @Override
