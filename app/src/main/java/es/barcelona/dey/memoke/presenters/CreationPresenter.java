@@ -243,14 +243,14 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
             savePairInBoard(pair);
             setIdCurrentPair(pair.getNumber());////////////////////////////
             //Vaciamos fragment y nos vamos al sgte
-            creationView.putFragmentEmptyAndGoNext(bundleSgte);
+            putFragmentEmptyAndGoNext(bundleSgte);
 
             //Ponemos el boton Siguiente invisible de nuevo
             creationView.hideNextButton();
 
         } else {
 
-            creationView.putFragmentEmptyAndGoNext(bundleSgte);
+            putFragmentEmptyAndGoNext(bundleSgte);
 
             //Rescatamos la pareja
             String jsonNextPair = getNextPairOnBoard(getIdCurrentPair());
@@ -261,6 +261,20 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         }
         //Actualizamos creationFragment con el numero de la pareja
         creationView.actualicePairNumber();
+    }
+
+    public void putFragmentEmptyAndGoNext(Bundle bundleSgte){
+        FragmentTransaction ft = creationView.getFragmentManager().beginTransaction();
+
+        //Incrementamos la pareja y pasamos el bundle
+        incrementIdCurrentPair();
+        bundleSgte.putInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER, getIdCurrentPair());
+
+        ft.setCustomAnimations(R.animator.slide_in_up, R.animator.slide_out_up).replace(R.id.content_frame,
+                ContentFragment.newInstance(bundleSgte),
+                ContentFragment.TAG).addToBackStack(null).commit();
+
+
     }
 
 

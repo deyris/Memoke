@@ -25,8 +25,6 @@ public interface CreationView {
 
     void hidePastButton();
 
-    void putFragmentEmptyAndGoNext(Bundle bundle);
-
     void actualicePairNumber();
 
      void setListenerBtnSgte();

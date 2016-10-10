@@ -54,7 +54,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
     @Override
     public void onFragmentIteration(Bundle arguments){
-        
+
     }
 
       @Override
@@ -165,27 +165,10 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         });
     }
 
-    public void putFragmentEmptyAndGoNext(Bundle bundleSgte){
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-
-        //Incrementamos la pareja y pasamos el bundle
-        creationPresenter.incrementIdCurrentPair();
-        bundleSgte.putInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER, creationPresenter.getIdCurrentPair());
-
-        ft.setCustomAnimations(R.animator.slide_in_up, R.animator.slide_out_up).replace(R.id.content_frame,
-                ContentFragment.newInstance(bundleSgte),
-                ContentFragment.TAG).addToBackStack(null).commit();
-
-
-    }
-
-
-
     public void actualicePairNumber(){
         //Actualizamos creationFragment con el numero de la pareja
         CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
-        Bundle bundleFromMain = getIntent().getExtras();
+      //  Bundle bundleFromMain = getIntent().getExtras();
 
         if (null != cf) {
             cf.mTxtNumber.setText(String.format(getResources().getString(R.string.creation_number), creationPresenter.getIdCurrentPair()));
