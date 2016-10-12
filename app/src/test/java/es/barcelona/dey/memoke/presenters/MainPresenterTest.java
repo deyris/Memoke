@@ -26,6 +26,6 @@ public class MainPresenterTest {
 
     @Test
     public void setViewIsIllegalArgumentExceptionIfViewNull(){
-        
+
     }
 }

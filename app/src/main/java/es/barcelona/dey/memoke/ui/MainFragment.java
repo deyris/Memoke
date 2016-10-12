@@ -22,9 +22,6 @@ import es.barcelona.dey.memoke.views.MainView;
  */
 public class MainFragment extends Fragment  implements MainView {
 
-    public static String PARAM_TITLE = "TITLE";
-    public static String PARAM_SELECTED_BOARD = "PARAM_SELECTED_BOARD";
-
     EditText mTxtTitle = null;
     EditText mTxtNumber = null;
     Button mBtnCreate = null;
@@ -51,7 +48,6 @@ public class MainFragment extends Fragment  implements MainView {
         mBtnCreate.setOnClickListener(new View.OnClickListener() {
                                           @Override
                                           public void onClick(View v) {
-                                         //Verificar si existe ya el tablero y lanzar un popup
                                         mainPresenter.clickOnCreateButton(mTxtTitle.getText().toString().trim());
 
                                           }
@@ -72,10 +68,10 @@ public class MainFragment extends Fragment  implements MainView {
     @Override
     public void openToCreateBoardFromOther() {
         Intent i = new Intent(getActivity(), CreationActivity.class);
-        i.putExtra(PARAM_TITLE, mTxtTitle.getText().toString().trim());
+        i.putExtra(MainPresenter.PARAM_TITLE, mTxtTitle.getText().toString().trim());
          //Restablecer el board
         String jsonSelectedBoard = mainPresenter.getBoardForRestore(mTxtTitle.getText().toString().trim());
-        i.putExtra(PARAM_SELECTED_BOARD, jsonSelectedBoard);
+        i.putExtra(MainPresenter.PARAM_SELECTED_BOARD, jsonSelectedBoard);
 
 
         startActivity(i);
@@ -84,7 +80,7 @@ public class MainFragment extends Fragment  implements MainView {
     @Override
     public void openToCreateBoardFromZero() {
         Intent i = new Intent(getActivity(), CreationActivity.class);
-        i.putExtra(PARAM_TITLE, mTxtTitle.getText().toString().trim());
+        i.putExtra(MainPresenter.PARAM_TITLE, mTxtTitle.getText().toString().trim());
 
         startActivity(i);
     }
