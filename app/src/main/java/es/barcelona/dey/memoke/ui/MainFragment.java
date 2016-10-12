@@ -23,7 +23,6 @@ import es.barcelona.dey.memoke.views.MainView;
 public class MainFragment extends Fragment  implements MainView {
 
     EditText mTxtTitle = null;
-    EditText mTxtNumber = null;
     Button mBtnCreate = null;
 
     MainPresenter mainPresenter;
