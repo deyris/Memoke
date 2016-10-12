@@ -193,18 +193,16 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-    @Override
-    public  void showContinueButton(){
-        if (null!= contentPresenter.getmCurrentPair()) {
-            contentPresenter.validatePairStateComplete(contentPresenter.getmCurrentPair());
-            Button b = (Button) getActivity().findViewById(R.id.btnSgte);
-            if (contentPresenter.getmCurrentPair().isReadyToBePassed()) {
-                b.setVisibility(View.VISIBLE);
-            } else {
-                b.setVisibility(View.GONE);
-            }
-        }
 
+
+    public void showNextButton(){
+        Button b = (Button) getActivity().findViewById(R.id.btnSgte);
+        b.setVisibility(View.VISIBLE);
+    }
+
+    public void hideNextButton(){
+        Button b = (Button) getActivity().findViewById(R.id.btnSgte);
+        b.setVisibility(View.GONE);
     }
 
     @Override
@@ -441,7 +439,7 @@ public class ContentFragment extends Fragment implements ContentView{
         contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setText(data.getText().toString());
         contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setSize((int) data.getTextSize());
 
-        showContinueButton();
+        contentPresenter.showContinueButton();
     }
 
 
@@ -480,7 +478,7 @@ public class ContentFragment extends Fragment implements ContentView{
                 .resize(height, width)
              .centerCrop().into(img);
         contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setUri(contentPresenter.getmCurrentPhotoPath());
-        showContinueButton();
+        contentPresenter.showContinueButton();
 
     }
 

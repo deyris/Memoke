@@ -4,12 +4,15 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.io.File;
 import java.io.IOException;
+
+import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.interactors.ContentInteractor;
@@ -89,6 +92,18 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
     }
 
+    public  void showContinueButton(){
+        if (null!= getmCurrentPair()) {
+            validatePairStateComplete(getmCurrentPair());
+            if (getmCurrentPair().isReadyToBePassed()) {
+                contentView.showNextButton();
+            } else {
+                contentView.hideNextButton();
+            }
+        }
+
+    }
+
     public void fillPairOnView(String jsonCurrentPair){
         if(null!=jsonCurrentPair) {
 
@@ -158,7 +173,7 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
     public void controlButtonsAntSgte(){
         contentView.showAntButton();
-        contentView.showContinueButton();
+        showContinueButton();
     }
 
     public boolean existTextToShowInView(Pair currentPair, int tab){

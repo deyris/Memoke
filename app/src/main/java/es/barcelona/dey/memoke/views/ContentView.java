@@ -24,7 +24,10 @@ public interface ContentView {
 
     void fillImgsWithCurrent();
 
-    void showContinueButton();
+
+    void showNextButton();
+
+    void hideNextButton();
 
     void showAntButton();
 
