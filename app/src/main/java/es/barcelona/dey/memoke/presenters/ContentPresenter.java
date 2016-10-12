@@ -17,6 +17,7 @@ import es.barcelona.dey.memoke.views.ContentView;
  */
 public class ContentPresenter extends ComunPresenter implements Presenter<ContentView>{
 
+    int mCurrentFrame;
     int mCurrentImgResultShow;
     int mCurrentTextResultShow;
     int mCurrentTab;
@@ -200,5 +201,13 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
     public void setmCurrentImgResultShow(int mCurrentImgResultShow) {
         this.mCurrentImgResultShow = mCurrentImgResultShow;
+    }
+
+    public int getmCurrentFrame() {
+        return mCurrentFrame;
+    }
+
+    public void setmCurrentFrame(int mCurrentFrame) {
+        this.mCurrentFrame = mCurrentFrame;
     }
 }

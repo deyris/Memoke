@@ -52,8 +52,6 @@ public class ContentFragment extends Fragment implements ContentView{
     static final int REQUEST_SELECT_PICTURE = 2;
 
 
-    static int mCurrentFrame;
-
     TextView  mTextView1;
     TextView  mTextView2;
 
@@ -416,7 +414,7 @@ public class ContentFragment extends Fragment implements ContentView{
 
                 //Determinamos donde mostrar el resultado
                 FrameLayout thisFrame = (FrameLayout)mLayout.findViewById(v.getId());
-                mCurrentFrame = thisFrame.getId();
+                contentPresenter.setmCurrentFrame(thisFrame.getId());
                 contentPresenter.setmCurrentTextResultShow(thisFrame.getChildAt(0).getId());
                 contentPresenter.setmCurrentImgResultShow(thisFrame.getChildAt(1).getId());
 
