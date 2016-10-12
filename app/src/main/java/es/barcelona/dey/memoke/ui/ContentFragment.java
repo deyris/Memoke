@@ -51,8 +51,6 @@ public class ContentFragment extends Fragment implements ContentView{
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_SELECT_PICTURE = 2;
 
-    static String mCurrentPhotoPath;
-
 
     static int mCurrentTab;
     static int mCurrentTextResultShow;
@@ -281,7 +279,7 @@ public class ContentFragment extends Fragment implements ContentView{
         }else if (requestCode==REQUEST_SELECT_PICTURE){
             if (null!=data && null!=data.getData()) {
                 Uri selectedImage = data.getData();
-                mCurrentPhotoPath = selectedImage.toString();
+                contentPresenter.setmCurrentPhotoPath(selectedImage.toString());
                 setPicToBackground();
             }
         }
@@ -383,16 +381,16 @@ public class ContentFragment extends Fragment implements ContentView{
                 finalWidth = imageViewTmp.getMeasuredWidth();
 
                 int tempImg = mCurrentImgResultShow;
-                String tempPhoto = mCurrentPhotoPath;
+                String tempPhoto = contentPresenter.getmCurrentPhotoPath();
                 int tempTab = mCurrentTab;
 
                 mCurrentImgResultShow = imageViewTmp.getId();
-                mCurrentPhotoPath = uriTemp;
+                contentPresenter.setmCurrentPhotoPath(uriTemp);
                 mCurrentTab = tabTmp;
                 setPicToImg(imageViewTmp, finalHeight, finalWidth);
 
                 mCurrentImgResultShow = tempImg;
-                mCurrentPhotoPath = tempPhoto;
+                contentPresenter.setmCurrentPhotoPath(tempPhoto);
                 mCurrentTab = tempTab;
 
                 return true;
@@ -493,7 +491,7 @@ public class ContentFragment extends Fragment implements ContentView{
             File photoFile = contentPresenter.createFileFromPhoto();
 
             // Save a file: path for use with ACTION_VIEW intents
-            mCurrentPhotoPath = "file:" + photoFile.getAbsolutePath();
+            contentPresenter.setmCurrentPhotoPath("file:" + photoFile.getAbsolutePath());
 
 
             // Continue only if the File was successfully created
@@ -515,10 +513,10 @@ public class ContentFragment extends Fragment implements ContentView{
 
     public void setPicToImg(ImageView img, int height, int width){
 
-     Picasso.with(getActivity()).load(mCurrentPhotoPath)
+     Picasso.with(getActivity()).load(contentPresenter.getmCurrentPhotoPath())
                 .resize(height, width)
              .centerCrop().into(img);
-        contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1].setUri(mCurrentPhotoPath);
+        contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1].setUri(contentPresenter.getmCurrentPhotoPath());
         showContinueButton();
 
     }
@@ -531,7 +529,7 @@ public class ContentFragment extends Fragment implements ContentView{
         ImageView imageView = (ImageView)mLayout.findViewById(mCurrentImgResultShow);
         imageView.setVisibility(View.VISIBLE);
 
-        preDrawPhoto(imageView, mCurrentTab, mCurrentPhotoPath);
+        preDrawPhoto(imageView, mCurrentTab, contentPresenter.getmCurrentPhotoPath());
 
     }
 

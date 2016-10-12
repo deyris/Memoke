@@ -1,21 +1,12 @@
 package es.barcelona.dey.memoke.presenters;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.os.Handler;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.google.gson.Gson;
-
 import java.io.File;
 import java.io.IOException;
-
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.interactors.ContentInteractor;
-import es.barcelona.dey.memoke.interactors.CreationInteractor;
 import es.barcelona.dey.memoke.ui.CreationActivity;
 import es.barcelona.dey.memoke.ui.DialogPhoto;
 import es.barcelona.dey.memoke.ui.DialogText;
@@ -26,6 +17,7 @@ import es.barcelona.dey.memoke.views.ContentView;
  */
 public class ContentPresenter extends ComunPresenter implements Presenter<ContentView>{
 
+    String mCurrentPhotoPath;
     Pair mCurrentPair = new Pair();
     ContentView contentView;
     ContentInteractor contentInteractor;
@@ -173,5 +165,13 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
     public void setmCurrentPair(Pair mCurrentPair) {
         this.mCurrentPair = mCurrentPair;
+    }
+
+    public String getmCurrentPhotoPath() {
+        return mCurrentPhotoPath;
+    }
+
+    public void setmCurrentPhotoPath(String mCurrentPhotoPath) {
+        this.mCurrentPhotoPath = mCurrentPhotoPath;
     }
 }
