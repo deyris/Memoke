@@ -7,6 +7,7 @@ import android.view.Window;
 import android.widget.Button;
 
 import es.barcelona.dey.memoke.R;
+import es.barcelona.dey.memoke.presenters.ContentPresenter;
 
 /**
  * Created by deyris.drake on 2/2/16.
@@ -26,10 +27,10 @@ public class DialogPhoto extends Dialog implements android.view.View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnCamera:
-                c.onDataPass(ContentFragment.PHOTO_FROM_CAMERA);
+                c.onDataPass(ContentPresenter.PHOTO_FROM_CAMERA);
                 break;
             case R.id.btnGallery:
-                c.onDataPass(ContentFragment.PHOTO_FROM_GALLERY);
+                c.onDataPass(ContentPresenter.PHOTO_FROM_GALLERY);
                 break;
             default:
                 break;

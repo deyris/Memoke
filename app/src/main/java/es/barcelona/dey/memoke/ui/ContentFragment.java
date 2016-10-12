@@ -46,11 +46,6 @@ public class ContentFragment extends Fragment implements ContentView{
 
     FrameLayout mFrameTab2;
 
-    static final int PHOTO_FROM_CAMERA = 1;
-    static final int PHOTO_FROM_GALLERY = 2;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int REQUEST_SELECT_PICTURE = 2;
-
 
     TextView  mTextView1;
     TextView  mTextView2;
@@ -269,9 +264,9 @@ public class ContentFragment extends Fragment implements ContentView{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode==REQUEST_IMAGE_CAPTURE){
+        if (requestCode== ContentPresenter.REQUEST_IMAGE_CAPTURE){
             setPicToBackground();
-        }else if (requestCode==REQUEST_SELECT_PICTURE){
+        }else if (requestCode== ContentPresenter.REQUEST_SELECT_PICTURE){
             if (null!=data && null!=data.getData()) {
                 Uri selectedImage = data.getData();
                 contentPresenter.setmCurrentPhotoPath(selectedImage.toString());
@@ -448,10 +443,10 @@ public class ContentFragment extends Fragment implements ContentView{
     }
 
     public void receivingFromDialog(int data){
-        if (data==PHOTO_FROM_CAMERA){
+        if (data== ContentPresenter.PHOTO_FROM_CAMERA){
             openingCamera();
         }
-        if (data==PHOTO_FROM_GALLERY){
+        if (data== ContentPresenter.PHOTO_FROM_GALLERY){
             openingGallery();
         }
     }
@@ -494,7 +489,7 @@ public class ContentFragment extends Fragment implements ContentView{
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.fromFile(photoFile));
 
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, ContentPresenter.REQUEST_IMAGE_CAPTURE);
 
             }
         }
@@ -503,7 +498,7 @@ public class ContentFragment extends Fragment implements ContentView{
     private void openingGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
 
-        startActivityForResult(intent, REQUEST_SELECT_PICTURE);
+        startActivityForResult(intent, ContentPresenter.REQUEST_SELECT_PICTURE);
     }
 
     public void setPicToImg(ImageView img, int height, int width){
