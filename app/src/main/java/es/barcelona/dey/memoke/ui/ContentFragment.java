@@ -53,7 +53,6 @@ public class ContentFragment extends Fragment implements ContentView{
     ImageView  mImageView1;
     ImageView  mImageView2;
 
-    static int finalHeight, finalWidth;
     private FragmentIterationListener mCallback = null;
     public ContentPresenter contentPresenter;
 
@@ -367,8 +366,8 @@ public class ContentFragment extends Fragment implements ContentView{
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             public boolean onPreDraw() {
                 mImageView1.getViewTreeObserver().removeOnPreDrawListener(this);
-                finalHeight = imageViewTmp.getMeasuredHeight();
-                finalWidth = imageViewTmp.getMeasuredWidth();
+                ContentPresenter.finalHeight = imageViewTmp.getMeasuredHeight();
+                ContentPresenter.finalWidth = imageViewTmp.getMeasuredWidth();
 
                 int tempImg = contentPresenter.getmCurrentImgResultShow();
                 String tempPhoto = contentPresenter.getmCurrentPhotoPath();
@@ -377,7 +376,7 @@ public class ContentFragment extends Fragment implements ContentView{
                 contentPresenter.setmCurrentImgResultShow(imageViewTmp.getId());
                 contentPresenter.setmCurrentPhotoPath(uriTemp);
                 contentPresenter.setmCurrentTab(tabTmp);
-                setPicToImg(imageViewTmp, finalHeight, finalWidth);
+                setPicToImg(imageViewTmp, ContentPresenter.finalHeight, ContentPresenter.finalWidth);
 
                 contentPresenter.setmCurrentImgResultShow(tempImg);
                 contentPresenter.setmCurrentPhotoPath(tempPhoto);

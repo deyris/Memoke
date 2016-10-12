@@ -21,6 +21,8 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
     public static final int PHOTO_FROM_CAMERA = 1;
     public static final int REQUEST_IMAGE_CAPTURE = 1;
     public static final int REQUEST_SELECT_PICTURE = 2;
+    public static int finalHeight;
+    public static int finalWidth;
 
     int mCurrentFrame;
     int mCurrentImgResultShow;
