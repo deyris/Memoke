@@ -126,19 +126,21 @@ public class ContentFragment extends Fragment implements ContentView{
         mLayout = (LinearLayout) inflater.inflate(R.layout.fragment_creation_content,
                 container, false);
 
-        if (mLayout!=null) {
-            mFrameTab1 = (FrameLayout) mLayout.findViewById(R.id.editContent1);
-            mFrameTab2 = (FrameLayout) mLayout.findViewById(R.id.editContent2);
-
-
-            mTextView1 = (TextView) mLayout.findViewById(R.id.txtContent1);
-            mTextView2 = (TextView) mLayout.findViewById(R.id.txtContent2);
-
-            mImageView1 = (ImageView) mLayout.findViewById(R.id.imgContent1);
-            mImageView2 = (ImageView) mLayout.findViewById(R.id.imgContent2);
-        }
+        contentPresenter.creatingView(mLayout);
 
         return mLayout;
+    }
+
+    public void inicializeFragment(){
+        mFrameTab1 = (FrameLayout) mLayout.findViewById(R.id.editContent1);
+        mFrameTab2 = (FrameLayout) mLayout.findViewById(R.id.editContent2);
+
+
+        mTextView1 = (TextView) mLayout.findViewById(R.id.txtContent1);
+        mTextView2 = (TextView) mLayout.findViewById(R.id.txtContent2);
+
+        mImageView1 = (ImageView) mLayout.findViewById(R.id.imgContent1);
+        mImageView2 = (ImageView) mLayout.findViewById(R.id.imgContent2);
     }
 
     @Override

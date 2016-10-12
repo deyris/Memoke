@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,6 +83,11 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
     }
 
+    public void creatingView(LinearLayout mLayout){
+        if (mLayout!=null) {
+            contentView.inicializeFragment();
+        }
+    }
 
     public void fillPairOnView(String jsonCurrentPair){
         if(null!=jsonCurrentPair) {

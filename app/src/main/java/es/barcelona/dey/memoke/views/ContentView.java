@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,4 +39,6 @@ public interface ContentView {
     void fillNumberInCurrentPair();
 
     void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1);
+
+    void inicializeFragment();
 }
