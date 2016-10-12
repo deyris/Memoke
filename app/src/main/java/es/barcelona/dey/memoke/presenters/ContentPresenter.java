@@ -1,7 +1,10 @@
 package es.barcelona.dey.memoke.presenters;
 
 import android.app.Dialog;
+import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
+
 import java.io.File;
 import java.io.IOException;
 import es.barcelona.dey.memoke.beans.Pair;
@@ -46,6 +49,27 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
     public void detachView() {
         contentView = null;
     }
+
+    public void onViewCreated(FrameLayout  mFrameTab1,FrameLayout  mFrameTab2, Bundle savedInstanceState){
+        contentView.setListenerFrame(mFrameTab1,1);
+        contentView.setListenerFrame(mFrameTab2,2);
+
+        String jsonCurrentPair = contentView.getCurrentPairFromContext(savedInstanceState);
+
+        if(null!=jsonCurrentPair) {
+            setmCurrentPair(getCurrentPair(jsonCurrentPair));
+            fillPairOnView(jsonCurrentPair);
+
+        }
+
+        contentView.fillNumberInCurrentPair();
+
+        //Comprobamos botones de Anterior y Siguiente
+        controlButtonsAntSgte();
+    }
+
+
+
 
 
     public void fillPairOnView(String jsonCurrentPair){

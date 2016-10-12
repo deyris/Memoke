@@ -1,7 +1,9 @@
 package es.barcelona.dey.memoke.views;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -29,4 +31,9 @@ public interface ContentView {
 
     void hideImageInTab(int idText, int idImg);
 
+    void setListenerFrame(FrameLayout frame, int tab);
+
+    String getCurrentPairFromContext(Bundle savedInstanceState);
+
+    void fillNumberInCurrentPair();
 }

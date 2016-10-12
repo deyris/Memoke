@@ -145,7 +145,8 @@ public class ContentFragment extends Fragment implements ContentView{
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        setListenerFrame(mFrameTab1,1);
+        contentPresenter.onViewCreated(mFrameTab1,mFrameTab2, savedInstanceState);
+       /* setListenerFrame(mFrameTab1,1);
         setListenerFrame(mFrameTab2,2);
 
         String jsonCurrentPair = getCurrentPairFromContext(savedInstanceState);
@@ -159,7 +160,7 @@ public class ContentFragment extends Fragment implements ContentView{
         fillNumberInCurrentPair();
 
         //Comprobamos botones de Anterior y Siguiente
-       contentPresenter.controlButtonsAntSgte();
+       contentPresenter.controlButtonsAntSgte();*/
     }
 
 
@@ -286,7 +287,8 @@ public class ContentFragment extends Fragment implements ContentView{
         }
     }
 
-    private String getCurrentPairFromContext(Bundle savedInstanceState){
+    @Override
+    public String getCurrentPairFromContext(Bundle savedInstanceState){
         String jsonCurrentPair = null;
 
         if (savedInstanceState!=null || existCurrentPairFromArguments()) {
@@ -318,6 +320,7 @@ public class ContentFragment extends Fragment implements ContentView{
         }, 500); // after 0.5 sec
     }
 
+    @Override
     public void fillNumberInCurrentPair(){
         if (getArguments()!=null && getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER)!=0) {
             int currentPair = getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER);
@@ -391,6 +394,7 @@ public class ContentFragment extends Fragment implements ContentView{
         return getArguments()!=null && getArguments().getString(CreationPresenter.PARAM_CURRENT_PAIR)!=null;
     }
 
+    @Override
     public  void setListenerFrame(FrameLayout frame, int tab) {
 
         contentPresenter.markCurrentView(frame,tab);
