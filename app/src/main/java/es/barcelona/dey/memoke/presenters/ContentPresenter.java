@@ -1,6 +1,9 @@
 package es.barcelona.dey.memoke.presenters;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -8,6 +11,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +97,7 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
     }
 
-    public  void showContinueButton(){
+    public  void manageVisibilityNextButton(){
         if (null!= getmCurrentPair()) {
             validatePairStateComplete(getmCurrentPair());
             if (getmCurrentPair().isReadyToBePassed()) {
@@ -104,6 +109,16 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
     }
 
+    /*public void manageVisibilityAntButton(){
+        if (null!= getmCurrentPair()) {
+            if (getmCurrentPair().getNumber() > 1) {
+                contentView.showAntButton();
+            } else {
+                contentView.hideAntButton();
+            }
+        }
+    }*/
+
     public void fillPairOnView(String jsonCurrentPair){
         if(null!=jsonCurrentPair) {
 
@@ -114,6 +129,45 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
     }
 
+    public void addingOnPreDrawListener(ImageView imageViewTmp, String uriTemp, int tabTmp){
+        ContentPresenter.finalHeight = imageViewTmp.getMeasuredHeight();
+        ContentPresenter.finalWidth = imageViewTmp.getMeasuredWidth();
+
+        int tempImg = getmCurrentImgResultShow();
+        String tempPhoto = getmCurrentPhotoPath();
+        int tempTab = getmCurrentTab();
+
+        setmCurrentImgResultShow(imageViewTmp.getId());
+        setmCurrentPhotoPath(uriTemp);
+        setmCurrentTab(tabTmp);
+        contentView.setPicToImg(imageViewTmp, ContentPresenter.finalHeight, ContentPresenter.finalWidth);
+
+        setmCurrentImgResultShow(tempImg);
+        setmCurrentPhotoPath(tempPhoto);
+        setmCurrentTab(tempTab);
+    }
+
+    public void setPicToImg(Activity activity, ImageView img, int height, int width){
+
+        Picasso.with(activity).load(getmCurrentPhotoPath())
+                .resize(height, width)
+                .centerCrop().into(img);
+        getmCurrentPair().getTabs()[getmCurrentTab() - 1].setUri(getmCurrentPhotoPath());
+        manageVisibilityNextButton();
+
+    }
+
+    public void onActivityResult(int requestCode,Intent data){
+        if (requestCode== REQUEST_IMAGE_CAPTURE){
+            contentView.setPicToBackground();
+        }else if (requestCode== ContentPresenter.REQUEST_SELECT_PICTURE){
+            if (null!=data && null!=data.getData()) {
+                Uri selectedImage = data.getData();
+                setmCurrentPhotoPath(selectedImage.toString());
+                contentView.setPicToBackground();
+            }
+        }
+    }
     public void fillHandlerWithTextAndHideImg(int textId, int position, ImageView imageView){
         final Handler handler = new Handler();
         final int finalTextId = textId;
@@ -173,7 +227,7 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
     public void controlButtonsAntSgte(){
         contentView.showAntButton();
-        showContinueButton();
+        manageVisibilityNextButton();
     }
 
     public boolean existTextToShowInView(Pair currentPair, int tab){

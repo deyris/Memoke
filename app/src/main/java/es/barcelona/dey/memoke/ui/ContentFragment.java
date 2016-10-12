@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -207,15 +206,16 @@ public class ContentFragment extends Fragment implements ContentView{
 
     @Override
     public void showAntButton(){
-        if (null!= contentPresenter.getmCurrentPair()) {
-            Button btnAnt = (Button) getActivity().findViewById(R.id.btnAnt);
-            if (contentPresenter.getmCurrentPair().getNumber() > 1) {
-                btnAnt.setVisibility(View.VISIBLE);
-            } else {
-                btnAnt.setVisibility(View.GONE);
-            }
-        }
+        Button btnAnt = (Button) getActivity().findViewById(R.id.btnAnt);
+        btnAnt.setVisibility(View.VISIBLE);
+
     }
+    @Override
+    public void hideAntButton(){
+        Button btnAnt = (Button) getActivity().findViewById(R.id.btnAnt);
+        btnAnt.setVisibility(View.GONE);
+    }
+
 
     @Override
     public void fillTextInTab(int idText, String val, int size){
@@ -244,15 +244,7 @@ public class ContentFragment extends Fragment implements ContentView{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode== ContentPresenter.REQUEST_IMAGE_CAPTURE){
-            setPicToBackground();
-        }else if (requestCode== ContentPresenter.REQUEST_SELECT_PICTURE){
-            if (null!=data && null!=data.getData()) {
-                Uri selectedImage = data.getData();
-                contentPresenter.setmCurrentPhotoPath(selectedImage.toString());
-                setPicToBackground();
-            }
-        }
+       contentPresenter.onActivityResult(requestCode,data);
 
 
     }
@@ -337,21 +329,8 @@ public class ContentFragment extends Fragment implements ContentView{
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             public boolean onPreDraw() {
                 mImageView1.getViewTreeObserver().removeOnPreDrawListener(this);
-                ContentPresenter.finalHeight = imageViewTmp.getMeasuredHeight();
-                ContentPresenter.finalWidth = imageViewTmp.getMeasuredWidth();
 
-                int tempImg = contentPresenter.getmCurrentImgResultShow();
-                String tempPhoto = contentPresenter.getmCurrentPhotoPath();
-                int tempTab = contentPresenter.getmCurrentTab();
-
-                contentPresenter.setmCurrentImgResultShow(imageViewTmp.getId());
-                contentPresenter.setmCurrentPhotoPath(uriTemp);
-                contentPresenter.setmCurrentTab(tabTmp);
-                setPicToImg(imageViewTmp, ContentPresenter.finalHeight, ContentPresenter.finalWidth);
-
-                contentPresenter.setmCurrentImgResultShow(tempImg);
-                contentPresenter.setmCurrentPhotoPath(tempPhoto);
-                contentPresenter.setmCurrentTab(tempTab);
+                contentPresenter.addingOnPreDrawListener(imageViewTmp,  uriTemp, tabTmp);
 
                 return true;
             }
@@ -439,7 +418,7 @@ public class ContentFragment extends Fragment implements ContentView{
         contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setText(data.getText().toString());
         contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setSize((int) data.getTextSize());
 
-        contentPresenter.showContinueButton();
+        contentPresenter.manageVisibilityNextButton();
     }
 
 
@@ -472,16 +451,18 @@ public class ContentFragment extends Fragment implements ContentView{
         startActivityForResult(intent, ContentPresenter.REQUEST_SELECT_PICTURE);
     }
 
+    @Override
     public void setPicToImg(ImageView img, int height, int width){
 
      Picasso.with(getActivity()).load(contentPresenter.getmCurrentPhotoPath())
                 .resize(height, width)
              .centerCrop().into(img);
         contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setUri(contentPresenter.getmCurrentPhotoPath());
-        contentPresenter.showContinueButton();
+        contentPresenter.manageVisibilityNextButton();
 
     }
 
+    @Override
     public void setPicToBackground(){
 
         TextView textResult = (TextView)mLayout.findViewById(contentPresenter.getmCurrentTextResultShow());

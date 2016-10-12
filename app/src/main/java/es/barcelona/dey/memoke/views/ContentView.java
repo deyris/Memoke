@@ -31,6 +31,8 @@ public interface ContentView {
 
     void showAntButton();
 
+    void hideAntButton();
+
     void fillTextInTab(int idText, String val, int size);
 
     void hideImageInTab(int idText, int idImg);
@@ -44,4 +46,9 @@ public interface ContentView {
     void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1);
 
     void inicializeFragment();
+
+    void setPicToBackground();
+
+    void setPicToImg(ImageView img, int height, int width);
+
 }
