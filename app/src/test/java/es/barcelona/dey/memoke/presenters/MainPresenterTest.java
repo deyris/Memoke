@@ -23,4 +23,9 @@ public class MainPresenterTest {
     public void isButtonMoreBoardVisibleWithMoreBoard_return_true(){
 
     }
+
+    @Test
+    public void setViewIsIllegalArgumentExceptionIfViewNull(){
+        
+    }
 }
