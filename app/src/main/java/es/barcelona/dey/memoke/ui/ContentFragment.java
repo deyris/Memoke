@@ -52,8 +52,6 @@ public class ContentFragment extends Fragment implements ContentView{
     static final int REQUEST_SELECT_PICTURE = 2;
 
 
-    static int mCurrentTextResultShow;
-    static int mCurrentImgResultShow;
     static int mCurrentFrame;
 
     TextView  mTextView1;
@@ -379,16 +377,16 @@ public class ContentFragment extends Fragment implements ContentView{
                 finalHeight = imageViewTmp.getMeasuredHeight();
                 finalWidth = imageViewTmp.getMeasuredWidth();
 
-                int tempImg = mCurrentImgResultShow;
+                int tempImg = contentPresenter.getmCurrentImgResultShow();
                 String tempPhoto = contentPresenter.getmCurrentPhotoPath();
                 int tempTab = contentPresenter.getmCurrentTab();
 
-                mCurrentImgResultShow = imageViewTmp.getId();
+                contentPresenter.setmCurrentImgResultShow(imageViewTmp.getId());
                 contentPresenter.setmCurrentPhotoPath(uriTemp);
                 contentPresenter.setmCurrentTab(tabTmp);
                 setPicToImg(imageViewTmp, finalHeight, finalWidth);
 
-                mCurrentImgResultShow = tempImg;
+                contentPresenter.setmCurrentImgResultShow(tempImg);
                 contentPresenter.setmCurrentPhotoPath(tempPhoto);
                 contentPresenter.setmCurrentTab(tempTab);
 
@@ -419,8 +417,8 @@ public class ContentFragment extends Fragment implements ContentView{
                 //Determinamos donde mostrar el resultado
                 FrameLayout thisFrame = (FrameLayout)mLayout.findViewById(v.getId());
                 mCurrentFrame = thisFrame.getId();
-                mCurrentTextResultShow = thisFrame.getChildAt(0).getId();
-                mCurrentImgResultShow = thisFrame.getChildAt(1).getId();
+                contentPresenter.setmCurrentTextResultShow(thisFrame.getChildAt(0).getId());
+                contentPresenter.setmCurrentImgResultShow(thisFrame.getChildAt(1).getId());
 
                 //Abrimos un dialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(ContentFragment.this.getActivity());
@@ -462,12 +460,12 @@ public class ContentFragment extends Fragment implements ContentView{
 
     public void receivingFromDialog(EditText data){
 
-        ImageView imageView = (ImageView)mLayout.findViewById(mCurrentImgResultShow);
+        ImageView imageView = (ImageView)mLayout.findViewById(contentPresenter.getmCurrentImgResultShow());
         imageView.setBackground(null);
         imageView.setVisibility(View.GONE);
 
         //Actualizamos textView
-        TextView textView = (TextView)mLayout.findViewById(mCurrentTextResultShow);
+        TextView textView = (TextView)mLayout.findViewById(contentPresenter.getmCurrentTextResultShow());
         textView.setVisibility(View.VISIBLE);
         textView.setText("");
         textView.setText(data.getText());
@@ -522,10 +520,10 @@ public class ContentFragment extends Fragment implements ContentView{
 
     public void setPicToBackground(){
 
-        TextView textResult = (TextView)mLayout.findViewById(mCurrentTextResultShow);
+        TextView textResult = (TextView)mLayout.findViewById(contentPresenter.getmCurrentTextResultShow());
         textResult.setText("");
         textResult.setVisibility(View.GONE);
-        ImageView imageView = (ImageView)mLayout.findViewById(mCurrentImgResultShow);
+        ImageView imageView = (ImageView)mLayout.findViewById(contentPresenter.getmCurrentImgResultShow());
         imageView.setVisibility(View.VISIBLE);
 
         preDrawPhoto(imageView, contentPresenter.getmCurrentTab(), contentPresenter.getmCurrentPhotoPath());

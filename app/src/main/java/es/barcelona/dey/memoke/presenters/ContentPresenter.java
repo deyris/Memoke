@@ -17,6 +17,8 @@ import es.barcelona.dey.memoke.views.ContentView;
  */
 public class ContentPresenter extends ComunPresenter implements Presenter<ContentView>{
 
+    int mCurrentImgResultShow;
+    int mCurrentTextResultShow;
     int mCurrentTab;
     String mCurrentPhotoPath;
     Pair mCurrentPair = new Pair();
@@ -182,5 +184,21 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
     public void setmCurrentTab(int mCurrentTab) {
         this.mCurrentTab = mCurrentTab;
+    }
+
+    public int getmCurrentTextResultShow() {
+        return mCurrentTextResultShow;
+    }
+
+    public void setmCurrentTextResultShow(int mCurrentTextResultShow) {
+        this.mCurrentTextResultShow = mCurrentTextResultShow;
+    }
+
+    public int getmCurrentImgResultShow() {
+        return mCurrentImgResultShow;
+    }
+
+    public void setmCurrentImgResultShow(int mCurrentImgResultShow) {
+        this.mCurrentImgResultShow = mCurrentImgResultShow;
     }
 }
