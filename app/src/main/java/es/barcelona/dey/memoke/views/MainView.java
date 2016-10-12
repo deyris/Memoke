@@ -11,7 +11,5 @@ public interface MainView {
 
     void launchAlertExistsThisBoard();
 
-    void openToCreateBoardFromZero();
 
-    void openToCreateBoardFromOther();
 }

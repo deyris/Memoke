@@ -1,11 +1,14 @@
 package es.barcelona.dey.memoke.presenters;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 
 import es.barcelona.dey.memoke.interactors.MainInteractor;
+import es.barcelona.dey.memoke.ui.CreationActivity;
 import es.barcelona.dey.memoke.views.MainView;
 
 /**
@@ -37,16 +40,24 @@ public class MainPresenter implements Presenter<MainView>{
     }
 
 
-    public void clickPositiveButtonOnDialog(DialogInterface dialog, String titleBoard){
+    public void clickPositiveButtonOnDialog(Activity activity,DialogInterface dialog, String titleBoard){
         //Borramos el tablero
         deleteBoard(titleBoard);
         // List<Board> testBoard = BoardDatabase.getBoards(MainFragment.this.getActivity());
-        mainView.openToCreateBoardFromZero();
+        openToCreateBoardFromZero(activity,titleBoard);
         dialog.dismiss();
     }
 
-    public void clickNegativeButtonOnDialog(DialogInterface dialog){
-        mainView.openToCreateBoardFromOther();
+    public void clickNegativeButtonOnDialog(Activity activity, String title, DialogInterface dialog){
+        //mainView.openToCreateBoardFromOther();
+        Intent i = new Intent(activity, CreationActivity.class);
+        i.putExtra(MainPresenter.PARAM_TITLE, title);
+        //Restablecer el board
+        String jsonSelectedBoard =getBoardForRestore(title);
+        i.putExtra(MainPresenter.PARAM_SELECTED_BOARD, jsonSelectedBoard);
+
+
+        activity.startActivity(i);
         dialog.dismiss();
     }
 
@@ -55,14 +66,21 @@ public class MainPresenter implements Presenter<MainView>{
         return mainInteractor.existsMoreBoards();
     }
 
-    public void clickOnCreateButton(String title){
+    public void clickOnCreateButton(Activity activity, String title){
         if (mainInteractor.existsThisBoard(title)){
             mainView.launchAlertExistsThisBoard();
 
         }else{
-            mainView.openToCreateBoardFromZero();
+            openToCreateBoardFromZero(activity, title);
         }
 
+    }
+
+    public void openToCreateBoardFromZero(Activity activity, String title) {
+        Intent i = new Intent(activity, CreationActivity.class);
+        i.putExtra(MainPresenter.PARAM_TITLE, title);
+
+        activity.startActivity(i);
     }
 
     public void visibiltyForLoadButton(Button mBtnLoad){

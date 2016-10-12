@@ -48,7 +48,7 @@ public class MainFragment extends Fragment  implements MainView {
         mBtnCreate.setOnClickListener(new View.OnClickListener() {
                                           @Override
                                           public void onClick(View v) {
-                                        mainPresenter.clickOnCreateButton(mTxtTitle.getText().toString().trim());
+                            mainPresenter.clickOnCreateButton(getActivity(),mTxtTitle.getText().toString().trim());
 
                                           }
 
@@ -62,27 +62,6 @@ public class MainFragment extends Fragment  implements MainView {
         return mRelativeLayout;
 
 
-    }
-
-
-    @Override
-    public void openToCreateBoardFromOther() {
-        Intent i = new Intent(getActivity(), CreationActivity.class);
-        i.putExtra(MainPresenter.PARAM_TITLE, mTxtTitle.getText().toString().trim());
-         //Restablecer el board
-        String jsonSelectedBoard = mainPresenter.getBoardForRestore(mTxtTitle.getText().toString().trim());
-        i.putExtra(MainPresenter.PARAM_SELECTED_BOARD, jsonSelectedBoard);
-
-
-        startActivity(i);
-    }
-
-    @Override
-    public void openToCreateBoardFromZero() {
-        Intent i = new Intent(getActivity(), CreationActivity.class);
-        i.putExtra(MainPresenter.PARAM_TITLE, mTxtTitle.getText().toString().trim());
-
-        startActivity(i);
     }
 
 
@@ -101,12 +80,12 @@ public class MainFragment extends Fragment  implements MainView {
 
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                mainPresenter.clickPositiveButtonOnDialog(dialog,mTxtTitle.getText().toString());
+                mainPresenter.clickPositiveButtonOnDialog(getActivity(),dialog,mTxtTitle.getText().toString());
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                mainPresenter.clickNegativeButtonOnDialog(dialog);
+                mainPresenter.clickNegativeButtonOnDialog(getActivity(),mTxtTitle.getText().toString().trim(),dialog);
             }
         });
         AlertDialog dialog = builder.create();
