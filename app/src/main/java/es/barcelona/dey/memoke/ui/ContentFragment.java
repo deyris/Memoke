@@ -146,21 +146,7 @@ public class ContentFragment extends Fragment implements ContentView{
         super.onViewCreated(view, savedInstanceState);
 
         contentPresenter.onViewCreated(mFrameTab1,mFrameTab2, savedInstanceState);
-       /* setListenerFrame(mFrameTab1,1);
-        setListenerFrame(mFrameTab2,2);
 
-        String jsonCurrentPair = getCurrentPairFromContext(savedInstanceState);
-
-        if(null!=jsonCurrentPair) {
-            contentPresenter.setmCurrentPair(contentPresenter.getCurrentPair(jsonCurrentPair));
-            contentPresenter.fillPairOnView(jsonCurrentPair);
-
-        }
-
-        fillNumberInCurrentPair();
-
-        //Comprobamos botones de Anterior y Siguiente
-       contentPresenter.controlButtonsAntSgte();*/
     }
 
 
@@ -169,13 +155,7 @@ public class ContentFragment extends Fragment implements ContentView{
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         instancePresenter();
-        //Serializamos nuestro currentPair
-        if (null!= contentPresenter.getmCurrentPair() && contentPresenter.getmCurrentPair().getState()!=Pair.State.EMPTY) {
-
-            String jsonCurrentPair = contentPresenter.getJsonCurrentPair(contentPresenter.getmCurrentPair());
-            outState.putString(CreationPresenter.PARAM_CURRENT_PAIR, jsonCurrentPair);
-
-        }
+        contentPresenter.onSavingInstanceState(outState);
 
     }
 
@@ -192,12 +172,12 @@ public class ContentFragment extends Fragment implements ContentView{
 
     @Override
     public void fillFirstTab(){
-        fillHandlerWithTextAndHideImg(mTextView1.getId(), 1, mImageView1);
+        contentPresenter.fillHandlerWithTextAndHideImg(mTextView1.getId(), 1, mImageView1);
 
     }
     @Override
     public void fillSecondTab(){
-        fillHandlerWithTextAndHideImg(mTextView2.getId(), 2, mImageView2);
+        contentPresenter.fillHandlerWithTextAndHideImg(mTextView2.getId(), 2, mImageView2);
 
     }
 
@@ -305,20 +285,7 @@ public class ContentFragment extends Fragment implements ContentView{
         return jsonCurrentPair;
     }
 
-    public void fillHandlerWithTextAndHideImg(int textId, int position, ImageView imageView){
-        final Handler handler = new Handler();
-        final int finalTextId = textId;
-        final int finalPosition = position;
-        final ImageView finalImageView = imageView;
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                fillResultWithCurrent(finalTextId, finalPosition, finalImageView);
-
-            }
-        }, 500); // after 0.5 sec
-    }
 
     @Override
     public void fillNumberInCurrentPair(){
@@ -332,7 +299,8 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-    private void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1){
+    @Override
+    public void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1){
         final  ImageView imgToHide = imgToHide1;
         final TextView mText = (TextView) mLayout.findViewById(idText);
         if (contentPresenter.getmCurrentPair()!=null && contentPresenter.getmCurrentPair().getTabs()[tab - 1] != null) {

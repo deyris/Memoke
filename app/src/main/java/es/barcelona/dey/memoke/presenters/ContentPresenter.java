@@ -2,8 +2,10 @@ package es.barcelona.dey.memoke.presenters;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +71,16 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
     }
 
 
+    public void onSavingInstanceState(Bundle outState){
+        //Serializamos nuestro currentPair
+        boolean existCurrentPair = null!= getmCurrentPair() && getmCurrentPair().getState()!=Pair.State.EMPTY;
+        if (existCurrentPair) {
 
+            String jsonCurrentPair = getJsonCurrentPair(getmCurrentPair());
+            outState.putString(CreationPresenter.PARAM_CURRENT_PAIR, jsonCurrentPair);
+
+        }
+    }
 
 
     public void fillPairOnView(String jsonCurrentPair){
@@ -82,6 +93,20 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
     }
 
+    public void fillHandlerWithTextAndHideImg(int textId, int position, ImageView imageView){
+        final Handler handler = new Handler();
+        final int finalTextId = textId;
+        final int finalPosition = position;
+        final ImageView finalImageView = imageView;
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                contentView.fillResultWithCurrent(finalTextId, finalPosition, finalImageView);
+
+            }
+        }, 500); // after 0.5 sec
+    }
 
     public boolean validTab(Pair mCurrentPair, int tab){
         boolean valid = false;

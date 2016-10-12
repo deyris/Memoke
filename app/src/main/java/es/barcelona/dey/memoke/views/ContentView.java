@@ -36,4 +36,6 @@ public interface ContentView {
     String getCurrentPairFromContext(Bundle savedInstanceState);
 
     void fillNumberInCurrentPair();
+
+    void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1);
 }
