@@ -13,6 +13,9 @@ import es.barcelona.dey.memoke.views.MainView;
  */
 public class MainPresenter implements Presenter<MainView>{
 
+    public static String PARAM_TITLE = "TITLE";
+    public static String PARAM_SELECTED_BOARD = "PARAM_SELECTED_BOARD";
+
     MainView mainView;
     MainInteractor mainInteractor;
 
@@ -46,17 +49,6 @@ public class MainPresenter implements Presenter<MainView>{
         mainView.openToCreateBoardFromOther();
         dialog.dismiss();
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
     public boolean isButtonMoreBoardsVisible(){

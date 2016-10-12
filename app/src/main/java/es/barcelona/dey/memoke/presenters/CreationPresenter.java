@@ -14,7 +14,6 @@ import es.barcelona.dey.memoke.database.BoardDatabase;
 import es.barcelona.dey.memoke.interactors.CreationInteractor;
 import es.barcelona.dey.memoke.ui.ContentFragment;
 import es.barcelona.dey.memoke.ui.CreationFragment;
-import es.barcelona.dey.memoke.ui.MainFragment;
 import es.barcelona.dey.memoke.views.CreationView;
 
 /**
@@ -99,9 +98,9 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     public Pair generateNextPair(Bundle bundleFromMain){
         Pair currentPair;
-        if (bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD) != null) {  //Hay un board que ya existe que viene del view anterior
+        if (bundleFromMain.getString(MainPresenter.PARAM_SELECTED_BOARD) != null) {  //Hay un board que ya existe que viene del view anterior
 
-            currentPair =  loadPairFromExistingBoard(bundleFromMain.getString(MainFragment.PARAM_SELECTED_BOARD));
+            currentPair =  loadPairFromExistingBoard(bundleFromMain.getString(MainPresenter.PARAM_SELECTED_BOARD));
         } else {
             //Creamos tablero
             currentPair = generateNewPair();
@@ -188,8 +187,8 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         if (null==mBoard){
             mBoard = new Board();
         }
-        if (bundleFromMain.getString(MainFragment.PARAM_TITLE) != null) {
-            String title = bundleFromMain.getString(MainFragment.PARAM_TITLE).toString();
+        if (bundleFromMain.getString(MainPresenter.PARAM_TITLE) != null) {
+            String title = bundleFromMain.getString(MainPresenter.PARAM_TITLE).toString();
             mBoard.setTitle(title);
         }
 

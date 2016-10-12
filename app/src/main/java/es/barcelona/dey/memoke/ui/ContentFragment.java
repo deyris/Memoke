@@ -330,7 +330,7 @@ public class ContentFragment extends Fragment implements ContentView{
             public boolean onPreDraw() {
                 mImageView1.getViewTreeObserver().removeOnPreDrawListener(this);
 
-                contentPresenter.addingOnPreDrawListener(imageViewTmp,  uriTemp, tabTmp);
+                contentPresenter.addingOnPreDrawListener(getActivity(),imageViewTmp,  uriTemp, tabTmp);
 
                 return true;
             }

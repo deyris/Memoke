@@ -129,7 +129,7 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
     }
 
-    public void addingOnPreDrawListener(ImageView imageViewTmp, String uriTemp, int tabTmp){
+    public void addingOnPreDrawListener(Activity activity, ImageView imageViewTmp, String uriTemp, int tabTmp){
         ContentPresenter.finalHeight = imageViewTmp.getMeasuredHeight();
         ContentPresenter.finalWidth = imageViewTmp.getMeasuredWidth();
 
@@ -140,7 +140,7 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         setmCurrentImgResultShow(imageViewTmp.getId());
         setmCurrentPhotoPath(uriTemp);
         setmCurrentTab(tabTmp);
-        contentView.setPicToImg(imageViewTmp, ContentPresenter.finalHeight, ContentPresenter.finalWidth);
+        setPicToImg(activity, imageViewTmp, ContentPresenter.finalHeight, ContentPresenter.finalWidth);
 
         setmCurrentImgResultShow(tempImg);
         setmCurrentPhotoPath(tempPhoto);
