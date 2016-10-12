@@ -226,8 +226,21 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
     }
 
     public void controlButtonsAntSgte(){
-        contentView.showAntButton();
+        manageVisibilityAntButton();
         manageVisibilityNextButton();
+    }
+
+    public void manageVisibilityAntButton(){
+        if (null!= getmCurrentPair()) {
+
+            if (getmCurrentPair().getNumber() > 1) {
+
+                contentView.showAntButton();
+            } else {
+                contentView.hideAntButton();
+            }
+        }
+
     }
 
     public boolean existTextToShowInView(Pair currentPair, int tab){
