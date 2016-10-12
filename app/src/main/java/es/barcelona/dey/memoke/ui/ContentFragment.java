@@ -52,7 +52,6 @@ public class ContentFragment extends Fragment implements ContentView{
     static final int REQUEST_SELECT_PICTURE = 2;
 
 
-    static int mCurrentTab;
     static int mCurrentTextResultShow;
     static int mCurrentImgResultShow;
     static int mCurrentFrame;
@@ -382,16 +381,16 @@ public class ContentFragment extends Fragment implements ContentView{
 
                 int tempImg = mCurrentImgResultShow;
                 String tempPhoto = contentPresenter.getmCurrentPhotoPath();
-                int tempTab = mCurrentTab;
+                int tempTab = contentPresenter.getmCurrentTab();
 
                 mCurrentImgResultShow = imageViewTmp.getId();
                 contentPresenter.setmCurrentPhotoPath(uriTemp);
-                mCurrentTab = tabTmp;
+                contentPresenter.setmCurrentTab(tabTmp);
                 setPicToImg(imageViewTmp, finalHeight, finalWidth);
 
                 mCurrentImgResultShow = tempImg;
                 contentPresenter.setmCurrentPhotoPath(tempPhoto);
-                mCurrentTab = tempTab;
+                contentPresenter.setmCurrentTab(tempTab);
 
                 return true;
             }
@@ -414,7 +413,7 @@ public class ContentFragment extends Fragment implements ContentView{
                 contentPresenter.putTabIN_PROCESS(contentPresenter.getmCurrentPair());
 
                 //Determinamos en que ficha estamos basándonos en la marca puesta por el presenter
-                mCurrentTab = contentPresenter.getMarkOfCurrentView(v);
+                contentPresenter.setmCurrentTab(contentPresenter.getMarkOfCurrentView(v));
 
 
                 //Determinamos donde mostrar el resultado
@@ -430,10 +429,10 @@ public class ContentFragment extends Fragment implements ContentView{
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         // Do something with the selection
-                        if (null == contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1]) {
-                            contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1] = new Tab();
+                        if (null == contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1]) {
+                            contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1] = new Tab();
                         }
-                        contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1].setType(contentPresenter.getTypeById(item));
+                        contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setType(contentPresenter.getTypeById(item));
                         initChargeTab();
                     }
                 });
@@ -447,7 +446,7 @@ public class ContentFragment extends Fragment implements ContentView{
 
     private void initChargeTab(){
 
-        Dialog dialog = contentPresenter.showDialogFromFrame(contentPresenter.getmCurrentPair(),mCurrentTab-1,(CreationActivity) getActivity());
+        Dialog dialog = contentPresenter.showDialogFromFrame(contentPresenter.getmCurrentPair(), contentPresenter.getmCurrentTab()-1,(CreationActivity) getActivity());
         dialog.show();
 
     }
@@ -475,8 +474,8 @@ public class ContentFragment extends Fragment implements ContentView{
         textView.setTextSize(data.getTextSize() / 2);
 
         //Actualizamos currentPair
-        contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1].setText(data.getText().toString());
-        contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1].setSize((int) data.getTextSize());
+        contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setText(data.getText().toString());
+        contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setSize((int) data.getTextSize());
 
         showContinueButton();
     }
@@ -516,7 +515,7 @@ public class ContentFragment extends Fragment implements ContentView{
      Picasso.with(getActivity()).load(contentPresenter.getmCurrentPhotoPath())
                 .resize(height, width)
              .centerCrop().into(img);
-        contentPresenter.getmCurrentPair().getTabs()[mCurrentTab - 1].setUri(contentPresenter.getmCurrentPhotoPath());
+        contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setUri(contentPresenter.getmCurrentPhotoPath());
         showContinueButton();
 
     }
@@ -529,7 +528,7 @@ public class ContentFragment extends Fragment implements ContentView{
         ImageView imageView = (ImageView)mLayout.findViewById(mCurrentImgResultShow);
         imageView.setVisibility(View.VISIBLE);
 
-        preDrawPhoto(imageView, mCurrentTab, contentPresenter.getmCurrentPhotoPath());
+        preDrawPhoto(imageView, contentPresenter.getmCurrentTab(), contentPresenter.getmCurrentPhotoPath());
 
     }
 
