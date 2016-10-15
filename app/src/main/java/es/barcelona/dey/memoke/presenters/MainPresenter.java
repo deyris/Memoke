@@ -40,25 +40,20 @@ public class MainPresenter implements Presenter<MainView>{
     }
 
 
-    public void clickPositiveButtonOnDialog(Activity activity,DialogInterface dialog, String titleBoard){
+    public void clickPositiveButtonOnDialog(String titleBoard){
         //Borramos el tablero
         deleteBoard(titleBoard);
         // List<Board> testBoard = BoardDatabase.getBoards(MainFragment.this.getActivity());
-        openToCreateBoardFromZero(activity,titleBoard);
-        dialog.dismiss();
+        mainView.openToCreateBoardFromZero(titleBoard);
+
     }
 
-    public void clickNegativeButtonOnDialog(Activity activity, String title, DialogInterface dialog){
-        //mainView.openToCreateBoardFromOther();
-        Intent i = new Intent(activity, CreationActivity.class);
-        i.putExtra(MainPresenter.PARAM_TITLE, title);
+    public void clickNegativeButtonOnDialog(String title){
+
         //Restablecer el board
         String jsonSelectedBoard =getBoardForRestore(title);
-        i.putExtra(MainPresenter.PARAM_SELECTED_BOARD, jsonSelectedBoard);
 
-
-        activity.startActivity(i);
-        dialog.dismiss();
+        mainView.openToCreateBoardFromOther(jsonSelectedBoard,title);
     }
 
 
@@ -66,28 +61,22 @@ public class MainPresenter implements Presenter<MainView>{
         return mainInteractor.existsMoreBoards();
     }
 
-    public void clickOnCreateButton(Activity activity, String title){
+    public void clickOnCreateButton(String title){
         if (mainInteractor.existsThisBoard(title)){
             mainView.launchAlertExistsThisBoard();
 
         }else{
-            openToCreateBoardFromZero(activity, title);
+            mainView.openToCreateBoardFromZero(title);
         }
 
     }
 
-    public void openToCreateBoardFromZero(Activity activity, String title) {
-        Intent i = new Intent(activity, CreationActivity.class);
-        i.putExtra(MainPresenter.PARAM_TITLE, title);
 
-        activity.startActivity(i);
-    }
-
-    public void visibiltyForLoadButton(Button mBtnLoad){
+    public void manageVisibiltyForLoadButton(){
         if (isButtonMoreBoardsVisible()) {
-            mBtnLoad.setVisibility(View.VISIBLE);
+            mainView.showButtonMoreBoards();
         } else {
-            mBtnLoad.setVisibility(View.GONE);
+            mainView.hideButtonMoreBoards();
         }
     }
 

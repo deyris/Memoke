@@ -1,5 +1,6 @@
 package es.barcelona.dey.memoke.ui;
 
+
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
@@ -23,8 +24,8 @@ import es.barcelona.dey.memoke.views.MainView;
 public class MainFragment extends Fragment  implements MainView {
 
     EditText mTxtTitle = null;
-    EditText mTxtNumber = null;
     Button mBtnCreate = null;
+    Button mBtnMoreBoard = null;
 
     MainPresenter mainPresenter;
 
@@ -45,10 +46,12 @@ public class MainFragment extends Fragment  implements MainView {
 
         mBtnCreate = (Button) mRelativeLayout.findViewById(R.id.btnCrear);
 
+        mBtnMoreBoard = (Button) mRelativeLayout.findViewById(R.id.btnLoad);
+
         mBtnCreate.setOnClickListener(new View.OnClickListener() {
                                           @Override
                                           public void onClick(View v) {
-                            mainPresenter.clickOnCreateButton(getActivity(),mTxtTitle.getText().toString().trim());
+                            mainPresenter.clickOnCreateButton(mTxtTitle.getText().toString().trim());
 
                                           }
 
@@ -56,8 +59,8 @@ public class MainFragment extends Fragment  implements MainView {
 
         );
 
-        Button mBtnLoad = (Button) mRelativeLayout.findViewById(R.id.btnLoad);
-        mainPresenter.visibiltyForLoadButton(mBtnLoad);
+
+        mainPresenter.manageVisibiltyForLoadButton();
 
         return mRelativeLayout;
 
@@ -80,16 +83,49 @@ public class MainFragment extends Fragment  implements MainView {
 
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                mainPresenter.clickPositiveButtonOnDialog(getActivity(),dialog,mTxtTitle.getText().toString());
+                mainPresenter.clickPositiveButtonOnDialog(mTxtTitle.getText().toString());
+                dialog.dismiss();
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                mainPresenter.clickNegativeButtonOnDialog(getActivity(),mTxtTitle.getText().toString().trim(),dialog);
+                mainPresenter.clickNegativeButtonOnDialog(mTxtTitle.getText().toString().trim());
+                dialog.dismiss();
             }
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+
+    }
+
+    @Override
+    public void openToCreateBoardFromZero(String title) {
+        Intent i = new Intent(getActivity(), CreationActivity.class);
+        i.putExtra(MainPresenter.PARAM_TITLE, title);
+
+        startActivity(i);
+    }
+
+    @Override
+    public void openToCreateBoardFromOther(String jsonSelectedBoard, String title){
+        Intent i = new Intent(getActivity(), CreationActivity.class);
+        i.putExtra(MainPresenter.PARAM_TITLE, title);
+        i.putExtra(MainPresenter.PARAM_SELECTED_BOARD, jsonSelectedBoard);
+
+        startActivity(i);
+    }
+
+    @Override
+    public void hideButtonMoreBoards(){
+       // Button mBtnLoad = (Button) getActivity().findViewById(R.id.btnLoad);
+        mBtnMoreBoard.setVisibility(View.GONE);
+
+    }
+
+    @Override
+    public void showButtonMoreBoards(){
+      //  Button mBtnLoad = (Button) getActivity().findViewById(R.id.btnLoad);
+        mBtnMoreBoard.setVisibility(View.VISIBLE);
 
     }
 
