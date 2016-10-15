@@ -28,4 +28,6 @@ public interface CreationView {
 
      void setListenerBtnSgte();
 
+    void prepareForContentFragmentForRotate(Bundle savedInstanceState);
+
 }

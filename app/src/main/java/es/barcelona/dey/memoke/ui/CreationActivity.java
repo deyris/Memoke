@@ -1,6 +1,8 @@
 package es.barcelona.dey.memoke.ui;
 
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -61,8 +63,8 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
             creationPresenter = new CreationPresenter();
             creationPresenter.setView(this);
-
-            creationPresenter.createCreationActivity(savedInstanceState,getIntent().getExtras());
+            boolean existeContentFragment = fragmentAlreadyRestoredFromSavedState(ContentFragment.TAG);
+            creationPresenter.createCreationActivity(existeContentFragment,savedInstanceState,getIntent().getExtras());
         }
     @Override
     public void inicializeButtonNext(){
@@ -150,5 +152,30 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
                 creationPresenter.clickOnPastButton();
             }
         });
+    }
+
+    public boolean fragmentAlreadyRestoredFromSavedState(String tag) {
+        return (getFragmentManager().findFragmentByTag(tag) != null ? true : false);
+    }
+
+    public void prepareForContentFragmentForRotate(Bundle savedInstanceState){
+        Bundle bundle = new Bundle();
+        bundle.putInt(CreationPresenter.PARAM_CURRENT_PAIR, creationPresenter.getIdCurrentPair());
+
+        CreationFragment mCreationFragment = new CreationFragment();
+        mCreationFragment.setArguments(bundle);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+      //  fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.header_frame, mCreationFragment, CreationFragment.TAG);
+        fragmentTransaction.commit();
+
+        if (!fragmentAlreadyRestoredFromSavedState(ContentFragment.TAG)) {
+            fragmentManager.beginTransaction().add(R.id.content_frame,
+                    ContentFragment.newInstance(savedInstanceState),
+                    ContentFragment.TAG).addToBackStack(ContentFragment.TAG).commit();
+        }
+
     }
 }

@@ -109,12 +109,9 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         return currentPair;
     }
 
-    public boolean fragmentAlreadyRestoredFromSavedState(String tag) {
-        return (creationView.getFragmentManager().findFragmentByTag(tag) != null ? true : false);
-    }
 
-    public Bundle prepareForContentFragmentFirstLoad(Bundle bundleFromMainActivity, Bundle savedInstanceState){
-        boolean existeContentFragment = fragmentAlreadyRestoredFromSavedState(ContentFragment.TAG);
+
+    public Bundle prepareForContentFragmentFirstLoad(boolean existeContentFragment,Bundle bundleFromMainActivity, Bundle savedInstanceState){
         if(!existeContentFragment) { //Primera vez que se carga el fragment
             Pair currentPair;
             currentPair = generateNextPair(bundleFromMainActivity);
@@ -130,7 +127,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         return savedInstanceState;
     }
 
-    public void createCreationActivity(Bundle savedInstanceState, Bundle bundleFromMain){
+    public void createCreationActivity(boolean existeContentFragment,Bundle savedInstanceState, Bundle bundleFromMain){
 
         // Get a reference to the FragmentManager
         FragmentTransaction fragmentTransaction = creationView.getFragmentManager().beginTransaction();
@@ -139,9 +136,10 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
         updateIdCurrentPairIfExistInContext(savedInstanceState);
         updateBoardIfExistInContent(savedInstanceState);
-        savedInstanceState = prepareForContentFragmentFirstLoad(bundleFromMain,savedInstanceState);
 
-        prepareForContentFragmentForRotate(savedInstanceState, fragmentManager,fragmentTransaction);
+        savedInstanceState = prepareForContentFragmentFirstLoad(existeContentFragment,bundleFromMain,savedInstanceState);
+
+        creationView.prepareForContentFragmentForRotate(savedInstanceState);
 
 
         //Inicializamos botones
@@ -152,24 +150,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         //Boton anterior
         creationView.inicializeButtonPast();
     }
-    public void prepareForContentFragmentForRotate(Bundle savedInstanceState, FragmentManager fragmentManager, FragmentTransaction fragmentTransaction){
-        Bundle bundle = new Bundle();
-        bundle.putInt(PARAM_CURRENT_PAIR, getIdCurrentPair());
 
-        CreationFragment mCreationFragment = new CreationFragment();
-        mCreationFragment.setArguments(bundle);
-
-        fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.header_frame, mCreationFragment, CreationFragment.TAG);
-        fragmentTransaction.commit();
-
-        if (!fragmentAlreadyRestoredFromSavedState(ContentFragment.TAG)) {
-            fragmentManager.beginTransaction().add(R.id.content_frame,
-                    ContentFragment.newInstance(savedInstanceState),
-                    ContentFragment.TAG).addToBackStack(ContentFragment.TAG).commit();
-        }
-
-    }
 
     public void updateIdCurrentPairIfExistInContext(Bundle savedInstanceState){
         if(null!= savedInstanceState){
