@@ -129,10 +129,6 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     public void createCreationActivity(boolean existeContentFragment,Bundle savedInstanceState, Bundle bundleFromMain){
 
-        // Get a reference to the FragmentManager
-        FragmentTransaction fragmentTransaction = creationView.getFragmentManager().beginTransaction();
-        FragmentManager fragmentManager = creationView.getFragmentManager();
-        //Verificamos si venimos o no de un fichero ya existente
 
         updateIdCurrentPairIfExistInContext(savedInstanceState);
         updateBoardIfExistInContent(savedInstanceState);
@@ -200,13 +196,9 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     }
 
-    public void clickOnNextButton(){
-        ContentFragment f = (ContentFragment) creationView.getFragmentManager().findFragmentByTag(ContentFragment.TAG);
+    public void clickOnNextButton(Pair pair){
 
         inicializeBoardIfPairsAreNull();
-
-
-        Pair pair = f.getContentPresenter().getmCurrentPair();
 
         Bundle bundleSgte = new Bundle();
         if (pairNotSavedYet(pair)) {

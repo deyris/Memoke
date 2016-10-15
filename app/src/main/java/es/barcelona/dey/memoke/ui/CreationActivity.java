@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import es.barcelona.dey.memoke.R;
+import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.presenters.CreationPresenter;
 import es.barcelona.dey.memoke.views.CreationView;
 
@@ -129,8 +130,9 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
             @Override
             public void onClick(View v) {
-
-               creationPresenter.clickOnNextButton();
+                ContentFragment f = (ContentFragment) getFragmentManager().findFragmentByTag(ContentFragment.TAG);
+                Pair pair = f.getContentPresenter().getmCurrentPair();
+               creationPresenter.clickOnNextButton(pair);
 
             }
         });
