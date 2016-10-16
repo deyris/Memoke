@@ -132,21 +132,24 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
             public void onClick(View v) {
                 ContentFragment f = (ContentFragment) getFragmentManager().findFragmentByTag(ContentFragment.TAG);
                 Pair pair = f.getContentPresenter().getmCurrentPair();
-               creationPresenter.clickOnNextButton(pair);
+                CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+                boolean existsCreationFragment = cf!=null;
+                creationPresenter.clickOnNextButton(existsCreationFragment,pair);
 
             }
         });
     }
 
     @Override
-    public void actualicePairNumberInContentFragment(CreationFragment cf){
+    public void actualicePairNumberInContentFragment(){
+        CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+
         String text = String.format(getResources().getString(R.string.creation_number), creationPresenter.getIdCurrentPair());
         cf.mTxtNumber.setText(text);
     }
 
     public void setListenerBtnAnterior(){
         Button btnAnt = (Button)findViewById(R.id.btnAnt);
-
         btnAnt.setOnClickListener(new View.OnClickListener() {
 
             @Override

@@ -196,7 +196,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     }
 
-    public void clickOnNextButton(Pair pair){
+    public void clickOnNextButton(boolean existsCreationFragment, Pair pair){
 
         inicializeBoardIfPairsAreNull();
 
@@ -226,15 +226,14 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
         }
         //Actualizamos creationFragment con el numero de la pareja
-        actualicePairNumber();
+        actualicePairNumber(existsCreationFragment);
     }
 
-    public void actualicePairNumber(){
-        CreationFragment cf = (CreationFragment) creationView.getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+    public void actualicePairNumber(boolean existsCreationFragment){
         //  Bundle bundleFromMain = getIntent().getExtras();
 
-        if (null != cf) {
-           creationView.actualicePairNumberInContentFragment(cf);
+        if (existsCreationFragment) {
+           creationView.actualicePairNumberInContentFragment();
         }
     }
 
@@ -266,7 +265,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         creationView.setListenerBtnSgte();
 
 
-        actualicePairNumber();
+        creationView.actualicePairNumberInContentFragment();
 
     }
 

@@ -24,7 +24,7 @@ public interface CreationView {
 
     void hideNextButton();
 
-    void actualicePairNumberInContentFragment(CreationFragment creationFragment);
+    void actualicePairNumberInContentFragment();
 
      void setListenerBtnSgte();
 
