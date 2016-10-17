@@ -1,5 +1,6 @@
 package es.barcelona.dey.memoke.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
@@ -8,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -125,7 +127,9 @@ public class ContentFragment extends Fragment implements ContentView{
         mLayout = (LinearLayout) inflater.inflate(R.layout.fragment_creation_content,
                 container, false);
 
-        contentPresenter.creatingView(mLayout);
+        if (mLayout!=null) {
+            inicializeFragment();
+        }
 
         return mLayout;
     }
@@ -173,12 +177,12 @@ public class ContentFragment extends Fragment implements ContentView{
 
     @Override
     public void fillFirstTab(){
-        contentPresenter.fillHandlerWithTextAndHideImg(mTextView1.getId(), 1, mImageView1);
+        fillHandlerWithTextAndHideImg(mTextView1.getId(), 1, mImageView1);
 
     }
     @Override
     public void fillSecondTab(){
-        contentPresenter.fillHandlerWithTextAndHideImg(mTextView2.getId(), 2, mImageView2);
+        fillHandlerWithTextAndHideImg(mTextView2.getId(), 2, mImageView2);
 
     }
 
@@ -193,6 +197,43 @@ public class ContentFragment extends Fragment implements ContentView{
     }
 
 
+
+    public void openDialogText(Pair currentPair, int idCurrentTab){
+        DialogText textDialog = new DialogText((CreationActivity) getActivity());
+        textDialog.setTextFromFragment(currentPair.getTabs()[idCurrentTab].getText());
+        textDialog.setTextSizeFromFragment(currentPair.getTabs()[idCurrentTab].getSize());
+
+        textDialog.show();
+    }
+
+    public void openEmptyDialogText(){
+        DialogText textDialog = new DialogText((CreationActivity) getActivity());
+
+        textDialog.show();
+    }
+
+    public void openDialogPhoto(){
+        DialogPhoto cdd = new DialogPhoto((CreationActivity) getActivity());
+        cdd.show();
+    }
+
+    public void addingOnPreDrawListener(ImageView imageViewTmp, String uriTemp, int tabTmp){
+        ContentPresenter.finalHeight = imageViewTmp.getMeasuredHeight();
+        ContentPresenter.finalWidth = imageViewTmp.getMeasuredWidth();
+
+        int tempImg = contentPresenter.getmCurrentImgResultShow();
+        String tempPhoto = contentPresenter.getmCurrentPhotoPath();
+        int tempTab = contentPresenter.getmCurrentTab();
+
+        contentPresenter.setmCurrentImgResultShow(imageViewTmp.getId());
+        contentPresenter.setmCurrentPhotoPath(uriTemp);
+        contentPresenter.setmCurrentTab(tabTmp);
+        setPicToImg(getActivity(), imageViewTmp, ContentPresenter.finalHeight, ContentPresenter.finalWidth);
+
+        contentPresenter. setmCurrentImgResultShow(tempImg);
+        contentPresenter.setmCurrentPhotoPath(tempPhoto);
+        contentPresenter.setmCurrentTab(tempTab);
+    }
 
     public void showNextButton(){
         Button b = (Button) getActivity().findViewById(R.id.btnSgte);
@@ -311,6 +352,8 @@ public class ContentFragment extends Fragment implements ContentView{
         }
     }
 
+
+
     private void fillImageWithTab(int tab, TextView textview, ImageView imageView){
         if (contentPresenter.getmCurrentPair()!=null && contentPresenter.getmCurrentPair().getTabs()[tab - 1]!=null) {
 
@@ -330,11 +373,36 @@ public class ContentFragment extends Fragment implements ContentView{
             public boolean onPreDraw() {
                 mImageView1.getViewTreeObserver().removeOnPreDrawListener(this);
 
-                contentPresenter.addingOnPreDrawListener(getActivity(),imageViewTmp,  uriTemp, tabTmp);
+                addingOnPreDrawListener(imageViewTmp,  uriTemp, tabTmp);
 
                 return true;
             }
         });
+    }
+
+    public void fillHandlerWithTextAndHideImg(int textId, int position, ImageView imageView){
+        final Handler handler = new Handler();
+        final int finalTextId = textId;
+        final int finalPosition = position;
+        final ImageView finalImageView = imageView;
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fillResultWithCurrent(finalTextId, finalPosition, finalImageView);
+
+            }
+        }, 500); // after 0.5 sec
+    }
+
+    public void setPicToImg(Activity activity, ImageView img, int height, int width){
+
+        Picasso.with(activity).load(contentPresenter.getmCurrentPhotoPath())
+                .resize(height, width)
+                .centerCrop().into(img);
+        contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setUri(contentPresenter.getmCurrentPhotoPath());
+        contentPresenter.manageVisibilityNextButton();
+
     }
 
     private boolean existCurrentPairFromArguments(){
@@ -386,10 +454,9 @@ public class ContentFragment extends Fragment implements ContentView{
     }
 
     private void initChargeTab(){
-
-        Dialog dialog = contentPresenter.showDialogFromFrame(contentPresenter.getmCurrentPair(), contentPresenter.getmCurrentTab()-1,(CreationActivity) getActivity());
-        dialog.show();
-
+        contentPresenter.showDialogFromFrame(contentPresenter.getmCurrentPair(),
+                                             contentPresenter.getmCurrentTab()-1,
+                                             (CreationActivity) getActivity());
     }
 
     public void receivingFromDialog(int data){

@@ -10,6 +10,9 @@ import android.widget.LinearLayout;
 import java.io.File;
 import java.io.IOException;
 
+import es.barcelona.dey.memoke.beans.Pair;
+import es.barcelona.dey.memoke.ui.DialogText;
+
 /**
  * Created by deyris.drake on 26/9/16.
  */
@@ -50,5 +53,11 @@ public interface ContentView {
     void setPicToBackground();
 
     void setPicToImg(ImageView img, int height, int width);
+
+    void openDialogText(Pair currentPair, int idCurrentTab);
+
+    void openEmptyDialogText();
+
+    void openDialogPhoto();
 
 }

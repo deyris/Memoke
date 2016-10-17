@@ -91,11 +91,7 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
     }
 
-    public void creatingView(LinearLayout mLayout){
-        if (mLayout!=null) {
-            contentView.inicializeFragment();
-        }
-    }
+
 
     public  void manageVisibilityNextButton(){
         if (null!= getmCurrentPair()) {
@@ -109,15 +105,6 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
     }
 
-    /*public void manageVisibilityAntButton(){
-        if (null!= getmCurrentPair()) {
-            if (getmCurrentPair().getNumber() > 1) {
-                contentView.showAntButton();
-            } else {
-                contentView.hideAntButton();
-            }
-        }
-    }*/
 
     public void fillPairOnView(String jsonCurrentPair){
         if(null!=jsonCurrentPair) {
@@ -129,33 +116,9 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
     }
 
-    public void addingOnPreDrawListener(Activity activity, ImageView imageViewTmp, String uriTemp, int tabTmp){
-        ContentPresenter.finalHeight = imageViewTmp.getMeasuredHeight();
-        ContentPresenter.finalWidth = imageViewTmp.getMeasuredWidth();
 
-        int tempImg = getmCurrentImgResultShow();
-        String tempPhoto = getmCurrentPhotoPath();
-        int tempTab = getmCurrentTab();
 
-        setmCurrentImgResultShow(imageViewTmp.getId());
-        setmCurrentPhotoPath(uriTemp);
-        setmCurrentTab(tabTmp);
-        setPicToImg(activity, imageViewTmp, ContentPresenter.finalHeight, ContentPresenter.finalWidth);
 
-        setmCurrentImgResultShow(tempImg);
-        setmCurrentPhotoPath(tempPhoto);
-        setmCurrentTab(tempTab);
-    }
-
-    public void setPicToImg(Activity activity, ImageView img, int height, int width){
-
-        Picasso.with(activity).load(getmCurrentPhotoPath())
-                .resize(height, width)
-                .centerCrop().into(img);
-        getmCurrentPair().getTabs()[getmCurrentTab() - 1].setUri(getmCurrentPhotoPath());
-        manageVisibilityNextButton();
-
-    }
 
     public void onActivityResult(int requestCode,Intent data){
         if (requestCode== REQUEST_IMAGE_CAPTURE){
@@ -168,20 +131,7 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
             }
         }
     }
-    public void fillHandlerWithTextAndHideImg(int textId, int position, ImageView imageView){
-        final Handler handler = new Handler();
-        final int finalTextId = textId;
-        final int finalPosition = position;
-        final ImageView finalImageView = imageView;
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                contentView.fillResultWithCurrent(finalTextId, finalPosition, finalImageView);
-
-            }
-        }, 500); // after 0.5 sec
-    }
 
     public boolean validTab(Pair mCurrentPair, int tab){
         boolean valid = false;
@@ -273,24 +223,23 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
        return (int)view.getTag();
     }
 
-    public Dialog showDialogFromFrame(Pair currentPair, int idCurrentTab, CreationActivity activity){
-        if (currentPair.getTabs()[idCurrentTab].getType()==Tab.Type.TEXT) {
+    public  void showDialogFromFrame(Pair currentPair, int idCurrentTab, CreationActivity activity){
+        boolean typeText = currentPair.getTabs()[idCurrentTab].getType()==Tab.Type.TEXT;
+        boolean typePhoto = currentPair.getTabs()[idCurrentTab].getType()==Tab.Type.PHOTO;
+        if (typeText) {
 
-            DialogText textDialog = new DialogText(activity);
             if (null != currentPair.getTabs()[idCurrentTab].getText()){
-                textDialog.setTextFromFragment(currentPair.getTabs()[idCurrentTab].getText());
-                textDialog.setTextSizeFromFragment(currentPair.getTabs()[idCurrentTab].getSize());
-
+                contentView.openDialogText(currentPair,idCurrentTab);
+            }else{
+                contentView.openEmptyDialogText();
             }
 
-            return textDialog;
+
         }
-        if (currentPair.getTabs()[idCurrentTab].getType()==Tab.Type.PHOTO) {
-            DialogPhoto cdd = new DialogPhoto(activity);
-            return cdd;
+        if (typePhoto) {
+           contentView.openDialogPhoto();
         }
 
-        return null;
     }
 
     public File createFileFromPhoto(){
