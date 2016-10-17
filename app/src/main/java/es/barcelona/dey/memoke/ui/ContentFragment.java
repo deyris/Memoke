@@ -228,7 +228,7 @@ public class ContentFragment extends Fragment implements ContentView{
         contentPresenter.setmCurrentImgResultShow(imageViewTmp.getId());
         contentPresenter.setmCurrentPhotoPath(uriTemp);
         contentPresenter.setmCurrentTab(tabTmp);
-        setPicToImg(getActivity(), imageViewTmp, ContentPresenter.finalHeight, ContentPresenter.finalWidth);
+        setPicToImg(imageViewTmp, ContentPresenter.finalHeight, ContentPresenter.finalWidth);
 
         contentPresenter. setmCurrentImgResultShow(tempImg);
         contentPresenter.setmCurrentPhotoPath(tempPhoto);
@@ -395,9 +395,9 @@ public class ContentFragment extends Fragment implements ContentView{
         }, 500); // after 0.5 sec
     }
 
-    public void setPicToImg(Activity activity, ImageView img, int height, int width){
+    public void setPicToImg(ImageView img, int height, int width){
 
-        Picasso.with(activity).load(contentPresenter.getmCurrentPhotoPath())
+        Picasso.with(getActivity()).load(contentPresenter.getmCurrentPhotoPath())
                 .resize(height, width)
                 .centerCrop().into(img);
         contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setUri(contentPresenter.getmCurrentPhotoPath());
@@ -455,8 +455,7 @@ public class ContentFragment extends Fragment implements ContentView{
 
     private void initChargeTab(){
         contentPresenter.showDialogFromFrame(contentPresenter.getmCurrentPair(),
-                                             contentPresenter.getmCurrentTab()-1,
-                                             (CreationActivity) getActivity());
+                                             contentPresenter.getmCurrentTab()-1);
     }
 
 
@@ -509,16 +508,7 @@ public class ContentFragment extends Fragment implements ContentView{
         startActivityForResult(intent, ContentPresenter.REQUEST_SELECT_PICTURE);
     }
 
-    @Override
-    public void setPicToImg(ImageView img, int height, int width){
 
-     Picasso.with(getActivity()).load(contentPresenter.getmCurrentPhotoPath())
-                .resize(height, width)
-             .centerCrop().into(img);
-        contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setUri(contentPresenter.getmCurrentPhotoPath());
-        contentPresenter.manageVisibilityNextButton();
-
-    }
 
     @Override
     public void setPicToBackground(){

@@ -1,30 +1,21 @@
 package es.barcelona.dey.memoke.presenters;
 
-import android.app.Activity;
-import android.app.Dialog;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.MediaStore;
+
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-
-import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.io.IOException;
 
-import es.barcelona.dey.memoke.R;
+
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.interactors.ContentInteractor;
 import es.barcelona.dey.memoke.ui.CreationActivity;
-import es.barcelona.dey.memoke.ui.DialogPhoto;
-import es.barcelona.dey.memoke.ui.DialogText;
+
 import es.barcelona.dey.memoke.views.ContentView;
 
 /**
@@ -224,7 +215,7 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
        return (int)view.getTag();
     }
 
-    public  void showDialogFromFrame(Pair currentPair, int idCurrentTab, CreationActivity activity){
+    public  void showDialogFromFrame(Pair currentPair, int idCurrentTab){
         boolean typeText = currentPair.getTabs()[idCurrentTab].getType()==Tab.Type.TEXT;
         boolean typePhoto = currentPair.getTabs()[idCurrentTab].getType()==Tab.Type.PHOTO;
         if (typeText) {
