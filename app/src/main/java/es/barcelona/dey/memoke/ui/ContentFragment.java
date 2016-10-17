@@ -459,13 +459,9 @@ public class ContentFragment extends Fragment implements ContentView{
                                              (CreationActivity) getActivity());
     }
 
+
     public void receivingFromDialog(int data){
-        if (data== ContentPresenter.PHOTO_FROM_CAMERA){
-            openingCamera();
-        }
-        if (data== ContentPresenter.PHOTO_FROM_GALLERY){
-            openingGallery();
-        }
+        contentPresenter.onReceiveFromDialog(data);
     }
 
     public void receivingFromDialog(EditText data){
@@ -488,31 +484,26 @@ public class ContentFragment extends Fragment implements ContentView{
         contentPresenter.manageVisibilityNextButton();
     }
 
-
-    private void openingCamera(){
+    @Override
+    public void openingCamera(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        boolean existCameraToHandleIntent = takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null;
+        contentPresenter.openingCameraIfExist(existCameraToHandleIntent);
 
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = contentPresenter.createFileFromPhoto();
-
-            // Save a file: path for use with ACTION_VIEW intents
-            contentPresenter.setmCurrentPhotoPath("file:" + photoFile.getAbsolutePath());
-
-
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
-
-                startActivityForResult(takePictureIntent, ContentPresenter.REQUEST_IMAGE_CAPTURE);
-
-            }
-        }
     }
 
-    private void openingGallery(){
+    @Override
+    public void manageIntent(File photoFile){
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                Uri.fromFile(photoFile));
+
+        startActivityForResult(takePictureIntent, ContentPresenter.REQUEST_IMAGE_CAPTURE);
+    }
+
+    @Override
+    public void openingGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
 
         startActivityForResult(intent, ContentPresenter.REQUEST_SELECT_PICTURE);

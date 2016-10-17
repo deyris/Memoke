@@ -60,4 +60,10 @@ public interface ContentView {
 
     void openDialogPhoto();
 
+    void openingCamera();
+
+    void openingGallery();
+
+    void manageIntent(File photoFile);
+
 }

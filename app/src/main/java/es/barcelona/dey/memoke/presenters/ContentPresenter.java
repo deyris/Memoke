@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -241,6 +242,34 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
 
     }
+
+    public void onReceiveFromDialog(int data){
+        if (data== ContentPresenter.PHOTO_FROM_CAMERA){
+            contentView.openingCamera();
+        }
+        if (data== ContentPresenter.PHOTO_FROM_GALLERY){
+            contentView.openingGallery();
+        }
+    }
+
+    public void openingCameraIfExist(boolean existCameraToHandleIntent){
+        // Ensure that there's a camera activity to handle the intent
+        if (existCameraToHandleIntent) {
+            // Create the File where the photo should go
+            File photoFile = createFileFromPhoto();
+
+            // Save a file: path for use with ACTION_VIEW intents
+            setmCurrentPhotoPath("file:" + photoFile.getAbsolutePath());
+
+
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                contentView.manageIntent(photoFile);
+             }
+
+        }
+    }
+
 
     public File createFileFromPhoto(){
         // Create the File where the photo should go
