@@ -4,18 +4,13 @@ package es.barcelona.dey.memoke.presenters;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.view.View;
 import android.widget.FrameLayout;
 import java.io.File;
 import java.io.IOException;
-
-
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.interactors.ContentInteractor;
-import es.barcelona.dey.memoke.ui.CreationActivity;
-
 import es.barcelona.dey.memoke.views.ContentView;
 
 /**
@@ -65,12 +60,16 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
         }
 
-        contentView.fillNumberInCurrentPair();
+        contentView.fillNumberInCurrentPairByArguments();
 
         //Comprobamos botones de Anterior y Siguiente
         controlButtonsAntSgte();
     }
 
+    public void createNewPairInCurrentPair(int currentPair){
+       setmCurrentPair(new Pair());
+       getmCurrentPair().setNumber(currentPair);
+    }
 
     public void onSavingInstanceState(Bundle outState){
         //Serializamos nuestro currentPair

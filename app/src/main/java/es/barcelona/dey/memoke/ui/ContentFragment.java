@@ -321,13 +321,15 @@ public class ContentFragment extends Fragment implements ContentView{
 
 
     @Override
-    public void fillNumberInCurrentPair(){
-        if (getArguments()!=null && getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER)!=0) {
+    public void fillNumberInCurrentPairByArguments(){
+
+        boolean existsPairNumberInArguments = getArguments()!=null && getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER)!=0;
+        if (existsPairNumberInArguments) {
             int currentPair = getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER);
-            if (null== contentPresenter.getmCurrentPair() || contentPresenter.getmCurrentPair().getNumber() < currentPair){
-                contentPresenter.setmCurrentPair(new Pair());
+            boolean currentPairLowerThanPairInArguments = null== contentPresenter.getmCurrentPair() || contentPresenter.getmCurrentPair().getNumber() < currentPair;
+            if (currentPairLowerThanPairInArguments) {
+                contentPresenter.createNewPairInCurrentPair(currentPair);
             }
-            contentPresenter.getmCurrentPair().setNumber(getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER));
         }
 
     }
@@ -335,7 +337,6 @@ public class ContentFragment extends Fragment implements ContentView{
     @Override
     public void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1){
         final  ImageView imgToHide = imgToHide1;
-        final TextView mText = (TextView) mLayout.findViewById(idText);
         if (contentPresenter.getmCurrentPair()!=null && contentPresenter.getmCurrentPair().getTabs()[tab - 1] != null) {
 
             if (contentPresenter.getmCurrentPair().getTabs()[tab -1].getType()==Tab.Type.TEXT) {

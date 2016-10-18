@@ -27,7 +27,6 @@ public interface ContentView {
 
     void fillImgsWithCurrent();
 
-
     void showNextButton();
 
     void hideNextButton();
@@ -44,7 +43,7 @@ public interface ContentView {
 
     String getCurrentPairFromContext(Bundle savedInstanceState);
 
-    void fillNumberInCurrentPair();
+    void fillNumberInCurrentPairByArguments();
 
     void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1);
 
