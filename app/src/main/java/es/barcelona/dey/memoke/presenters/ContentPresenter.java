@@ -66,9 +66,15 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         controlButtonsAntSgte();
     }
 
-    public void createNewPairInCurrentPair(int currentPair){
-       setmCurrentPair(new Pair());
-       getmCurrentPair().setNumber(currentPair);
+    public void createNewPairInCurrentPair(boolean existsPairNumberInArguments, boolean mostCreateNewPair, Bundle arguments){
+
+        if (existsPairNumberInArguments) {
+            int currentPair = arguments.getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER);
+            if (existsPairNumberInArguments) {
+                setmCurrentPair(new Pair());
+                getmCurrentPair().setNumber(currentPair);
+            }
+        }
     }
 
     public void onSavingInstanceState(Bundle outState){

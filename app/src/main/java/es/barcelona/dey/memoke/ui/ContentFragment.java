@@ -324,13 +324,10 @@ public class ContentFragment extends Fragment implements ContentView{
     public void fillNumberInCurrentPairByArguments(){
 
         boolean existsPairNumberInArguments = getArguments()!=null && getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER)!=0;
-        if (existsPairNumberInArguments) {
-            int currentPair = getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER);
-            boolean currentPairLowerThanPairInArguments = null== contentPresenter.getmCurrentPair() || contentPresenter.getmCurrentPair().getNumber() < currentPair;
-            if (currentPairLowerThanPairInArguments) {
-                contentPresenter.createNewPairInCurrentPair(currentPair);
-            }
-        }
+        boolean currentPairLowerThanPairInArguments = existsPairNumberInArguments &&
+                                                      (null== contentPresenter.getmCurrentPair() || contentPresenter.getmCurrentPair().getNumber() < getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER));
+
+        contentPresenter.createNewPairInCurrentPair(existsPairNumberInArguments,currentPairLowerThanPairInArguments,getArguments());
 
     }
 
