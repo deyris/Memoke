@@ -56,7 +56,7 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
         if(null!=jsonCurrentPair) {
             setmCurrentPair(getCurrentPair(jsonCurrentPair));
-            fillPairOnView(jsonCurrentPair);
+            fillPairOnView();
 
         }
 
@@ -66,11 +66,14 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         controlButtonsAntSgte();
     }
 
-    public void createNewPairInCurrentPair(boolean existsPairNumberInArguments, boolean mostCreateNewPair, Bundle arguments){
+    public void createNewPairInCurrentPair(Bundle arguments){
+        boolean existsPairNumberInArguments = arguments!=null && arguments.getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER)!=0;
+        boolean currentPairLowerThanPairInArguments = existsPairNumberInArguments &&
+                (null== getmCurrentPair() || getmCurrentPair().getNumber() < arguments.getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER));
 
         if (existsPairNumberInArguments) {
             int currentPair = arguments.getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER);
-            if (existsPairNumberInArguments) {
+            if (currentPairLowerThanPairInArguments) {
                 setmCurrentPair(new Pair());
                 getmCurrentPair().setNumber(currentPair);
             }
@@ -103,14 +106,11 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
     }
 
 
-    public void fillPairOnView(String jsonCurrentPair){
-        if(null!=jsonCurrentPair) {
-
-          contentView.fillFirstTab();
-          contentView.fillSecondTab();
+    public void fillPairOnView(){
+       contentView.fillFirstTab();
+        contentView.fillSecondTab();
           contentView.fillImgsWithCurrent();
 
-        }
     }
 
 

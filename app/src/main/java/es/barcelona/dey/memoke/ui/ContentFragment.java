@@ -303,13 +303,13 @@ public class ContentFragment extends Fragment implements ContentView{
     @Override
     public String getCurrentPairFromContext(Bundle savedInstanceState){
         String jsonCurrentPair = null;
-
-        if (savedInstanceState!=null || existCurrentPairFromArguments()) {
+        boolean existDataInInstance = savedInstanceState!=null;
+        if (existDataInInstance || existCurrentPairFromArguments()) {
             if (null != getArguments() && null == savedInstanceState) {
                 savedInstanceState = getArguments();
-
+                existDataInInstance = true;
             }
-            if (savedInstanceState != null) {
+            if (existDataInInstance) {
                 jsonCurrentPair = savedInstanceState.getString(CreationPresenter.PARAM_CURRENT_PAIR);
             }
 
@@ -322,18 +322,15 @@ public class ContentFragment extends Fragment implements ContentView{
 
     @Override
     public void fillNumberInCurrentPairByArguments(){
-
-        boolean existsPairNumberInArguments = getArguments()!=null && getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER)!=0;
-        boolean currentPairLowerThanPairInArguments = existsPairNumberInArguments &&
-                                                      (null== contentPresenter.getmCurrentPair() || contentPresenter.getmCurrentPair().getNumber() < getArguments().getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER));
-
-        contentPresenter.createNewPairInCurrentPair(existsPairNumberInArguments,currentPairLowerThanPairInArguments,getArguments());
+        contentPresenter.createNewPairInCurrentPair(getArguments());
 
     }
 
     @Override
     public void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1){
         final  ImageView imgToHide = imgToHide1;
+        boolean existTab = contentPresenter.getmCurrentPair()!=null && contentPresenter.getmCurrentPair().getTabs()[tab - 1] != null;
+       // boolean
         if (contentPresenter.getmCurrentPair()!=null && contentPresenter.getmCurrentPair().getTabs()[tab - 1] != null) {
 
             if (contentPresenter.getmCurrentPair().getTabs()[tab -1].getType()==Tab.Type.TEXT) {
