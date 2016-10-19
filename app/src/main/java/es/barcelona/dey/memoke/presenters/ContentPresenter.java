@@ -162,6 +162,14 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
     }
 
+    public void whatDoWithTheSelectionOfFrame(int item){
+        boolean existTab = null == getmCurrentPair().getTabs()[getmCurrentTab() - 1];
+        if (existTab) {
+            getmCurrentPair().getTabs()[getmCurrentTab() - 1] = new Tab();
+        }
+        getmCurrentPair().getTabs()[getmCurrentTab() - 1].setType(getTypeById(item));
+        showDialogFromFrame(getmCurrentPair(),getmCurrentTab()-1);
+    }
 
     public boolean validTab(Pair mCurrentPair, int tab){
         boolean valid = false;

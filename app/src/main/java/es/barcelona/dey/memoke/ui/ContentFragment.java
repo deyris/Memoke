@@ -422,11 +422,7 @@ public class ContentFragment extends Fragment implements ContentView{
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         // Do something with the selection
-                        if (null == contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1]) {
-                            contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1] = new Tab();
-                        }
-                        contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setType(contentPresenter.getTypeById(item));
-                        initChargeTab();
+                        contentPresenter.whatDoWithTheSelectionOfFrame(item);
                     }
                 });
 
@@ -437,10 +433,7 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-    private void initChargeTab(){
-        contentPresenter.showDialogFromFrame(contentPresenter.getmCurrentPair(),
-                                             contentPresenter.getmCurrentTab()-1);
-    }
+
 
 
     public void receivingFromDialog(int data){
