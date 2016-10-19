@@ -234,12 +234,12 @@ public class ContentFragment extends Fragment implements ContentView{
         contentPresenter.setmCurrentPhotoPath(tempPhoto);
         contentPresenter.setmCurrentTab(tempTab);
     }
-
+    @Override
     public void showNextButton(){
         Button b = (Button) getActivity().findViewById(R.id.btnSgte);
         b.setVisibility(View.VISIBLE);
     }
-
+    @Override
     public void hideNextButton(){
         Button b = (Button) getActivity().findViewById(R.id.btnSgte);
         b.setVisibility(View.GONE);
@@ -290,8 +290,6 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-
-    /*  Métodos internos para interaccion entre los objetos del fragment   */
 
     public void instancePresenter(){
         if (null==contentPresenter){
