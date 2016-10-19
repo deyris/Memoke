@@ -191,8 +191,8 @@ public class ContentFragment extends Fragment implements ContentView{
     @Override
     public void fillImgsWithCurrent(){
 
-        fillImageWithTab(1,mTextView1,mImageView1);
-        fillImageWithTab(2,mTextView2,mImageView2);
+        contentPresenter.fillImageWithTab1();
+        contentPresenter.fillImageWithTab2();
 
     }
 
@@ -335,14 +335,17 @@ public class ContentFragment extends Fragment implements ContentView{
 
 
 
-    private void fillImageWithTab(int tab, TextView textview, ImageView imageView){
-        if (contentPresenter.getmCurrentPair()!=null && contentPresenter.getmCurrentPair().getTabs()[tab - 1]!=null) {
 
-            if (contentPresenter.getmCurrentPair().getTabs()[tab - 1].getType() == Tab.Type.PHOTO) {
-                textview.setVisibility(View.GONE);
-                preDrawPhoto(imageView,tab, contentPresenter.getmCurrentPair().getTabs()[tab - 1].getUri());
-            }
-        }
+    @Override
+    public void preDrawPhoto1(){
+        mTextView1.setVisibility(View.GONE);
+        preDrawPhoto(mImageView1,1,contentPresenter.getmCurrentPair().getTabs()[0].getUri());
+    }
+    @Override
+    public void preDrawPhoto2(){
+        mTextView2.setVisibility(View.GONE);
+
+        preDrawPhoto(mImageView2,2,contentPresenter.getmCurrentPair().getTabs()[1].getUri());
     }
 
     private void preDrawPhoto(ImageView imageView, int currentTabTemp, String uri){
@@ -352,7 +355,7 @@ public class ContentFragment extends Fragment implements ContentView{
         ViewTreeObserver vto = imageViewTmp.getViewTreeObserver();
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             public boolean onPreDraw() {
-                mImageView1.getViewTreeObserver().removeOnPreDrawListener(this);
+                imageViewTmp.getViewTreeObserver().removeOnPreDrawListener(this);
 
                 addingOnPreDrawListener(imageViewTmp,  uriTemp, tabTmp);
 

@@ -123,13 +123,31 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
     public void fillPairOnView(){
        contentView.fillFirstTab();
-        contentView.fillSecondTab();
-          contentView.fillImgsWithCurrent();
+       contentView.fillSecondTab();
+       contentView.fillImgsWithCurrent();
 
     }
 
 
+    public void fillImageWithTab1(){
+        if (validImageTab(1)) {
+            contentView.preDrawPhoto1();
 
+        }
+    }
+
+    public void fillImageWithTab2(){
+        if (validImageTab(2)) {
+            contentView.preDrawPhoto2();
+
+        }
+    }
+
+    private boolean  validImageTab(int tab){
+        boolean existTab = getmCurrentPair()!=null && getmCurrentPair().getTabs()[tab - 1]!=null;
+        boolean isTabPhoto = existTab && getmCurrentPair().getTabs()[tab -1].getType() == Tab.Type.PHOTO;
+        return isTabPhoto;
+    }
 
 
     public void onActivityResult(int requestCode,Intent data){

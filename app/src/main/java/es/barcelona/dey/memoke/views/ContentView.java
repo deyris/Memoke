@@ -65,4 +65,8 @@ public interface ContentView {
 
     void manageIntent(File photoFile);
 
+    void preDrawPhoto1();
+
+    void preDrawPhoto2();
+
 }
