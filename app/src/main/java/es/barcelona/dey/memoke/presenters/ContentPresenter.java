@@ -80,6 +80,21 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
     }
 
+    public void onFillResultWithCurrent(int imageId, int tab, int idText){
+        boolean existTab = getmCurrentPair()!=null && getmCurrentPair().getTabs()[tab - 1] != null;
+        boolean tabIsText = existTab && getmCurrentPair().getTabs()[tab -1].getType()==Tab.Type.TEXT;
+
+        if (tabIsText) {
+            //Ocultar foto de ese frame
+            hideImageInTab(idText,imageId);
+
+            if (existTextToShowInView(getmCurrentPair(),tab)) {
+                fillTextInTab(getmCurrentPair(),tab, idText);
+
+            }
+
+        }
+    }
     public void onSavingInstanceState(Bundle outState){
         //Serializamos nuestro currentPair
         boolean existCurrentPair = null!= getmCurrentPair() && getmCurrentPair().getState()!=Pair.State.EMPTY;

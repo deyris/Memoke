@@ -329,22 +329,8 @@ public class ContentFragment extends Fragment implements ContentView{
     @Override
     public void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1){
         final  ImageView imgToHide = imgToHide1;
-        boolean existTab = contentPresenter.getmCurrentPair()!=null && contentPresenter.getmCurrentPair().getTabs()[tab - 1] != null;
-       // boolean
-        if (contentPresenter.getmCurrentPair()!=null && contentPresenter.getmCurrentPair().getTabs()[tab - 1] != null) {
+        contentPresenter.onFillResultWithCurrent(imgToHide.getId(), tab, idText);
 
-            if (contentPresenter.getmCurrentPair().getTabs()[tab -1].getType()==Tab.Type.TEXT) {
-                //Ocultar foto de ese frame
-                contentPresenter.hideImageInTab(idText,imgToHide.getId());
-
-                if (contentPresenter.existTextToShowInView(contentPresenter.getmCurrentPair(),tab)) {
-                    contentPresenter.fillTextInTab(contentPresenter.getmCurrentPair(),tab, idText);
-
-                }
-
-            }
-
-        }
     }
 
 
