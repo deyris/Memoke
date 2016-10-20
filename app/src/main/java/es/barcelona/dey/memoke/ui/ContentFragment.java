@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.security.PrivateKey;
 
 import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Pair;
@@ -86,7 +87,6 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-    /*Sobrecarga de los metodos del ciclo de vida de un Fragment*/
 
     //El Activity que contiene el Fragment ha terminado su creación
     @Override
@@ -134,6 +134,7 @@ public class ContentFragment extends Fragment implements ContentView{
         return mLayout;
     }
 
+    @Override
     public void inicializeFragment(){
         mFrameTab1 = (FrameLayout) mLayout.findViewById(R.id.editContent1);
         mFrameTab2 = (FrameLayout) mLayout.findViewById(R.id.editContent2);
@@ -154,8 +155,6 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -164,8 +163,6 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-
-
     @Override
     public void onDestroy(){
         super.onDestroy();
@@ -173,7 +170,6 @@ public class ContentFragment extends Fragment implements ContentView{
        // TabDatabase.addPair(this.getActivity(), idCurrentPair);
     }
 
-     /* Métodos Override de la view*/
 
     @Override
     public void fillFirstTab(){
@@ -186,8 +182,6 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-
-
     @Override
     public void fillImgsWithCurrent(){
 
@@ -197,7 +191,7 @@ public class ContentFragment extends Fragment implements ContentView{
     }
 
 
-
+    @Override
     public void openDialogText(Pair currentPair, int idCurrentTab){
         DialogText textDialog = new DialogText((CreationActivity) getActivity());
         textDialog.setTextFromFragment(currentPair.getTabs()[idCurrentTab].getText());
@@ -206,34 +200,20 @@ public class ContentFragment extends Fragment implements ContentView{
         textDialog.show();
     }
 
+    @Override
     public void openEmptyDialogText(){
         DialogText textDialog = new DialogText((CreationActivity) getActivity());
 
         textDialog.show();
     }
 
+    @Override
     public void openDialogPhoto(){
         DialogPhoto cdd = new DialogPhoto((CreationActivity) getActivity());
         cdd.show();
     }
 
-    public void addingOnPreDrawListener(ImageView imageViewTmp, String uriTemp, int tabTmp){
-        ContentPresenter.finalHeight = imageViewTmp.getMeasuredHeight();
-        ContentPresenter.finalWidth = imageViewTmp.getMeasuredWidth();
 
-        int tempImg = contentPresenter.getmCurrentImgResultShow();
-        String tempPhoto = contentPresenter.getmCurrentPhotoPath();
-        int tempTab = contentPresenter.getmCurrentTab();
-
-        contentPresenter.setmCurrentImgResultShow(imageViewTmp.getId());
-        contentPresenter.setmCurrentPhotoPath(uriTemp);
-        contentPresenter.setmCurrentTab(tabTmp);
-        setPicToImg(imageViewTmp, ContentPresenter.finalHeight, ContentPresenter.finalWidth);
-
-        contentPresenter. setmCurrentImgResultShow(tempImg);
-        contentPresenter.setmCurrentPhotoPath(tempPhoto);
-        contentPresenter.setmCurrentTab(tempTab);
-    }
     @Override
     public void showNextButton(){
         Button b = (Button) getActivity().findViewById(R.id.btnSgte);
@@ -279,8 +259,6 @@ public class ContentFragment extends Fragment implements ContentView{
         mText.setVisibility(View.VISIBLE);
     }
 
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -288,14 +266,6 @@ public class ContentFragment extends Fragment implements ContentView{
        contentPresenter.onActivityResult(requestCode,data);
 
 
-    }
-
-
-    public void instancePresenter(){
-        if (null==contentPresenter){
-            contentPresenter = new ContentPresenter();
-            contentPresenter.setView(ContentFragment.this);
-        }
     }
 
     @Override
@@ -316,8 +286,6 @@ public class ContentFragment extends Fragment implements ContentView{
         return jsonCurrentPair;
     }
 
-
-
     @Override
     public void fillNumberInCurrentPairByArguments(){
         contentPresenter.createNewPairInCurrentPair(getArguments());
@@ -331,9 +299,6 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-
-
-
     @Override
     public void preDrawPhoto1(){
         mTextView1.setVisibility(View.GONE);
@@ -346,37 +311,8 @@ public class ContentFragment extends Fragment implements ContentView{
         preDrawPhoto(mImageView2,2,contentPresenter.getmCurrentPair().getTabs()[1].getUri());
     }
 
-    private void preDrawPhoto(ImageView imageView, int currentTabTemp, String uri){
-        final ImageView imageViewTmp = imageView;
-        final int tabTmp = currentTabTemp;
-        final String uriTemp = uri;
-        ViewTreeObserver vto = imageViewTmp.getViewTreeObserver();
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            public boolean onPreDraw() {
-                imageViewTmp.getViewTreeObserver().removeOnPreDrawListener(this);
 
-                addingOnPreDrawListener(imageViewTmp,  uriTemp, tabTmp);
-
-                return true;
-            }
-        });
-    }
-
-    public void fillHandlerWithTextAndHideImg(int textId, int position, ImageView imageView){
-        final Handler handler = new Handler();
-        final int finalTextId = textId;
-        final int finalPosition = position;
-        final ImageView finalImageView = imageView;
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                fillResultWithCurrent(finalTextId, finalPosition, finalImageView);
-
-            }
-        }, 500); // after 0.5 sec
-    }
-
+    @Override
     public void setPicToImg(ImageView img, int height, int width){
 
         Picasso.with(getActivity()).load(contentPresenter.getmCurrentPhotoPath())
@@ -385,10 +321,6 @@ public class ContentFragment extends Fragment implements ContentView{
         contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setUri(contentPresenter.getmCurrentPhotoPath());
         contentPresenter.manageVisibilityNextButton();
 
-    }
-
-    private boolean existCurrentPairFromArguments(){
-        return getArguments()!=null && getArguments().getString(CreationPresenter.PARAM_CURRENT_PAIR)!=null;
     }
 
     @Override
@@ -431,33 +363,6 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-
-
-
-    public void receivingFromDialog(int data){
-        contentPresenter.onReceiveFromDialog(data);
-    }
-
-    public void receivingFromDialog(EditText data){
-
-        ImageView imageView = (ImageView)mLayout.findViewById(contentPresenter.getmCurrentImgResultShow());
-        imageView.setBackground(null);
-        imageView.setVisibility(View.GONE);
-
-        //Actualizamos textView
-        TextView textView = (TextView)mLayout.findViewById(contentPresenter.getmCurrentTextResultShow());
-        textView.setVisibility(View.VISIBLE);
-        textView.setText("");
-        textView.setText(data.getText());
-        textView.setTextSize(data.getTextSize() / 2);
-
-        //Actualizamos currentPair
-        contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setText(data.getText().toString());
-        contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setSize((int) data.getTextSize());
-
-        contentPresenter.manageVisibilityNextButton();
-    }
-
     @Override
     public void openingCamera(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -483,8 +388,6 @@ public class ContentFragment extends Fragment implements ContentView{
         startActivityForResult(intent, ContentPresenter.REQUEST_SELECT_PICTURE);
     }
 
-
-
     @Override
     public void setPicToBackground(){
 
@@ -497,6 +400,91 @@ public class ContentFragment extends Fragment implements ContentView{
         preDrawPhoto(imageView, contentPresenter.getmCurrentTab(), contentPresenter.getmCurrentPhotoPath());
 
     }
+
+    public void receivingFromDialog(int data){
+        contentPresenter.onReceiveFromDialog(data);
+    }
+
+    public void receivingFromDialog(EditText data){
+
+        ImageView imageView = (ImageView)mLayout.findViewById(contentPresenter.getmCurrentImgResultShow());
+        imageView.setBackground(null);
+        imageView.setVisibility(View.GONE);
+
+        //Actualizamos textView
+        TextView textView = (TextView)mLayout.findViewById(contentPresenter.getmCurrentTextResultShow());
+        textView.setVisibility(View.VISIBLE);
+        textView.setText("");
+        textView.setText(data.getText());
+        textView.setTextSize(data.getTextSize() / 2);
+
+        //Actualizamos currentPair
+        contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setText(data.getText().toString());
+        contentPresenter.getmCurrentPair().getTabs()[contentPresenter.getmCurrentTab() - 1].setSize((int) data.getTextSize());
+
+        contentPresenter.manageVisibilityNextButton();
+    }
+
+    public void fillHandlerWithTextAndHideImg(int textId, int position, ImageView imageView){
+        final Handler handler = new Handler();
+        final int finalTextId = textId;
+        final int finalPosition = position;
+        final ImageView finalImageView = imageView;
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fillResultWithCurrent(finalTextId, finalPosition, finalImageView);
+
+            }
+        }, 500); // after 0.5 sec
+    }
+
+    private boolean existCurrentPairFromArguments(){
+        return getArguments()!=null && getArguments().getString(CreationPresenter.PARAM_CURRENT_PAIR)!=null;
+    }
+
+    private void preDrawPhoto(ImageView imageView, int currentTabTemp, String uri){
+        final ImageView imageViewTmp = imageView;
+        final int tabTmp = currentTabTemp;
+        final String uriTemp = uri;
+        ViewTreeObserver vto = imageViewTmp.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            public boolean onPreDraw() {
+                imageViewTmp.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                addingOnPreDrawListener(imageViewTmp,  uriTemp, tabTmp);
+
+                return true;
+            }
+        });
+    }
+
+    private void instancePresenter(){
+        if (null==contentPresenter){
+            contentPresenter = new ContentPresenter();
+            contentPresenter.setView(ContentFragment.this);
+        }
+    }
+
+    private void addingOnPreDrawListener(ImageView imageViewTmp, String uriTemp, int tabTmp){
+        ContentPresenter.finalHeight = imageViewTmp.getMeasuredHeight();
+        ContentPresenter.finalWidth = imageViewTmp.getMeasuredWidth();
+
+        int tempImg = contentPresenter.getmCurrentImgResultShow();
+        String tempPhoto = contentPresenter.getmCurrentPhotoPath();
+        int tempTab = contentPresenter.getmCurrentTab();
+
+        contentPresenter.setmCurrentImgResultShow(imageViewTmp.getId());
+        contentPresenter.setmCurrentPhotoPath(uriTemp);
+        contentPresenter.setmCurrentTab(tabTmp);
+        setPicToImg(imageViewTmp, ContentPresenter.finalHeight, ContentPresenter.finalWidth);
+
+        contentPresenter. setmCurrentImgResultShow(tempImg);
+        contentPresenter.setmCurrentPhotoPath(tempPhoto);
+        contentPresenter.setmCurrentTab(tempTab);
+    }
+
 
     public ContentPresenter getContentPresenter() {
         return contentPresenter;
