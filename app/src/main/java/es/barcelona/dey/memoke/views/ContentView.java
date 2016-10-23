@@ -41,8 +41,6 @@ public interface ContentView {
 
     void setListenerFrame(FrameLayout frame, int tab);
 
-    String getCurrentPairFromContext(Bundle savedInstanceState);
-
     void fillNumberInCurrentPairByArguments();
 
     void fillResultWithCurrent(int idText, int tab, ImageView imgToHide1);

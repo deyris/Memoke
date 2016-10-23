@@ -48,11 +48,11 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         contentView = null;
     }
 
-    public void onViewCreated(FrameLayout  mFrameTab1,FrameLayout  mFrameTab2, Bundle savedInstanceState){
-        contentView.setListenerFrame(mFrameTab1,1);
-        contentView.setListenerFrame(mFrameTab2,2);
+    public void onViewCreated(Bundle savedInstanceState, Bundle arguments){
+        //contentView.setListenerFrame(mFrameTab1,1);
+        //contentView.setListenerFrame(mFrameTab2,2);
 
-        String jsonCurrentPair = contentView.getCurrentPairFromContext(savedInstanceState);
+        String jsonCurrentPair = getCurrentPairFromContext(savedInstanceState, arguments);
 
         if(null!=jsonCurrentPair) {
             setmCurrentPair(getCurrentPair(jsonCurrentPair));
@@ -64,6 +64,32 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
         //Comprobamos botones de Anterior y Siguiente
         controlButtonsAntSgte();
+    }
+
+    public String getCurrentPairFromContext(Bundle savedInstanceState, Bundle arguments){
+        String jsonCurrentPair = null;
+        Bundle result = getBundleFromContext(savedInstanceState, arguments);
+        if (null!=result) {
+            jsonCurrentPair = result.getString(CreationPresenter.PARAM_CURRENT_PAIR);
+        }
+
+        return jsonCurrentPair;
+    }
+
+    public Bundle getBundleFromContext(Bundle savedInstanceState, Bundle arguments){
+        Bundle result = new Bundle();
+        boolean existDataInInstance = savedInstanceState!=null;
+        boolean existArguments = arguments!=null;
+
+        if (existArguments){
+            result = arguments;
+        }
+
+        if (existDataInInstance){
+            result = savedInstanceState;
+        }
+
+        return result;
     }
 
     public void createNewPairInCurrentPair(Bundle arguments){

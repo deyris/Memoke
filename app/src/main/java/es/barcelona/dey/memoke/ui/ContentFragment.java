@@ -151,7 +151,10 @@ public class ContentFragment extends Fragment implements ContentView{
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        contentPresenter.onViewCreated(mFrameTab1,mFrameTab2, savedInstanceState);
+        setListenerFrame(mFrameTab1,1);
+        setListenerFrame(mFrameTab2,2);
+
+        contentPresenter.onViewCreated(savedInstanceState, getArguments());
 
     }
 
@@ -268,23 +271,7 @@ public class ContentFragment extends Fragment implements ContentView{
 
     }
 
-    @Override
-    public String getCurrentPairFromContext(Bundle savedInstanceState){
-        String jsonCurrentPair = null;
-        boolean existDataInInstance = savedInstanceState!=null;
-        if (existDataInInstance || existCurrentPairFromArguments()) {
-            if (null != getArguments() && null == savedInstanceState) {
-                savedInstanceState = getArguments();
-                existDataInInstance = true;
-            }
-            if (existDataInInstance) {
-                jsonCurrentPair = savedInstanceState.getString(CreationPresenter.PARAM_CURRENT_PAIR);
-            }
 
-        }
-
-        return jsonCurrentPair;
-    }
 
     @Override
     public void fillNumberInCurrentPairByArguments(){
