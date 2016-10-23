@@ -155,14 +155,14 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
 
         if (null!=lastPlay) {
 
-            if (lastPlay.getMovedTabs()[0].getPositionInBoard() == position) {
+            if (null!=lastPlay.getMovedTabs()[0] && lastPlay.getMovedTabs()[0].getPositionInBoard() == position) {
                 lastPlay.getMovedTabs()[0]=null;
                 if (lastPlay.isEmpty()){
                     removeLastPlayFromGame();
                 }
                 return;
             }
-            if (lastPlay.getMovedTabs()[1].getPositionInBoard() == position) {
+            if (null!=lastPlay.getMovedTabs()[1] && lastPlay.getMovedTabs()[1].getPositionInBoard() == position) {
                 lastPlay.getMovedTabs()[1] = null;
                 if (lastPlay.isEmpty()){
                     removeLastPlayFromGame();                }
