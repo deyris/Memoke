@@ -19,8 +19,12 @@ public class BoardService {
     public Context context;
 
     public BoardService(Context context) {
+
         this.context = context;
+        this.boardDatabase = new BoardDatabase();
     }
+
+    private BoardDatabase boardDatabase;
 
     public void savePairInBoard(Context context, Board mBoard, Pair pair){
 
@@ -33,18 +37,18 @@ public class BoardService {
 
         //Persistimos lo que hay en el fragment
 
-        BoardDatabase.updateOrAddBoard(context, mBoard);
+        boardDatabase.updateOrAddBoard(context, mBoard);
     }
 
 
     public boolean existsBoards(){
-        List<Board> testBoard = BoardDatabase.getBoards(context);
+        List<Board> testBoard = boardDatabase.getBoards(context);
 
         return testBoard.size()>0;
     }
 
     public boolean existsThisBoard(String title){
-        List<Board> testBoard = BoardDatabase.getBoards(context);
+        List<Board> testBoard = boardDatabase.getBoards(context);
 
         for (Board board: testBoard){
             if (null!=board.getTitle() && board.getTitle().equals(title)){
@@ -56,11 +60,23 @@ public class BoardService {
     }
 
     public void deleteBoard(String title, Context context){
-        BoardDatabase.deleteBoard(context,title.trim());
+        boardDatabase.deleteBoard(context,title.trim());
 
     }
 
     public Board getBoard(String title, Context context){
-        return BoardDatabase.getBoard(context, title);
+        return boardDatabase.getBoard(context, title);
+    }
+
+    public void updateOrAddBoard(Board board, Context context){
+        boardDatabase.updateOrAddBoard(context,board);
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

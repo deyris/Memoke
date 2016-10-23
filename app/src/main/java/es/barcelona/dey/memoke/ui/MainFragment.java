@@ -34,6 +34,7 @@ public class MainFragment extends Fragment  implements MainView {
         return getActivity();
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

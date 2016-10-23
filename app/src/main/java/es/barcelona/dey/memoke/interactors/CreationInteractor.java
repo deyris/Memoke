@@ -24,4 +24,8 @@ public class CreationInteractor {
         boardService.savePairInBoard(context, board, pair);
     }
 
+    public void updateOrAddBoard(Board board){
+        boardService.updateOrAddBoard(board,context);
+    }
+
 }

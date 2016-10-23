@@ -32,7 +32,7 @@ public class BoardServiceTest {
     @Test
     public void validExistsBoardReturnFalseIfEmptyArray(){
 
-        Mockito.when(BoardDatabase.getBoards(context)).thenReturn(new ArrayList<Board>());
+        Mockito.when(boardDatabase.getBoards(context)).thenReturn(new ArrayList<Board>());
         BoardService boardService = new BoardService(context);
         assertEquals(boardService.existsBoards(),false);
 
@@ -41,7 +41,7 @@ public class BoardServiceTest {
     @Test
     public void validExistsBoardReturnFalseIfNull(){
 
-        Mockito.when(BoardDatabase.getBoards(context)).thenReturn(null);
+        Mockito.when(boardDatabase.getBoards(context)).thenReturn(null);
         BoardService boardService = new BoardService(context);
         assertEquals(boardService.existsBoards(),false);
 

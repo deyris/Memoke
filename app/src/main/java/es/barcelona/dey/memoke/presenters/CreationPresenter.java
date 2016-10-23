@@ -45,7 +45,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
     }
 
     public void updateOrAddBoard(Board board){
-        BoardDatabase.updateOrAddBoard(creationView.getContext(),board);
+        creationInteractor.updateOrAddBoard(board);
     }
 
     public void savePairInBoard(Pair pair){

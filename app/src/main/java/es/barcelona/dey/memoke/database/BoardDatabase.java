@@ -20,11 +20,11 @@ public class BoardDatabase {
     private static final String PREF_BOARD_LIST = "boardList";
     private static final String PREF_BOARD_SELECTED = "boardSelected";
 
-    private static List<Board> boards = null;
+    private  List<Board> boards = null;
 
-    private static Board selectedBoard = null;
+    private  Board selectedBoard = null;
 
-    public static List<Board> getBoards(Context context) {
+    public  List<Board> getBoards(Context context) {
         if (boards == null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             String value = preferences.getString(PREF_BOARD_LIST, null);
@@ -37,13 +37,13 @@ public class BoardDatabase {
         return boards;
     }
 
-    public static void addBoard(Context context, Board board) {
+    public  void addBoard(Context context, Board board) {
         List<Board> boards = getBoards(context);
         boards.add(board);
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_BOARD_LIST, GSON.toJson(boards)).commit();
     }
 
-    public static void updateOrAddBoard(Context context, Board board){
+    public  void updateOrAddBoard(Context context, Board board){
         List<Board>boards = getBoards(context);
         boolean existBoard = false;
         int loc = -1;
@@ -67,10 +67,10 @@ public class BoardDatabase {
 
     }
 
-    public static  Board getBoard(Context context, String title){
+    public   Board getBoard(Context context, String title){
         Board board = null;
 
-        List<Board>boards = getBoards(context);
+        List<Board>boards = this.getBoards(context);
 
         for(Board b: boards){
             if (b.getTitle().equals(title)){
@@ -85,7 +85,7 @@ public class BoardDatabase {
     }
 
 
-    public static void deleteBoard (Context context, String title){
+    public  void deleteBoard (Context context, String title){
         List<Board> boards = getBoards(context);
         Board board = getBoard(context, title);
         if (null!=board) {
@@ -95,9 +95,24 @@ public class BoardDatabase {
         }
     }
 
-    private static void clearCache(){
-        boards = null;
+    private  void clearCache(){
+        this.boards = null;
     }
 
 
+    public List<Board> getBoards() {
+        return boards;
+    }
+
+    public void setBoards(List<Board> boards) {
+        this.boards = boards;
+    }
+
+    public Board getSelectedBoard() {
+        return selectedBoard;
+    }
+
+    public void setSelectedBoard(Board selectedBoard) {
+        this.selectedBoard = selectedBoard;
+    }
 }

@@ -39,4 +39,20 @@ public class MainInteractor {
     public void deleteBoard(String title){
         boardService.deleteBoard(title,context);
     }
+
+    public BoardService getBoardService() {
+        return boardService;
+    }
+
+    public void setBoardService(BoardService boardService) {
+        this.boardService = boardService;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.test.RenamingDelegatingContext;
 import android.view.View;
 import android.widget.Button;
 
@@ -33,6 +34,8 @@ public class MainPresenter implements Presenter<MainView>{
         mainView = view;
         mainInteractor = new MainInteractor(mainView.getContext());
     }
+
+
 
     @Override
     public void detachView() {
