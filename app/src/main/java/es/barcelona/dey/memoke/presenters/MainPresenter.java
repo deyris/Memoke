@@ -21,18 +21,19 @@ public class MainPresenter implements Presenter<MainView>{
     public static String PARAM_SELECTED_BOARD = "PARAM_SELECTED_BOARD";
 
     MainView mainView;
+
+
     MainInteractor mainInteractor;
 
-    public MainPresenter() {
-
+    public MainPresenter(MainInteractor interactor) {
+        mainInteractor = interactor;
     }
 
     @Override
     public void setView(MainView view) {
-        if (view == null) throw new IllegalArgumentException("You can't set a null view");
 
+        if (view == null) throw new IllegalArgumentException("You can't set a null view");
         mainView = view;
-        mainInteractor = new MainInteractor(mainView.getContext());
     }
 
 
@@ -44,7 +45,7 @@ public class MainPresenter implements Presenter<MainView>{
 
 
     public void clickPositiveButtonOnDialog(String titleBoard){
-        //Borramos el tablero
+
         deleteBoard(titleBoard);
         // List<Board> testBoard = BoardDatabase.getBoards(MainFragment.this.getActivity());
         mainView.openToCreateBoardFromZero(titleBoard);
@@ -61,6 +62,7 @@ public class MainPresenter implements Presenter<MainView>{
 
 
     public boolean isButtonMoreBoardsVisible(){
+
         return mainInteractor.existsMoreBoards();
     }
 
@@ -90,4 +92,13 @@ public class MainPresenter implements Presenter<MainView>{
     public void deleteBoard(String title){
         mainInteractor.deleteBoard(title);
     }
+
+    public MainInteractor getMainInteractor() {
+        return mainInteractor;
+    }
+
+    public void setMainInteractor(MainInteractor mainInteractor) {
+        this.mainInteractor = mainInteractor;
+    }
+
 }

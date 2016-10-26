@@ -38,39 +38,73 @@ public class MainPresenterTest extends InstrumentationTestCase{
     @InjectMocks
     MainPresenter mainPresenter;
 
+
+
     @Mock
     MainInteractor mainInteractor;
-     SharedPreferences sharedPrefs = Mockito.mock(SharedPreferences.class);
      Context context = Mockito.mock(Context.class);
 
     @Before
     public void setUp(){
         mainInteractor = Mockito.mock(MainInteractor.class);
 
-        this.sharedPrefs = Mockito.mock(SharedPreferences.class);
         this.context = Mockito.mock(Context.class);
-        Mockito.when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(sharedPrefs);
 
-        mainPresenter = new MainPresenter();
+        mainPresenter = new MainPresenter(mainInteractor);
         mainPresenter.setView(mainViewContext);
 
     }
 
-    @Test
-    public void isButtonMoreBoardVisibleWithMoreBoard_return_true(){
-
-       // Mockito.when(PreferenceManager.getDefaultSharedPreferences(context)).thenReturn(sharedPrefs);
-
-       // when(mainInteractor.existsMoreBoards()).thenReturn(true);
-        mainPresenter.isButtonMoreBoardsVisible();
-        verify(mainInteractor).existsMoreBoards();
-
-       // assertEquals (mainPresenter.isButtonMoreBoardsVisible(),true);
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void setViewIsIllegalArgumentExceptionIfViewNull(){
-        MainPresenter mainPresenter = new MainPresenter();
         mainPresenter.setView(null);
     }
+
+    @Test
+    public void isButtonMoreBoardVisibleWithMoreBoard_returnTrue(){
+
+        when(mainInteractor.existsMoreBoards()).thenReturn(true);
+        assertEquals (mainPresenter.isButtonMoreBoardsVisible(),true);
+    }
+
+    @Test
+    public void ifExistBoard_launchAlertExistsThisBoard(){
+
+        when(mainInteractor.existsThisBoard(anyString())).thenReturn(true);
+        mainPresenter.clickOnCreateButton(anyString());
+        verify(mainViewContext).launchAlertExistsThisBoard();
+
+    }
+
+    @Test
+    public void ifNotExistBoard_openToCreateBoardFromZero(){
+
+        when(mainInteractor.existsThisBoard(anyString())).thenReturn(false);
+        mainPresenter.clickOnCreateButton(anyString());
+        verify(mainViewContext).openToCreateBoardFromZero(anyString());
+
+    }
+
+    @Test
+    public void ifExistMoreBoard_buttonMoreBoardsIsVisible(){
+
+        when(mainPresenter.isButtonMoreBoardsVisible()).thenReturn(true);
+        mainPresenter.manageVisibiltyForLoadButton();
+        verify(mainViewContext).showButtonMoreBoards();
+    }
+
+    @Test
+    public void ifNotExistMoreBoard_buttonMoreBoardsIsNotVisible(){
+
+        when(mainPresenter.isButtonMoreBoardsVisible()).thenReturn(false);
+        mainPresenter.manageVisibiltyForLoadButton();
+        verify(mainViewContext).hideButtonMoreBoards();
+    }
+
+    @Test
+    public void isButtonMoreBoardsVisible_existsMoreBoards(){
+        mainPresenter.isButtonMoreBoardsVisible();
+        verify(mainInteractor).existsMoreBoards();
+    }
+
 }
