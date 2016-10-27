@@ -34,12 +34,14 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
     ContentView contentView;
     ContentInteractor contentInteractor;
 
+    public ContentPresenter(ContentInteractor contentInteractor) {
+        this.contentInteractor = contentInteractor;
+    }
 
     @Override
     public void setView(ContentView view) {
         if (view == null) throw new IllegalArgumentException("You can't set a null view");
         contentView = view;
-        contentInteractor = new ContentInteractor(contentView.getContext());
 
     }
 
@@ -395,4 +397,6 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
     public void setmCurrentFrame(int mCurrentFrame) {
         this.mCurrentFrame = mCurrentFrame;
     }
+
+
 }

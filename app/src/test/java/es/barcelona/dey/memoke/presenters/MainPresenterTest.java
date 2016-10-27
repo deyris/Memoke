@@ -28,21 +28,19 @@ import static org.mockito.Mockito.when;
  * Created by deyris.drake on 3/10/16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class MainPresenterTest extends InstrumentationTestCase{
+public class MainPresenterTest{
 
     @Mock
     MainView mainViewContext;
-    @Mock
-    PreferenceManager preferenceManager;
+
 
     @InjectMocks
     MainPresenter mainPresenter;
 
-
-
     @Mock
     MainInteractor mainInteractor;
-     Context context = Mockito.mock(Context.class);
+
+    Context context = Mockito.mock(Context.class);
 
     @Before
     public void setUp(){
@@ -56,12 +54,12 @@ public class MainPresenterTest extends InstrumentationTestCase{
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setViewIsIllegalArgumentExceptionIfViewNull(){
+    public void setViewIfViewNull_IllegalArgumentException(){
         mainPresenter.setView(null);
     }
 
     @Test
-    public void isButtonMoreBoardVisibleWithMoreBoard_returnTrue(){
+    public void isButtonMoreBoardVisibleIfMoreBoard_returnTrue(){
 
         when(mainInteractor.existsMoreBoards()).thenReturn(true);
         assertEquals (mainPresenter.isButtonMoreBoardsVisible(),true);

@@ -93,12 +93,6 @@ public class MainPresenter implements Presenter<MainView>{
         mainInteractor.deleteBoard(title);
     }
 
-    public MainInteractor getMainInteractor() {
-        return mainInteractor;
-    }
 
-    public void setMainInteractor(MainInteractor mainInteractor) {
-        this.mainInteractor = mainInteractor;
-    }
 
 }

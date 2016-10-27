@@ -31,6 +31,7 @@ import java.security.PrivateKey;
 import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.beans.Tab;
+import es.barcelona.dey.memoke.interactors.ContentInteractor;
 import es.barcelona.dey.memoke.presenters.ContentPresenter;
 import es.barcelona.dey.memoke.presenters.CreationPresenter;
 import es.barcelona.dey.memoke.views.ContentView;
@@ -449,7 +450,7 @@ public class ContentFragment extends Fragment implements ContentView{
 
     private void instancePresenter(){
         if (null==contentPresenter){
-            contentPresenter = new ContentPresenter();
+            contentPresenter = new ContentPresenter(new ContentInteractor(this.getContext()));
             contentPresenter.setView(ContentFragment.this);
         }
     }
