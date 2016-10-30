@@ -45,21 +45,7 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
         boardPresenter.doLock(true,this);
 
         //Recuperamos tablero actual
-        Board currentBoard = null;
-        Bundle bundle = getIntent().getExtras();
-
-        if (bundle!=null && null!=bundle.getString(CreationPresenter.PARAM_CURRENT_BOARD)) {
-
-            String jsonCurrenBoard = bundle.getString(CreationPresenter.PARAM_CURRENT_BOARD);
-            currentBoard = boardPresenter.getCurrentBoard(jsonCurrenBoard);
-
-        }
-        if (null!=currentBoard){
-
-           boardPresenter.inicialiceGame(currentBoard);
-
-        }
-
+        boardPresenter.onCreateActivityBoard(getIntent().getExtras());
         GridView gridview = (GridView) findViewById(R.id.gridview);
 
         TabAdapter adapter = new TabAdapter(this,

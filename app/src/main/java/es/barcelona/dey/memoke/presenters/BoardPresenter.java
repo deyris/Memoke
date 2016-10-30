@@ -3,6 +3,7 @@ package es.barcelona.dey.memoke.presenters;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -97,6 +98,18 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
         //Se actualiza finished en Play
         currentPlay.setFinished(true);
 
+    }
+
+    public void onCreateActivityBoard(Bundle bundle){
+        Board currentBoard = null;
+        boolean existsCurrentBoard = bundle!=null && null!=bundle.getString(CreationPresenter.PARAM_CURRENT_BOARD);
+        if (existsCurrentBoard) {
+            String jsonCurrenBoard = bundle.getString(CreationPresenter.PARAM_CURRENT_BOARD);
+            currentBoard = getCurrentBoard(jsonCurrenBoard);
+        }
+        if (null!=currentBoard){
+            inicialiceGame(currentBoard);
+        }
     }
 
     public Play getLastPlayNotFinished(boolean needCompleted){
