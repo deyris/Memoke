@@ -30,7 +30,8 @@ public class HeaderPresenter extends ComunPresenter implements Presenter<HeaderV
     }
 
     public void creationFragmentOnCreate(Bundle bundle){
-        if (bundle!=null) {
+        if (bundle == null) throw new IllegalArgumentException("You can't fill header data with null object.");
+        else if (bundle!=null) {
             headerView.fillHeaderData(bundle);
         }
 
