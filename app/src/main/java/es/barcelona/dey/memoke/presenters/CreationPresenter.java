@@ -3,6 +3,7 @@ package es.barcelona.dey.memoke.presenters;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 
 
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         if (view == null) throw new IllegalArgumentException("You can't set a null view");
 
         creationView = view;
-        creationInteractor = new CreationInteractor(creationView.getContext());
+        creationInteractor = new CreationInteractor(creationView.getContext().getApplicationContext());
     }
 
     @Override
@@ -46,10 +47,14 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     public void updateOrAddBoard(Board board){
         creationInteractor.updateOrAddBoard(board);
+        this.mBoard = creationInteractor.getBoard(this.mBoard.getTitle());
+
     }
 
     public void savePairInBoard(Pair pair){
+
         creationInteractor.savePairInBoard(this.mBoard, pair);
+        this.mBoard = creationInteractor.getBoard(this.mBoard.getTitle());
     }
 
     public int getIdCurrentPair() {
@@ -61,12 +66,16 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         this.idCurrentPair = idCurrentPair;
     }
 
-    private Pair loadPairFromExistingBoard(String jsonBoard){
-        Board mBoard = gson.fromJson(jsonBoard, Board.class);
+
+    private Pair loadPairFromExistingBoard(String jsonmBoard){
+        //TODO: al llamar a este método ya tengo en el Bundle Title y BOard... quitar board, demora innecesaria. Revisar q siempre estén los dos
+        Board mBoard = this.getCurrentBoard(jsonmBoard);
+        //Actualizamos mBoard con valor del context
+        mBoard = creationInteractor.getBoard(mBoard.getTitle());
         //Buscamos currentPair
         Pair currentPair = new Pair();
-        if (null!=mBoard.getPairs()) {
-            this.idCurrentPair = (null != mBoard.getPairs()) ? mBoard.getPairs().size() : 1;
+        if (null!=mBoard.getPairs() && mBoard.getPairs().size()>0) {
+            this.idCurrentPair = mBoard.getPairs().size();
             //Actualizamos currentPair
             currentPair = mBoard.getPairs().get(this.idCurrentPair);
             this.mBoard = mBoard;
@@ -161,12 +170,15 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     private void updateTitleFromBundle(Bundle bundleFromMain){
         //Actualizamos title tablero
-        if (null==mBoard){
-            mBoard = new Board();
-        }
+
         if (bundleFromMain.getString(MainPresenter.PARAM_TITLE) != null) {
             String title = bundleFromMain.getString(MainPresenter.PARAM_TITLE).toString();
+            mBoard = creationInteractor.getBoard(title);
+            if (null==mBoard){
+                mBoard = new Board();
+            }
             mBoard.setTitle(title);
+            updateOrAddBoard(mBoard);
         }
 
     }
@@ -227,6 +239,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         }
         //Actualizamos creationFragment con el numero de la pareja
         actualicePairNumber(existsCreationFragment);
+
     }
 
     public void actualicePairNumber(boolean existsCreationFragment){
@@ -304,5 +317,9 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     public Board getmBoard() {
         return mBoard;
+    }
+
+    public Board getmBoard(String title) {
+        return creationInteractor.getBoard(title);
     }
 }

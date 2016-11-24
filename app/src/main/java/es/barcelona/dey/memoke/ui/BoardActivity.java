@@ -14,6 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
+
 import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Tab;
@@ -123,6 +126,11 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
                         .resize(180, 180)
                         .centerCrop()
                         .into(imageView);
+               /* Picasso.with(this).load(new File(tab.getUri()))
+                        .resize(180, 180)
+                        .centerCrop().into(imageView);*/
+
+
             }
             showFrontAnim.start();
             

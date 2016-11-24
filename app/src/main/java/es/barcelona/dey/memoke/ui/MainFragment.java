@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import es.barcelona.dey.memoke.R;
+import es.barcelona.dey.memoke.clients.MemokeApp;
 import es.barcelona.dey.memoke.interactors.MainInteractor;
 import es.barcelona.dey.memoke.presenters.MainPresenter;
 import es.barcelona.dey.memoke.views.MainView;
@@ -43,7 +44,7 @@ public class MainFragment extends Fragment  implements MainView {
         LinearLayout mRelativeLayout = (LinearLayout) inflater.inflate(R.layout.fragment_main,
                 container, false);
 
-        mainPresenter = new MainPresenter(new MainInteractor(getActivity()));
+        mainPresenter = new MainPresenter(new MainInteractor(getContext().getApplicationContext()));
         mainPresenter.setView(MainFragment.this);
 
         mBtnCreate = (Button) mRelativeLayout.findViewById(R.id.btnCrear);

@@ -12,20 +12,22 @@ import es.barcelona.dey.memoke.services.BoardService;
 public class CreationInteractor {
 
     BoardService boardService;
-    Context context;
 
     public CreationInteractor(Context context) {
 
-        this.boardService = new BoardService(context);
-        this.context = context;
+        this.boardService = new BoardService(context.getApplicationContext());
     }
 
     public void savePairInBoard(Board board, Pair pair){
-        boardService.savePairInBoard(context, board, pair);
+        boardService.savePairInBoard(board, pair);
     }
 
     public void updateOrAddBoard(Board board){
-        boardService.updateOrAddBoard(board,context);
+        boardService.updateOrAddBoard(board);
+    }
+
+    public Board getBoard(String title){
+        return boardService.getBoard(title);
     }
 
 }

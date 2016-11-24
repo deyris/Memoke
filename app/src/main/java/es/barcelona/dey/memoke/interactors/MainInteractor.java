@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.gson.Gson;
 
 import es.barcelona.dey.memoke.beans.Board;
+import es.barcelona.dey.memoke.clients.MemokeApp;
 import es.barcelona.dey.memoke.services.BoardService;
 
 /**
@@ -18,7 +19,7 @@ public class MainInteractor {
     public MainInteractor(Context context) {
 
         this.boardService = new BoardService(context);
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     public boolean existsMoreBoards(){
@@ -30,14 +31,14 @@ public class MainInteractor {
     }
 
     public String restoreBoard(String title){
-        Board board = boardService.getBoard(title,this.context);
+        Board board = boardService.getBoard(title);
         final Gson gson = new Gson();
         String jsonSelectedBoard = gson.toJson(board).toString();
         return jsonSelectedBoard;
     }
 
     public void deleteBoard(String title){
-        boardService.deleteBoard(title,context);
+        boardService.deleteBoard(title);
     }
 
     public BoardService getBoardService() {
@@ -48,11 +49,5 @@ public class MainInteractor {
         this.boardService = boardService;
     }
 
-    public Context getContext() {
-        return context;
-    }
 
-    public void setContext(Context context) {
-        this.context = context;
-    }
 }

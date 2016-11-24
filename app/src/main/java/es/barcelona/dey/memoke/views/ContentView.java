@@ -1,6 +1,7 @@
 package es.barcelona.dey.memoke.views;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -66,5 +67,7 @@ public interface ContentView {
     void preDrawPhoto1();
 
     void preDrawPhoto2();
+
+
 
 }

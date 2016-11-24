@@ -2,6 +2,7 @@ package es.barcelona.dey.memoke.beans;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,10 +14,15 @@ public class Board {
         IN_PROCESS, SAVED, EMPTY, COMPLETED
     }
 
+
     private Map<Integer,Pair> pairs;
     private String title;
     private State state;
     private Date date;
+
+    public Board() {
+        this.pairs = new HashMap<Integer, Pair>();
+    }
 
     public String getTitle() {
         return title;

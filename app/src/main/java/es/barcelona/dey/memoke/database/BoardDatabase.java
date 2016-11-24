@@ -75,8 +75,9 @@ public class BoardDatabase {
         for(Board b: boards){
             if (b.getTitle().equals(title)){
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                preferences.edit().putString(PREF_BOARD_SELECTED, GSON.toJson(b)).commit();
-                return b;
+                String r = GSON.toJson(b);
+                preferences.edit().putString(PREF_BOARD_SELECTED, r).commit();
+                board = b;
             }
         }
 

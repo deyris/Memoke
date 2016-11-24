@@ -2,12 +2,19 @@ package es.barcelona.dey.memoke.presenters;
 
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.interactors.ContentInteractor;
@@ -51,18 +58,21 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
     }
 
     public void onViewCreated(Bundle savedInstanceState, Bundle arguments){
-        //contentView.setListenerFrame(mFrameTab1,1);
-        //contentView.setListenerFrame(mFrameTab2,2);
 
         String jsonCurrentPair = getCurrentPairFromContext(savedInstanceState, arguments);
 
+        contentView.fillNumberInCurrentPairByArguments();
+
         if(null!=jsonCurrentPair) {
+            Pair pair = getCurrentPair(jsonCurrentPair);
+            Log.i("BUSCANDO","number: " + pair.getNumber());
             setmCurrentPair(getCurrentPair(jsonCurrentPair));
             fillPairOnView();
 
         }
 
-        contentView.fillNumberInCurrentPairByArguments();
+
+
 
         //Comprobamos botones de Anterior y Siguiente
         controlButtonsAntSgte();
@@ -99,13 +109,20 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         boolean currentPairLowerThanPairInArguments = existsPairNumberInArguments &&
                 (null== getmCurrentPair() || getmCurrentPair().getNumber() < arguments.getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER));
 
+
         if (existsPairNumberInArguments) {
             int currentPair = arguments.getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER);
+
+            Log.i("BUSCANDO", "estoy en existsPairNumberInArguments:" +  currentPair);
+
             if (currentPairLowerThanPairInArguments) {
+                Log.i("BUSCANDO", "estoy en currentPairLowerThanPairInArguments:" +  currentPair);
                 setmCurrentPair(new Pair());
                 getmCurrentPair().setNumber(currentPair);
             }
         }
+
+
     }
 
     public void onFillResultWithCurrent(int imageId, int tab, int idText){
@@ -132,7 +149,9 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
             outState.putString(CreationPresenter.PARAM_CURRENT_PAIR, jsonCurrentPair);
 
         }
+
     }
+
 
 
 
@@ -177,18 +196,52 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         return isTabPhoto;
     }
 
+    public Uri handleImageUri(Uri uri) {
+        if (uri.getPath().contains("content")) {
+            Pattern pattern = Pattern.compile("(content://media/.*\\d)");
+            Matcher matcher = pattern.matcher(uri.getPath());
+            if (matcher.find())
+                return Uri.parse(matcher.group(1));
+            else
+                throw new IllegalArgumentException("Cannot handle this URI");
+        }
+        return uri;
+    }
+
+    public String getRealPathFromURI(Uri contentURI) {
+        Cursor cursor = contentView.getContext().getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            return contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            return cursor.getString(idx);
+        }
+    }
 
     public void onActivityResult(int requestCode,Intent data){
         if (requestCode== REQUEST_IMAGE_CAPTURE){
             contentView.setPicToBackground();
         }else if (requestCode== ContentPresenter.REQUEST_SELECT_PICTURE){
+
+
             if (null!=data && null!=data.getData()) {
                 Uri selectedImage = data.getData();
-                setmCurrentPhotoPath(selectedImage.toString());
+
+                String[] filePath = {MediaStore.Images.Media.DATA};
+                Cursor c = contentView.getContext().getContentResolver().query(selectedImage, filePath, null, null, null);
+                c.moveToFirst();
+                int columnIndex = c.getColumnIndex(filePath[0]);
+                String picturePath = c.getString(columnIndex);
+
+                c.close();
+
+                setmCurrentPhotoPath(picturePath/*selectedImage.toString()*/);
                 contentView.setPicToBackground();
             }
         }
     }
+
 
     public void whatDoWithTheSelectionOfFrame(int item){
         boolean existTab = null == getmCurrentPair().getTabs()[getmCurrentTab() - 1];
@@ -220,7 +273,6 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
         }
 
-
         return valid;
     }
 
@@ -250,7 +302,6 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         if (null!= getmCurrentPair()) {
 
             if (getmCurrentPair().getNumber() > 1) {
-
                 contentView.showAntButton();
             } else {
                 contentView.hideAntButton();
@@ -300,7 +351,6 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
                 contentView.openEmptyDialogText();
             }
 
-
         }
         if (typePhoto) {
            contentView.openDialogPhoto();
@@ -348,6 +398,8 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
 
         return photoFile;
     }
+
+
 
 
     public Pair getmCurrentPair() {

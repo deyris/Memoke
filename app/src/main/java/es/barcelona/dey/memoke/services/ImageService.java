@@ -1,6 +1,16 @@
 package es.barcelona.dey.memoke.services;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,4 +37,6 @@ public class ImageService {
 
         return image;
     }
+
+
 }

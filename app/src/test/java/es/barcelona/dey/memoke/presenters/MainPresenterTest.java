@@ -66,7 +66,7 @@ public class MainPresenterTest{
     }
 
     @Test
-    public void ifExistBoard_launchAlertExistsThisBoard(){
+    public void clickOnCreateButtonIfExistBoard_launchAlertExistsThisBoard(){
 
         when(mainInteractor.existsThisBoard(anyString())).thenReturn(true);
         mainPresenter.clickOnCreateButton(anyString());
@@ -75,7 +75,7 @@ public class MainPresenterTest{
     }
 
     @Test
-    public void ifNotExistBoard_openToCreateBoardFromZero(){
+    public void clickOnCreateButtonIfNotExistBoard_openToCreateBoardFromZero(){
 
         when(mainInteractor.existsThisBoard(anyString())).thenReturn(false);
         mainPresenter.clickOnCreateButton(anyString());
@@ -84,7 +84,7 @@ public class MainPresenterTest{
     }
 
     @Test
-    public void ifExistMoreBoard_buttonMoreBoardsIsVisible(){
+    public void manageVisibiltyForLoadButtonIfExistMoreBoard_showButtonMoreBoards(){
 
         when(mainPresenter.isButtonMoreBoardsVisible()).thenReturn(true);
         mainPresenter.manageVisibiltyForLoadButton();
@@ -92,7 +92,7 @@ public class MainPresenterTest{
     }
 
     @Test
-    public void ifNotExistMoreBoard_buttonMoreBoardsIsNotVisible(){
+    public void manageVisibiltyForLoadButtonIfNotExistMoreBoard_hideButtonMoreBoards(){
 
         when(mainPresenter.isButtonMoreBoardsVisible()).thenReturn(false);
         mainPresenter.manageVisibiltyForLoadButton();
@@ -100,7 +100,7 @@ public class MainPresenterTest{
     }
 
     @Test
-    public void isButtonMoreBoardsVisible_existsMoreBoards(){
+    public void isButtonMoreBoardsVisibleIfIsButtonMoreBoardsVisible_existsMoreBoards(){
         mainPresenter.isButtonMoreBoardsVisible();
         verify(mainInteractor).existsMoreBoards();
     }

@@ -8,6 +8,7 @@ import android.test.RenamingDelegatingContext;
 import android.view.View;
 import android.widget.Button;
 
+import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.interactors.MainInteractor;
 import es.barcelona.dey.memoke.ui.CreationActivity;
 import es.barcelona.dey.memoke.views.MainView;
@@ -67,6 +68,7 @@ public class MainPresenter implements Presenter<MainView>{
     }
 
     public void clickOnCreateButton(String title){
+        Board board = mainInteractor.getBoardService().getBoard(title);
         if (mainInteractor.existsThisBoard(title)){
             mainView.launchAlertExistsThisBoard();
 

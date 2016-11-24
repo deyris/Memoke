@@ -39,7 +39,6 @@ public class Game {
         this.maxMoveNumber = maxMoveNumber;
     }
 
-
     public Time getTime() {
         return time;
     }
