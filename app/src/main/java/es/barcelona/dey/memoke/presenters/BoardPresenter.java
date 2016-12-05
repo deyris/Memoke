@@ -27,6 +27,8 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
     TabForGame[] tabsForGame = new TabForGame[]{};
     HashMap<Integer,FrameLayout> currentFrame = new HashMap<Integer,FrameLayout>();
     ArrayList clickedPositions;
+    int totalTabsShown = 0;
+
 
     @Override
     public void setView(BoardView view) {
@@ -38,6 +40,22 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
     @Override
     public void detachView() {
         boardView = null;
+    }
+
+    public void incrementTotalTabsShown(){
+        totalTabsShown++;
+    }
+
+    public void decrementTotalTabsShown(){
+        totalTabsShown--;
+    }
+
+    public boolean isGameBlockedForTabsShown(){
+        return totalTabsShown == 3;
+    }
+    
+    public void resetTotalTabsShown(){
+        totalTabsShown = 0;
     }
 
     public void doLock(boolean locked, Activity activity) {
@@ -97,7 +115,7 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
 
         //Se actualiza finished en Play
         currentPlay.setFinished(true);
-
+        resetTotalTabsShown();
     }
 
     public void onCreateActivityBoard(Bundle bundle){
@@ -192,6 +210,9 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
 
 
     public void manageClickOnFrame(View v, int position){
+        if (isGameBlockedForTabsShown()){
+            return;
+        }
         final Handler handler = new Handler();
         final int pos = position;
         boolean itsTheSame = false;
@@ -218,17 +239,18 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
         currentFrame.put(position, frameLayout);
         boolean isImparAndNotOne = this.clickedPositions.size() % 2 != 0 && this.clickedPositions.size() > 1;
         if (isImparAndNotOne) { //Si es impar las analizo ya
-
+            //Log.i("JUGANDO","impar y no uno" + this.clickedPositions.size());
             finaliceLastPlay();
             actualicePlays(pos);
 
             boardView.setAnimationToFrame(frameLayout, position);
 
         } else {
+           // Log.i("JUGANDO","lo otro" + this.clickedPositions.size());
             actualicePlays(pos);
 
             boardView.setAnimationToFrame(frameLayout, position);
-            handler.postDelayed(runnable, 3000); // after 3 sec
+            handler.postDelayed(runnable, 4000); // after 3 sec
 
         }
     }

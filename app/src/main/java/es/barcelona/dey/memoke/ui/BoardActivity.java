@@ -20,11 +20,9 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 
 import es.barcelona.dey.memoke.R;
-import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.beans.Tab;
 import es.barcelona.dey.memoke.beans.TabForGame;
 import es.barcelona.dey.memoke.presenters.BoardPresenter;
-import es.barcelona.dey.memoke.presenters.CreationPresenter;
 import es.barcelona.dey.memoke.views.BoardView;
 
 /**
@@ -141,18 +139,20 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
         }
         if (tab.isShowingBack()) {
 
-
             showFrontAnim.start();
             
             Toast.makeText(getApplicationContext(),
                     new Integer(position).toString(), Toast.LENGTH_SHORT).show();
             tab.setShowingBack(false);
-
+            Log.i("JUGANDO","showingBack = false");
+            boardPresenter.decrementTotalTabsShown();
         } else {
             cardFront.setVisibility(View.VISIBLE);
             showBackAnim.start();
 
             tab.setShowingBack(true);
+            Log.i("JUGANDO","showingBack = true");
+            boardPresenter.incrementTotalTabsShown();
         }
 
 

@@ -20,6 +20,10 @@ public class CreationInteractor {
 
     public void savePairInBoard(String title, Pair pair){
         Board board = getBoard(title);
+        if (board==null){
+            board = new Board();
+            board.setTitle(title);
+        }
         boardService.savePairInBoard(board, pair);
     }
 
