@@ -24,15 +24,21 @@ public class BoardDatabase {
 
     private  Board selectedBoard = null;
 
+
+    private List<Board> getBoardsFromCache(Context context){
+        String boardsJson = PreferenceManager
+                .getDefaultSharedPreferences(context)
+                .getString(BoardDatabase.PREF_BOARD_LIST,"empty");
+        List<Board> boards = null;
+        if (!"empty".equals(boardsJson)){
+            boards =  GSON.fromJson(boardsJson, BoardList.class);
+        }
+        return boards;
+    }
     public  List<Board> getBoards(Context context) {
+
         if (boards == null) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            String value = preferences.getString(PREF_BOARD_LIST, null);
-            if (value != null) {
-                boards = GSON.fromJson(value, BoardList.class);
-            } else {
-                boards = new BoardList();
-            }
+            boards = getBoardsFromCache(context);
         }
         return boards;
     }
@@ -47,37 +53,75 @@ public class BoardDatabase {
         List<Board>boards = getBoards(context);
         boolean existBoard = false;
         int loc = -1;
-        for(Board b: boards){
-            loc++;
-            if (null!=b.getTitle() && b.getTitle().equals(board.getTitle())){
-                existBoard = true;
-                break;
-            }
+        if (boards!=null) {
+            for (Board b : boards) {
+                loc++;
+                if (null != b.getTitle() && b.getTitle().equals(board.getTitle())) {
+                    existBoard = true;
+                    break;
+                }
 
-        }
-        if (existBoard){
-            //Borramos
-            boards.remove(loc);
+            }
+            if (existBoard) {
+                //Borramos
+                boards.remove(loc);
+            }
+        }else{
+            boards = new BoardList();
         }
         boards.add(board);
 
+        this.boards = boards;
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_BOARD_SELECTED, GSON.toJson(board)).commit();
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_BOARD_LIST, GSON.toJson(boards)).commit();
 
 
 
     }
 
-    public   Board getBoard(Context context, String title){
+    private Board getSelectedBoardFromCache(Context context){
+        String boardJson =  PreferenceManager.getDefaultSharedPreferences(context).getString(BoardDatabase.PREF_BOARD_SELECTED,"empty");
         Board board = null;
 
-        List<Board>boards = this.getBoards(context);
+        if(!"empty".equals(boardJson)){
+            board = GSON.fromJson(boardJson,Board.class);
+        }
 
-        for(Board b: boards){
-            if (b.getTitle().equals(title)){
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                String r = GSON.toJson(b);
-                preferences.edit().putString(PREF_BOARD_SELECTED, r).commit();
-                board = b;
+        return board;
+    }
+
+    public   Board getBoard(Context context, String title){
+        Board board = getSelectedBoard();
+        if (null!=board && !board.getTitle().equals(title)){
+            board = null;
+        }
+        if (null==board){
+            board = getSelectedBoardFromCache(context);
+            if (null!=board) {
+                boolean itsBoardSelected = board.getTitle().equals(title);
+                if (itsBoardSelected) {
+                    return board;
+                } else {
+                    board = null;
+                }
+            }
+
+            if (null==board){
+                List<Board>boards = this.getBoards(context);
+
+                if (boards!=null) {
+                    for (Board b : boards) {
+                        if (b.getTitle().equals(title)) {
+                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                            String r = GSON.toJson(b);
+                            preferences.edit().putString(PREF_BOARD_SELECTED, r).commit();
+                            selectedBoard = b;
+                            board = b;
+                            break;
+                        }
+                    }
+
+                }
             }
         }
 

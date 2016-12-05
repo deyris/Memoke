@@ -50,7 +50,7 @@ public interface ContentView {
 
     void setPicToBackground();
 
-    void setPicToImg(ImageView img, int height, int width);
+   // void setPicToImg(ImageView img, int height, int width);
 
     void openDialogText(Pair currentPair, int idCurrentTab);
 

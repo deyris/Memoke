@@ -3,8 +3,10 @@ package es.barcelona.dey.memoke.ui;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
@@ -69,6 +71,13 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
 
         });
 
+      /*  for ( TabForGame tab: boardPresenter.getTabsForGame()){
+            if (tab.getType()==Tab.Type.PHOTO) {
+               Picasso.with(this.getContext()).load("file:///" + tab.getUri()).resize(180, 180).centerCrop().fetch();
+            }
+        }*/
+
+
     }
 
     @Override
@@ -79,7 +88,6 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
 
     @Override
     public void setAnimationToFrame(FrameLayout frame, int position){
-
 
          AnimatorSet showFrontAnim = new AnimatorSet();
          AnimatorSet showBackAnim = new AnimatorSet();
@@ -109,29 +117,31 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
         showBackAnim.playTogether(leftOut, rightIn);
 
         TabForGame tab = boardPresenter.getTabsForGame()[position];
+        TextView textView = (TextView) cardFront.getChildAt(0);
+        ImageView imageView = (ImageView)cardFront.getChildAt(1);
+
+        if (tab.getType().equals(Tab.Type.TEXT)){
+            imageView.setVisibility(View.GONE);
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(tab.getText());
+            textView.setTextSize(tab.getSize()/2);
+        }
+        if (tab.getType().equals(Tab.Type.PHOTO)){
+            textView.setVisibility(View.GONE);
+            imageView.setVisibility(View.VISIBLE);
+            //  File file = new File(tab.getUri());
+
+            Uri uri = Uri.fromFile(new File(tab.getUri()));
+
+            Picasso.with(this).load("file:///" + uri.getPath())
+                    .resize(180, 180)
+                    .centerCrop()
+                    .into(imageView);
+
+        }
         if (tab.isShowingBack()) {
-            TextView textView = (TextView) cardFront.getChildAt(0);
-            ImageView imageView = (ImageView)cardFront.getChildAt(1);
-
-            if (tab.getType().equals(Tab.Type.TEXT)){
-                imageView.setVisibility(View.GONE);
-                textView.setVisibility(View.VISIBLE);
-                textView.setText(tab.getText());
-                textView.setTextSize(tab.getSize()/2);
-            }
-            if (tab.getType().equals(Tab.Type.PHOTO)){
-                textView.setVisibility(View.GONE);
-                imageView.setVisibility(View.VISIBLE);
-                Picasso.with(this).load(tab.getUri())
-                        .resize(180, 180)
-                        .centerCrop()
-                        .into(imageView);
-               /* Picasso.with(this).load(new File(tab.getUri()))
-                        .resize(180, 180)
-                        .centerCrop().into(imageView);*/
 
 
-            }
             showFrontAnim.start();
             
             Toast.makeText(getApplicationContext(),
@@ -141,6 +151,7 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
         } else {
             cardFront.setVisibility(View.VISIBLE);
             showBackAnim.start();
+
             tab.setShowingBack(true);
         }
 

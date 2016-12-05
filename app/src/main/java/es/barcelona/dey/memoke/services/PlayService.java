@@ -22,6 +22,7 @@ public class PlayService {
             for(Tab tab: pair.getTabs()){
                 TabForGame tabForGame = new TabForGame(tab);
                 tabForGame.setNumberOfPair(pair.getNumber());
+               // tabForGame.setShowingBack(true);
                 tabs.add(tabForGame);
             }
         }

@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import es.barcelona.dey.memoke.R;
+import es.barcelona.dey.memoke.interactors.CreationInteractor;
 import es.barcelona.dey.memoke.presenters.CreationPresenter;
 import es.barcelona.dey.memoke.presenters.HeaderPresenter;
 import es.barcelona.dey.memoke.views.HeaderView;
@@ -17,7 +18,7 @@ import es.barcelona.dey.memoke.views.HeaderView;
 /**
  * Created by deyris.drake on 25/1/16.
  */
-public class CreationFragment extends Fragment implements HeaderView{
+public class HeaderFragment extends Fragment implements HeaderView{
 
     public static final String TAG = "MMKCreationFragment";
 
@@ -56,4 +57,6 @@ public class CreationFragment extends Fragment implements HeaderView{
         mTxtNumber.setText(String.format(res.getString(R.string.creation_number), bundle1.getInt(CreationPresenter.PARAM_CURRENT_PAIR)));
 
     }
+
+
 }

@@ -18,7 +18,8 @@ public class CreationInteractor {
         this.boardService = new BoardService(context.getApplicationContext());
     }
 
-    public void savePairInBoard(Board board, Pair pair){
+    public void savePairInBoard(String title, Pair pair){
+        Board board = getBoard(title);
         boardService.savePairInBoard(board, pair);
     }
 

@@ -19,7 +19,8 @@
             android:id="@+id/txtMemoke"
             android:layout_height="fill_parent"
             android:layout_width="fill_parent"
-            android:height="100dp"/>
+            android:height="100dp"
+            android:text="Hola"/>
         <ImageView
             android:id="@+id/imgMemoke"
             android:layout_height="fill_parent"

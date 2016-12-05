@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
 import es.barcelona.dey.memoke.R;
+import es.barcelona.dey.memoke.beans.Board;
 import es.barcelona.dey.memoke.interactors.CreationInteractor;
 import es.barcelona.dey.memoke.views.CreationView;
 import es.barcelona.dey.memoke.views.HeaderView;
@@ -16,6 +17,7 @@ public class HeaderPresenter extends ComunPresenter implements Presenter<HeaderV
 
     public static String PARAM_TITLE = "TITLE";
     HeaderView headerView;
+
 
     @Override
     public void setView(HeaderView view) {
@@ -35,4 +37,6 @@ public class HeaderPresenter extends ComunPresenter implements Presenter<HeaderV
         }
 
     }
+
+
 }

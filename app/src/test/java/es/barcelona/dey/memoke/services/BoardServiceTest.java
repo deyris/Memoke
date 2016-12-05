@@ -32,8 +32,8 @@ public class BoardServiceTest {
     @Test
     public void validExistsBoardReturnFalseIfEmptyArray(){
 
-        Mockito.when(boardDatabase.getBoards(context)).thenReturn(new ArrayList<Board>());
-        BoardService boardService = new BoardService(context);
+        Mockito.when(boardDatabase.getBoards(new SpecializedMockContext(context))).thenReturn(new ArrayList<Board>());
+        BoardService boardService = new BoardService(new SpecializedMockContext(context));
         assertEquals(boardService.existsBoards(),false);
 
     }

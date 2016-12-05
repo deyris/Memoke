@@ -3,7 +3,7 @@ package es.barcelona.dey.memoke.presenters;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.util.Log;
+import android.preference.PreferenceManager;
 
 
 import java.util.HashMap;
@@ -14,7 +14,6 @@ import es.barcelona.dey.memoke.beans.Pair;
 import es.barcelona.dey.memoke.database.BoardDatabase;
 import es.barcelona.dey.memoke.interactors.CreationInteractor;
 import es.barcelona.dey.memoke.ui.ContentFragment;
-import es.barcelona.dey.memoke.ui.CreationFragment;
 import es.barcelona.dey.memoke.views.CreationView;
 
 /**
@@ -53,7 +52,7 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     public void savePairInBoard(Pair pair){
 
-        creationInteractor.savePairInBoard(this.mBoard, pair);
+        creationInteractor.savePairInBoard(this.mBoard.getTitle(), pair);
         this.mBoard = creationInteractor.getBoard(this.mBoard.getTitle());
     }
 
@@ -170,15 +169,14 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     private void updateTitleFromBundle(Bundle bundleFromMain){
         //Actualizamos title tablero
-
         if (bundleFromMain.getString(MainPresenter.PARAM_TITLE) != null) {
             String title = bundleFromMain.getString(MainPresenter.PARAM_TITLE).toString();
             mBoard = creationInteractor.getBoard(title);
             if (null==mBoard){
                 mBoard = new Board();
+
             }
             mBoard.setTitle(title);
-            updateOrAddBoard(mBoard);
         }
 
     }
@@ -199,11 +197,14 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
     public String getNextPairOnBoard(int mCurrentPair){
         Pair pairSgte = new Pair();
         String jsonPairAnt = null;
-        if (mBoard.getPairs().size() >= mCurrentPair) {
-            pairSgte = mBoard.getPairs().get(mCurrentPair);
-            jsonPairAnt = gson.toJson(pairSgte);
-        }
+        if (mBoard.getPairs().size() > mCurrentPair) {
+            pairSgte = mBoard.getPairs().get(mCurrentPair + 1);
 
+        }else{
+            pairSgte.setNumber(mCurrentPair+1);
+
+        }
+        jsonPairAnt = gson.toJson(pairSgte);
         return jsonPairAnt;
 
     }
@@ -220,6 +221,13 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
             //Verificamos si ya pair existe para agregarlo o modificarlo
             savePairInBoard(pair);
             setIdCurrentPair(pair.getNumber());////////////////////////////
+
+            //Rescatamos la pareja
+            String jsonNextPair = getNextPairOnBoard(getIdCurrentPair());
+
+            //Rellenamos Bundle con la pareja siguiente
+            bundleSgte.putSerializable(CreationPresenter.PARAM_CURRENT_PAIR, jsonNextPair);
+
             //Vaciamos fragment y nos vamos al sgte
             putFragmentEmptyAndGoNext(bundleSgte);
 
@@ -228,13 +236,15 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
         } else {
 
-            putFragmentEmptyAndGoNext(bundleSgte);
+
 
             //Rescatamos la pareja
             String jsonNextPair = getNextPairOnBoard(getIdCurrentPair());
 
             //Rellenamos Bundle con la pareja siguiente
             bundleSgte.putSerializable(CreationPresenter.PARAM_CURRENT_PAIR, jsonNextPair);
+
+            putFragmentEmptyAndGoNext(bundleSgte);
 
         }
         //Actualizamos creationFragment con el numero de la pareja
@@ -286,9 +296,10 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
         if (null != this.getmBoard())   {
             //Salvamos lo que hay en mBoard
             updateOrAddBoard(getmBoard());
-            //Guardamos el id VISUALIZADO en el momento de irnos
+           //Guardamos el id VISUALIZADO en el momento de irnos
             outState.putInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER,getIdCurrentPair());
             outState.putString(CreationPresenter.PARAM_CURRENT_BOARD, getJsonCurrentBoard(getmBoard()));
+
         }
     }
 
@@ -321,5 +332,9 @@ public class CreationPresenter extends ComunPresenter implements Presenter<Creat
 
     public Board getmBoard(String title) {
         return creationInteractor.getBoard(title);
+    }
+
+    public void onPauseActivity() {
+        creationInteractor.updateOrAddBoard(mBoard);
     }
 }

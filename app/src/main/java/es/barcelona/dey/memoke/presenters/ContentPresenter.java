@@ -64,14 +64,11 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         contentView.fillNumberInCurrentPairByArguments();
 
         if(null!=jsonCurrentPair) {
-            Pair pair = getCurrentPair(jsonCurrentPair);
-            Log.i("BUSCANDO","number: " + pair.getNumber());
+
             setmCurrentPair(getCurrentPair(jsonCurrentPair));
             fillPairOnView();
 
         }
-
-
 
 
         //Comprobamos botones de Anterior y Siguiente
@@ -113,10 +110,8 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         if (existsPairNumberInArguments) {
             int currentPair = arguments.getInt(CreationPresenter.PARAM_CURRENT_PAIR_NUMBER);
 
-            Log.i("BUSCANDO", "estoy en existsPairNumberInArguments:" +  currentPair);
 
             if (currentPairLowerThanPairInArguments) {
-                Log.i("BUSCANDO", "estoy en currentPairLowerThanPairInArguments:" +  currentPair);
                 setmCurrentPair(new Pair());
                 getmCurrentPair().setNumber(currentPair);
             }
@@ -151,7 +146,6 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
 
     }
-
 
 
 

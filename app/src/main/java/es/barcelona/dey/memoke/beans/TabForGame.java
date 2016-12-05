@@ -6,7 +6,7 @@ package es.barcelona.dey.memoke.beans;
 public class TabForGame extends Tab {
 
     private int numberOfPair;
-    private boolean showingBack = false;
+    private boolean showingBack;
     private boolean ok;
     private long idFrame;
     private int positionInBoard = -1;

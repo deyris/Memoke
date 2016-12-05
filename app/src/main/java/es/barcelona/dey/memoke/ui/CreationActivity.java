@@ -49,6 +49,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
     }
 
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
           super.onSaveInstanceState(outState);
@@ -132,7 +133,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
             public void onClick(View v) {
                 ContentFragment f = (ContentFragment) getFragmentManager().findFragmentByTag(ContentFragment.TAG);
                 Pair pair = f.getContentPresenter().getmCurrentPair();
-                CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+                HeaderFragment cf = (HeaderFragment) getFragmentManager().findFragmentByTag(HeaderFragment.TAG);
                 boolean existsCreationFragment = cf!=null;
                 creationPresenter.clickOnNextButton(existsCreationFragment,pair);
 
@@ -142,7 +143,7 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
     @Override
     public void actualicePairNumberInContentFragment(){
-        CreationFragment cf = (CreationFragment) getFragmentManager().findFragmentByTag(CreationFragment.TAG);
+        HeaderFragment cf = (HeaderFragment) getFragmentManager().findFragmentByTag(HeaderFragment.TAG);
 
         String text = String.format(getResources().getString(R.string.creation_number), creationPresenter.getIdCurrentPair());
         cf.mTxtNumber.setText(text);
@@ -167,13 +168,13 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         Bundle bundle = new Bundle();
         bundle.putInt(CreationPresenter.PARAM_CURRENT_PAIR, creationPresenter.getIdCurrentPair());
 
-        CreationFragment mCreationFragment = new CreationFragment();
+        HeaderFragment mCreationFragment = new HeaderFragment();
         mCreationFragment.setArguments(bundle);
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
       //  fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.header_frame, mCreationFragment, CreationFragment.TAG);
+        fragmentTransaction.replace(R.id.header_frame, mCreationFragment, HeaderFragment.TAG);
         fragmentTransaction.commit();
 
         if (!fragmentAlreadyRestoredFromSavedState(ContentFragment.TAG)) {

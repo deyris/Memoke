@@ -186,6 +186,7 @@ public class ContentFragment extends Fragment implements ContentView{
     }
 
 
+
     @Override
     public void fillFirstTab(){
         fillHandlerWithTextAndHideImg(mTextView1.getId(), 1, mImageView1);
@@ -315,8 +316,8 @@ public class ContentFragment extends Fragment implements ContentView{
 
 
 
-    @Override
-    public void setPicToImg(ImageView img, int height, int width){
+   /*  @Override
+   public void setPicToImg(ImageView img, int height, int width){
 
         Uri uri = Uri.parse(contentPresenter.getmCurrentPhotoPath());
 
@@ -326,7 +327,7 @@ public class ContentFragment extends Fragment implements ContentView{
                 .centerCrop().into(img);
 
 
-    }
+    }*/
 
     @Override
     public  void setListenerFrame(FrameLayout frame, int tab) {
@@ -481,7 +482,7 @@ public class ContentFragment extends Fragment implements ContentView{
         }
     }
 
-    private void addingOnPreDrawListener(ImageView imageViewTmp, String uriTemp, int tabTmp){
+   /* private void addingOnPreDrawListener(ImageView imageViewTmp, String uriTemp, int tabTmp){
         ContentPresenter.finalHeight = imageViewTmp.getMeasuredHeight();
         ContentPresenter.finalWidth = imageViewTmp.getMeasuredWidth();
 
@@ -506,7 +507,7 @@ public class ContentFragment extends Fragment implements ContentView{
         contentPresenter. setmCurrentImgResultShow(tempImg);
         contentPresenter.setmCurrentPhotoPath(tempPhoto);
         contentPresenter.setmCurrentTab(tempTab);
-    }
+    }*/
 
 
     public ContentPresenter getContentPresenter() {

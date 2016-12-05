@@ -44,16 +44,18 @@ public class BoardService {
     public boolean existsBoards(){
         List<Board> testBoard = boardDatabase.getBoards(context);
 
-        return testBoard.size()>0;
+        return testBoard!=null && testBoard.size()>0;
     }
 
     public boolean existsThisBoard(String title){
 
         List<Board> testBoard = boardDatabase.getBoards(context);
 
-        for (Board board: testBoard){
-            if (null!=board.getTitle() && board.getTitle().equals(title)){
-                return true;
+        if (testBoard!=null) {
+            for (Board board : testBoard) {
+                if (null != board.getTitle() && board.getTitle().equals(title)) {
+                    return true;
+                }
             }
         }
 
