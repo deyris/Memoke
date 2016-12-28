@@ -1,16 +1,23 @@
 package es.barcelona.dey.memoke.presenters;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,8 +78,7 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
 
 
-        //Comprobamos botones de Anterior y Siguiente
-        controlButtonsAntSgte();
+        
     }
 
     public String getCurrentPairFromContext(Bundle savedInstanceState, Bundle arguments){
@@ -213,25 +219,52 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
     }
 
-    public void onActivityResult(int requestCode,Intent data){
-        if (requestCode== REQUEST_IMAGE_CAPTURE){
+    public static Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public void onActivityResultForCamera(Intent data){
+        Uri capturedImageUri = null;
+        if (null!=data.getData()){
+            capturedImageUri = data.getData();
+
+        }else if (null!=data.getExtras().get("data")) {
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+
+            capturedImageUri = getImageUri(contentView.getContext(), bitmap);
+
+        }
+        if (null!=capturedImageUri) {
+            String capturedPicFilePath = getRealPathFromURI(capturedImageUri);
+            setmCurrentPhotoPath(capturedPicFilePath);
             contentView.setPicToBackground();
-        }else if (requestCode== ContentPresenter.REQUEST_SELECT_PICTURE){
+        }
+    }
+
+    public void onActivityResultForGallery(Intent data){
+        Uri selectedImage = null;
+
+        if (null!=data.getData()) {
+            selectedImage = data.getData();
+        }
+        if (null!=selectedImage) {
+            String selectedImageString = getRealPathFromURI(selectedImage);
+
+            setmCurrentPhotoPath(selectedImageString);
+            contentView.setPicToBackground();
+        }
+    }
 
 
-            if (null!=data && null!=data.getData()) {
-                Uri selectedImage = data.getData();
-
-                String[] filePath = {MediaStore.Images.Media.DATA};
-                Cursor c = contentView.getContext().getContentResolver().query(selectedImage, filePath, null, null, null);
-                c.moveToFirst();
-                int columnIndex = c.getColumnIndex(filePath[0]);
-                String picturePath = c.getString(columnIndex);
-
-                c.close();
-
-                setmCurrentPhotoPath(picturePath/*selectedImage.toString()*/);
-                contentView.setPicToBackground();
+    public void onActivityResult(int requestCode,Intent data){
+        if (null!=data) {
+            if (requestCode == REQUEST_IMAGE_CAPTURE) {
+                onActivityResultForCamera(data);
+            } else if (requestCode == ContentPresenter.REQUEST_SELECT_PICTURE) {
+                onActivityResultForGallery(data);
             }
         }
     }
@@ -365,16 +398,16 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         // Ensure that there's a camera activity to handle the intent
         if (existCameraToHandleIntent) {
             // Create the File where the photo should go
-            File photoFile = createFileFromPhoto();
+         //   File photoFile = createFileFromPhoto();
 
             // Save a file: path for use with ACTION_VIEW intents
-            setmCurrentPhotoPath("file:" + photoFile.getAbsolutePath());
+         //   setmCurrentPhotoPath("file:" + photoFile.getAbsolutePath());
 
 
             // Continue only if the File was successfully created
-            if (photoFile != null) {
-                contentView.manageIntent(photoFile);
-             }
+         //   if (photoFile != null) {
+                contentView.manageIntent(new File("txt.jpg"));
+         //    }
 
         }
     }
@@ -387,6 +420,7 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
             photoFile = contentInteractor.createImageFile();
         } catch (IOException ex) {
             // Error occurred while creating the File
+            Log.e("ERROR",ex.getMessage());
 
         }
 

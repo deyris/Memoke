@@ -1,5 +1,6 @@
 package es.barcelona.dey.memoke.ui;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,6 +9,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,10 +17,13 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +81,56 @@ public class ContentFragment extends Fragment implements ContentView{
     }
 
 
-    public interface OnDataPass {
+    String[] perms = {"android.permission.CAMERA","android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
+
+    int permsRequestCode = 200;
+
+
+
+    @Override
+
+    public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults){
+
+        switch(permsRequestCode){
+
+            case 200:
+
+                boolean cameraAccepted = grantResults[0]==PackageManager.PERMISSION_GRANTED;
+                if (!cameraAccepted){
+                    hasPermission("android.permission.CAMERA");
+                }
+                boolean storageReadAccepted = grantResults[1]==PackageManager.PERMISSION_GRANTED;
+                if (!storageReadAccepted){
+                    hasPermission("android.permission.READ_EXTERNAL_STORAGE");
+                }
+                boolean storageWriteAccepted = grantResults[2]==PackageManager.PERMISSION_GRANTED;
+                if (!storageWriteAccepted){
+                    hasPermission("android.permission.WRITE_EXTERNAL_STORAGE");
+                }
+                break;
+
+
+        }
+
+    }
+
+    private boolean hasPermission(String permission){
+
+        if(MemokeApp.canMakeSmores()){
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                return(getActivity().checkSelfPermission(permission)==PackageManager.PERMISSION_GRANTED);
+            }
+
+        }
+
+        return true;
+
+    }
+
+
+
+        public interface OnDataPass {
         public void onDataPass(int data);
         public void onDataPass(EditText data);
 
@@ -105,6 +159,11 @@ public class ContentFragment extends Fragment implements ContentView{
     public void onCreate(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (MemokeApp.canMakeSmores()){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(perms, permsRequestCode);
+            }
+        }
         try{
             mCallback = (FragmentIterationListener) getActivity();
         }catch(Exception ex){
@@ -314,21 +373,6 @@ public class ContentFragment extends Fragment implements ContentView{
     }
 
 
-
-
-   /*  @Override
-   public void setPicToImg(ImageView img, int height, int width){
-
-        Uri uri = Uri.parse(contentPresenter.getmCurrentPhotoPath());
-
-        Picasso.with(getActivity()).load(uri)
-               // .resize(height, width)
-                .fit()
-                .centerCrop().into(img);
-
-
-    }*/
-
     @Override
     public  void setListenerFrame(FrameLayout frame, int tab) {
 
@@ -379,23 +423,21 @@ public class ContentFragment extends Fragment implements ContentView{
 
     @Override
     public void manageIntent(File photoFile){
-       /* Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(photoFile));
+       /*takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                Uri.fromFile(photoFile));*/
 
-        startActivityForResult(takePictureIntent, ContentPresenter.REQUEST_IMAGE_CAPTURE);*/
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        photoPickerIntent.setType("image/*");
-        startActivityForResult(photoPickerIntent, ContentPresenter.REQUEST_IMAGE_CAPTURE);
+
+       startActivityForResult(takePictureIntent,ContentPresenter.REQUEST_IMAGE_CAPTURE);
+
     }
 
 
     @Override
     public void openingGallery(){
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
 
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, ContentPresenter.REQUEST_SELECT_PICTURE);
     }
 
@@ -455,8 +497,15 @@ public class ContentFragment extends Fragment implements ContentView{
         return getArguments()!=null && getArguments().getString(CreationPresenter.PARAM_CURRENT_PAIR)!=null;
     }
 
+
     private void preDrawPhoto(ImageView imageView,String uri){
 
+        Picasso.Builder builder = new Picasso.Builder(getActivity().getApplicationContext());
+        builder.listener(new Picasso.Listener() {
+                             @Override
+                             public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                                 exception.printStackTrace();
+                             };});
 
         Picasso.with(getActivity()).load(new File(uri))
                 .fit()
@@ -513,4 +562,6 @@ public class ContentFragment extends Fragment implements ContentView{
     public ContentPresenter getContentPresenter() {
         return contentPresenter;
     }
+
+
 }

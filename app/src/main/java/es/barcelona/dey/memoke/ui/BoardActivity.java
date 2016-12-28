@@ -69,11 +69,11 @@ public class BoardActivity extends AppCompatActivity implements BoardView{
 
         });
 
-      /*  for ( TabForGame tab: boardPresenter.getTabsForGame()){
+        for ( TabForGame tab: boardPresenter.getTabsForGame()){
             if (tab.getType()==Tab.Type.PHOTO) {
                Picasso.with(this.getContext()).load("file:///" + tab.getUri()).resize(180, 180).centerCrop().fetch();
             }
-        }*/
+        }
 
 
     }

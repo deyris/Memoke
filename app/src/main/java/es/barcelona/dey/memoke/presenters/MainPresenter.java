@@ -77,7 +77,7 @@ public class MainPresenter implements Presenter<MainView>{
       //  Board board = mainInteractor.getBoardService().getBoard(title);
         this.mTitle = title;
 
-        if (mainInteractor.existsThisBoard(title)){
+        if ((mBoard!=null && mBoard.getTitle().equals(title))|| mainInteractor.existsThisBoard(title)){
             mainView.launchAlertExistsThisBoard();
 
         }else{
@@ -110,14 +110,8 @@ public class MainPresenter implements Presenter<MainView>{
 
     public void onResumeFragment() {
         if (!"".equals(mTitle)) {
-            Board board = mainInteractor.getBoardService().getBoard(mTitle);
-            if (board != null) {
-                Log.i("BUSCANDO", "pairs: " + board.getPairs().size());
-            }else{
-                Log.i("BUSCANDO", "board null");
-            }
-        }else{
-            Log.i("BUSCANDO","title vacio");
+            mainInteractor.resetBoard(mTitle);
+            this.mBoard = mainInteractor.getBoardService().getBoard(mTitle);
         }
     }
 }

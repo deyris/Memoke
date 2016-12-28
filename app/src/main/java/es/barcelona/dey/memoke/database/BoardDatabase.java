@@ -90,6 +90,13 @@ public class BoardDatabase {
         return board;
     }
 
+    public void resetSelectedBoard(String title){
+        Board board = getSelectedBoard();
+        if (null!=board && board.getTitle().equals(title)) {
+            setSelectedBoard(null);
+        }
+    }
+
     public   Board getBoard(Context context, String title){
         Board board = getSelectedBoard();
         if (null!=board && !board.getTitle().equals(title)){

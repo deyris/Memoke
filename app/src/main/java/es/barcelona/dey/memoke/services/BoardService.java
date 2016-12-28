@@ -71,6 +71,10 @@ public class BoardService {
         return boardDatabase.getBoard(context, title);
     }
 
+    public void resetSelectedBoard(String title){
+        boardDatabase.resetSelectedBoard(title);
+    }
+
     public void updateOrAddBoard(Board board){
         boardDatabase.updateOrAddBoard(context,board);
     }

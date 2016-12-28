@@ -37,6 +37,10 @@ public class MainInteractor {
         return jsonSelectedBoard;
     }
 
+    public void resetBoard(String title){
+        boardService.resetSelectedBoard(title);
+    }
+
     public void deleteBoard(String title){
         boardService.deleteBoard(title);
     }

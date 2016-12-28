@@ -1,11 +1,15 @@
 package es.barcelona.dey.memoke.ui;
 
 
+import android.Manifest;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -164,6 +168,8 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         return (getFragmentManager().findFragmentByTag(tag) != null ? true : false);
     }
 
+
+
     public void prepareForContentFragmentForRotate(Bundle savedInstanceState){
         Bundle bundle = new Bundle();
         bundle.putInt(CreationPresenter.PARAM_CURRENT_PAIR, creationPresenter.getIdCurrentPair());
@@ -173,7 +179,6 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-      //  fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.header_frame, mCreationFragment, HeaderFragment.TAG);
         fragmentTransaction.commit();
 
@@ -184,4 +189,6 @@ public class CreationActivity extends AppCompatActivity implements CreationView,
         }
 
     }
+
+
 }

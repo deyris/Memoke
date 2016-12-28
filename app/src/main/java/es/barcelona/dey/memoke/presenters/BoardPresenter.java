@@ -215,7 +215,7 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
         }
         final Handler handler = new Handler();
         final int pos = position;
-        boolean itsTheSame = false;
+
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -239,18 +239,19 @@ public class BoardPresenter extends ComunPresenter implements Presenter<BoardVie
         currentFrame.put(position, frameLayout);
         boolean isImparAndNotOne = this.clickedPositions.size() % 2 != 0 && this.clickedPositions.size() > 1;
         if (isImparAndNotOne) { //Si es impar las analizo ya
-            //Log.i("JUGANDO","impar y no uno" + this.clickedPositions.size());
             finaliceLastPlay();
             actualicePlays(pos);
 
             boardView.setAnimationToFrame(frameLayout, position);
 
         } else {
-           // Log.i("JUGANDO","lo otro" + this.clickedPositions.size());
+            if (isGameBlockedForTabsShown()){
+                return;
+            }
             actualicePlays(pos);
 
             boardView.setAnimationToFrame(frameLayout, position);
-            handler.postDelayed(runnable, 4000); // after 3 sec
+            handler.postDelayed(runnable, 3000); // after 3 sec
 
         }
     }
