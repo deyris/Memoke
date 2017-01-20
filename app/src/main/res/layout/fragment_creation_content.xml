@@ -18,7 +18,9 @@
             android:textSize="20dip"
             android:text="Ficha 1"
             android:textColor="#0b84aa"
-            android:layout_marginLeft="5dip" />
+            android:layout_marginLeft="5dip"
+            android:gravity="center"
+            />
 
         <FrameLayout
             android:id="@+id/editContent1"
@@ -55,7 +57,9 @@
             android:textSize="20dip"
             android:text="Ficha 2"
             android:textColor="#0b84aa"
-            android:layout_marginLeft="5dip" />
+            android:layout_marginLeft="5dip"
+            android:gravity="center"
+            />
 
         <FrameLayout
             android:id="@+id/editContent2"
