@@ -76,9 +76,9 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
             fillPairOnView();
 
         }
+        controlButtonsAntSgte();
 
 
-        
     }
 
     public String getCurrentPairFromContext(Bundle savedInstanceState, Bundle arguments){
@@ -152,8 +152,6 @@ public class ContentPresenter extends ComunPresenter implements Presenter<Conten
         }
 
     }
-
-
 
     public  void manageVisibilityNextButton(){
         if (null!= getmCurrentPair()) {
