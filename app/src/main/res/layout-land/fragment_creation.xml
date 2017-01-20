@@ -9,7 +9,9 @@
         android:layout_height="wrap_content"
         android:textSize="20dip"
         android:textColor="#0b84aa"
-        android:text="sdkfjsldfjsdf"/>
+        android:text="sdkfjsldfjsdf"
+        android:layout_marginLeft="10dip"
+        />
 
     <TextView android:id="@+id/creationNumber"
         android:layout_width="wrap_content"
