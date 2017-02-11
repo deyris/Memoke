@@ -28,7 +28,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="0.15"
-        android:text="Anterior"/>
+        android:text="Anterior"
+        android:background="@color/colorAccent"
+        />
         <Button
             android:id="@+id/btnSgte"
             android:layout_width="match_parent"

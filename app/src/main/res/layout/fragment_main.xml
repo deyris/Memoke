@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="fill_parent"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="fill_parent"
 android:layout_height="fill_parent"
 android:padding="20dip"
 android:orientation="vertical">
@@ -8,21 +9,46 @@ android:orientation="vertical">
 <TextView android:id="@+id/hello"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="40dip"
+    android:layout_marginTop="70dip"
     android:layout_marginBottom="40dip"
     android:text="Construye tu propio tablero!"
     android:gravity="center"
-    android:textSize="20dip"
-    android:textColor="#0b84aa"/>
+          android:textSize="26sp"
+          android:textColor="@color/colorCasiNegro"
+          android:textStyle="bold"
 
-<EditText
-    android:id="@+id/txtTitle"
-    android:layout_height="wrap_content"
-    android:layout_width="fill_parent"
-    android:hint="Escribe un título"
-    android:inputType="text" />
+    />
+    <TextView android:id="@+id/detail"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="30dip"
+              android:text="Inventa tus parejas con textos, fotos y figuras"
+              android:gravity="center"
+              android:textSize="20sp"
+              android:textColor="@color/colorGray"
+              android:textStyle="normal|bold"
+        />
+   <RelativeLayout
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_centerInParent="true"
 
-<Button
+       >
+
+    <EditText
+        android:id="@+id/txtTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Escribe un título"
+        android:inputType="text"
+        android:textSize="18sp"
+        android:theme="@style/FullWidthEditText"
+        android:background="@drawable/border_edit"
+        android:gravity="center"
+        />
+
+    </RelativeLayout>
+    <Button
     android:id="@+id/btnCrear"
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
@@ -30,8 +56,10 @@ android:orientation="vertical">
     android:layout_gravity="center_horizontal"
     android:paddingLeft="15dip"
     android:paddingRight="15dip"
-    android:layout_marginTop="35dip"
-    />
+    android:layout_marginTop="25dip"
+    android:background="@drawable/border_edit"
+
+        />
 
     <Button
         android:id="@+id/btnLoad"
@@ -41,7 +69,10 @@ android:orientation="vertical">
         android:layout_gravity="center_horizontal"
         android:paddingLeft="15dip"
         android:paddingRight="15dip"
-        android:layout_marginTop="35dip"
+        android:layout_marginTop="25dip"
+        android:background="@drawable/border_edit"
+
+        style="@style/GeneralButton"
         />
 
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import android.widget.TextView;
 import es.barcelona.dey.memoke.R;
 import es.barcelona.dey.memoke.clients.MemokeApp;
 import es.barcelona.dey.memoke.interactors.MainInteractor;
@@ -29,6 +31,8 @@ public class MainFragment extends Fragment  implements MainView {
     EditText mTxtTitle = null;
     Button mBtnCreate = null;
     Button mBtnMoreBoard = null;
+    TextView mTxtHello =null;
+   TextView mTxtDetail =null;
 
     MainPresenter mainPresenter;
 
@@ -51,6 +55,17 @@ public class MainFragment extends Fragment  implements MainView {
         mBtnCreate = (Button) mRelativeLayout.findViewById(R.id.btnCrear);
 
         mBtnMoreBoard = (Button) mRelativeLayout.findViewById(R.id.btnLoad);
+
+        mTxtHello = (TextView) mRelativeLayout.findViewById(R.id.hello);
+        Typeface typeFace = Typeface.createFromAsset(this.getActivity().getAssets(),"Roboto-Light.ttf");
+
+         mTxtHello.setTypeface(typeFace);
+
+      mTxtDetail = (TextView) mRelativeLayout.findViewById(R.id.detail);
+      mTxtDetail.setTypeface(typeFace);
+
+      mTxtTitle = (EditText) mRelativeLayout.findViewById(R.id.txtTitle);
+      mTxtTitle.setTypeface(typeFace);
 
         mBtnCreate.setOnClickListener(new View.OnClickListener() {
                                           @Override
